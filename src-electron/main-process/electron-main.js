@@ -1,4 +1,5 @@
-import { app, BrowserWindow, nativeTheme } from 'electron'
+import { app, BrowserWindow, nativeTheme, Menu, MenuItem, ipcMain, dialog } from 'electron'
+import fs from 'fs'
 
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
@@ -40,6 +41,36 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  /**
+   * Initial menu options
+   */
+  const menu = Menu.buildFromTemplate([
+    new MenuItem({
+      label:"File",
+      submenu:[
+        new MenuItem({
+          label:"Import analysis.json",
+          click:async ()=>{
+            let result = await dialog.showOpenDialog({ 
+              properties: ['openFile'],
+              filters: [
+                { name: 'analysis.json file', extensions: ['json'] },
+              ]
+            })
+            console.log(result.filePaths)
+            if(result.filePaths.length>=1){
+              let buffer = await fs.promises.readFile(result.filePaths[0],'utf-8');
+              ipcMain.emit('set-data',{
+                extracted:JSON.parse(buffer)
+              })
+            }
+          }
+        })
+      ]
+    })
+  ])
+  Menu.setApplicationMenu(menu)
 }
 
 app.on('ready', createWindow)
