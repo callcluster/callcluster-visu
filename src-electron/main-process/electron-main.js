@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, Menu, MenuItem, ipcMain, dialog } from 'electron'
+import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog } from 'electron'
 import fs from 'fs'
 
 try {
@@ -36,12 +36,17 @@ function createWindow () {
     }
   })
 
-  mainWindow.loadURL(process.env.APP_URL)
-
+  
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+  
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('test','This is a test');
+  })
 
+  mainWindow.loadURL(process.env.APP_URL)
+  
   /**
    * Initial menu options
    */
@@ -61,9 +66,8 @@ function createWindow () {
             console.log(result.filePaths)
             if(result.filePaths.length>=1){
               let buffer = await fs.promises.readFile(result.filePaths[0],'utf-8');
-              ipcMain.emit('set-data',{
-                extracted:JSON.parse(buffer)
-              })
+              console.log("llamando a setData")
+              mainWindow.webContents.send('data',buffer);
             }
           }
         })
