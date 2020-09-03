@@ -77,7 +77,8 @@ function createWindow () {
             if(result.filePaths.length>=1){
               setAnalysisJson(result.filePaths[0])
             }
-          }
+          },
+          accelerator:'CommandOrControl+I'
         })
       ]
     })
