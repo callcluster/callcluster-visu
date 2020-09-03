@@ -6,7 +6,7 @@ function register(store:Store<any>){
   console.log("registered!!!")
   ipcRenderer.send("alive","message meaning that I can listen to messages");
   ipcRenderer.on('data',function(ev,data){
-    store.commit('fullDataModule/setData', JSON.parse(data))
+    store.commit('data/setData', JSON.parse(data))
   })
 }
 

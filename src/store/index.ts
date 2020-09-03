@@ -18,7 +18,7 @@ export default store(function ({ Vue }) {
 
   const Store = new Vuex.Store<StateInterface>({
     modules: {
-      fullDataModule
+      data:fullDataModule
     },
 
     // enable strict mode (adds overhead!)

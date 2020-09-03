@@ -1,4 +1,4 @@
-import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog } from 'electron'
+import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
 
 try {
@@ -14,6 +14,17 @@ try {
 if (process.env.PROD) {
   global.__statics = __dirname
 }
+
+async function setAnalysisJson(path){
+  let buffer = await fs.promises.readFile(path,'utf-8');
+  console.log("llamando a setData")
+  mainWindow.webContents.send('data',buffer);
+}
+
+ipcMain.on("setFilePath",async (event,path)=>{
+  setAnalysisJson(path)
+})
+
 
 let mainWindow
 
@@ -63,11 +74,8 @@ function createWindow () {
                 { name: 'analysis.json file', extensions: ['json'] },
               ]
             })
-            console.log(result.filePaths)
             if(result.filePaths.length>=1){
-              let buffer = await fs.promises.readFile(result.filePaths[0],'utf-8');
-              console.log("llamando a setData")
-              mainWindow.webContents.send('data',buffer);
+              setAnalysisJson(result.filePaths[0])
             }
           }
         })
