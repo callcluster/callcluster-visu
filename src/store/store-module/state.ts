@@ -5,6 +5,9 @@ export interface StoredStateInterface {
 }
 
 const state: StoredStateInterface = {
+  minedCommunity:{},
+  functions:[],
+  calls:[]
 }
 
 export default state

@@ -6,7 +6,7 @@
         :limits="[0, 100]"
       >
         <template v-slot:before>
-          <div class="q-pa-md">
+          <div class="q-pa-xs">
             <file-structure/>
           </div>
         </template>
