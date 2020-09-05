@@ -1,37 +1,57 @@
 <template>
-  <vis-graph 
-  :nodes="graphData.nodes"
-  :edges="graphData.edges"
-  />
+  <vis-graph :vis-data="graphData" />
 </template>
-
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { Community } from '../Types';
-import VisGraph from "components/VisGraph.vue";
+import VisGraph ,{ VisNode, VisEdge, VisGraphData} from "components/VisGraph.vue";
+import { Edge } from 'vis-network';
 @Component({
   components: { VisGraph }
 })
 export default class ClassComponent extends Vue {
-  @Prop({ type: Object, required: true }) readonly community!: Community;
+  @Prop({ type: Object, required: true }) readonly community!: Community | null;
+  private getFunctions(community: Community | null):Array<number> {
+    if(community==null){
+      return [];
+    }
+    return [
+      ... (community.functions || []), 
+      ... (community.communities || []).flatMap(c=>this.getFunctions(c))
+    ];
+  }
 
-  get graphData(){
+  private getNodes(functions:Array<number>):Array<VisNode>{
+    return functions.map((f)=>{ return {
+      id:f,
+      label:f+""
+    }});
+  }
+  isVisEdgeArray(o: any): o is Array<VisEdge> {
+    return o instanceof Array && (
+      o.length == 0 || 
+      ("from" in o[0] && "to" in o[0])
+    )
+  }
+
+  private getEdges(functions:Array<number>):Array<VisEdge>{
+    let calls:any = this.$store?.state?.data?.calls;
+    if(this.isVisEdgeArray(calls)){
+      return calls.filter(c => 
+        "from" in c && functions.includes(c.from) &&
+        "to" in c && functions.includes(c.to)
+      )
+    }else{
+      return []
+    }
+  }
+
+  get graphData():VisGraphData{
+    const functions:Array<number> = this.getFunctions(this.community);
     return {
-      nodes:[
-        {id: 1, label: 'Node 1'},
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-        {id: 4, label: 'Node 4'},
-        {id: 5, label: 'Node 5'}
-      ],
-      edges:[
-        {from: 1, to: 3},
-        {from: 1, to: 2},
-        {from: 2, to: 4},
-        {from: 2, to: 5},
-        {from: 3, to: 3}
-      ]
+      nodes:this.getNodes(functions),
+      edges:this.getEdges(functions)
     }
   }
 }

@@ -3,31 +3,40 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { Network } from "vis-network";
-type VisNode = { id:number, label:string };
-type VisEdge = { from:number, to:number };
+import { VisData } from 'vis-network/declarations/network/gephiParser';
+export type VisNode = { id:number, label:string };
+export type VisEdge = { from:number, to:number };
+export type VisGraphData = { nodes:Array<VisNode>, edges:Array<VisEdge> }
+
+let networks:Map<symbol,Network|null>=new Map<symbol,Network|null>();
+
 @Component
 export default class VisGraph extends Vue {
-  @Prop({ type: Array, required: true }) readonly nodes!: Array<VisNode>;
-  @Prop({ type: Array, required: true }) readonly edges!: Array<VisEdge>;
-  private network:Network | null = null;
+  @Prop({ type: Object, required: true }) readonly visData!:VisGraphData ;
+  readonly networkKey:symbol = Symbol();
   created(){
-    this.network = null;
+    networks.set(this.networkKey,null)
   }
   mounted(){
+    console.log("MOUNTED!!")
     let visuRef = this.$refs["visualization"];
     if(visuRef instanceof HTMLElement){
-      this.network = new Network(visuRef,{ 
-        nodes:this.nodes, 
-        edges:this.edges 
-      },{})
+      networks.set(this.networkKey,new Network(visuRef,this.visData,{}))
     }else{
       throw new Error("No visualization div inside VisGraph.")
     }
   }
+  @Watch("visData")
+  nodesChanged(d:VisData){
+    console.log("Data changed!")
+    console.log(d)
+    console.log(networks.get(this.networkKey))
+    networks.get(this.networkKey)?.setData(Object.assign({},d))
+  }
   beforeDestroy(){
-    this.network?.destroy();
+    networks.get(this.networkKey)?.destroy();
   }
 }
 </script>

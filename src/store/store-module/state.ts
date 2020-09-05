@@ -5,7 +5,7 @@ export interface StoredStateInterface {
 }
 
 const state: StoredStateInterface = {
-  minedCommunity: {},
+  minedCommunity: null,
   functions: [],
   calls: []
 }

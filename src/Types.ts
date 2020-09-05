@@ -1,7 +1,7 @@
 export type Community = {
   name:string,
   communities?:Array<Community>,
-  functions?:Array<Function>
+  functions?:Array<number>
 }
 
 export type FunctionDefinition = {

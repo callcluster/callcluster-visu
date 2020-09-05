@@ -59,21 +59,23 @@ export default class ClassComponent extends Vue {
       (filter as any).focus();
     }
   }
-  get minedCommunity():Community{
-    return this.$store.state.data.minedCommunity as Community
+  get minedCommunity():Community | null{
+    return this.$store.state.data.minedCommunity as (Community | null)
   }
   get functions():Array<FunctionDefinition>{
     return this.$store.state.data.functions;
   }
   get structure(){
     this.communityMapper = new CommunityMapper(1);
-    return [
-      {
+    if(this.minedCommunity != null){
+      return [{
         label:"Mined hierarchy",
         id:0,
         children:[this.communityMapper.mapCommunity(this.minedCommunity)]
-      }
-    ];
+      }];
+    }else{
+      return [];
+    }
   }
   @Watch("selected")
   changeSelected(newSelected?:number,oldSelected?:number){
