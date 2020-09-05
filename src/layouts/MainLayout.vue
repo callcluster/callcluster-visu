@@ -34,7 +34,7 @@ import { Community } from '../Types';
 })
 export default class MainLayout extends Vue {
   splitterModel = 20;
-  community: Community|null =null;
+  community: Community|Object = {};
   changeSelected(community:Community){
     this.community = community;
     console.log(community.name)

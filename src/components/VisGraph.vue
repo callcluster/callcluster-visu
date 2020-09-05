@@ -21,7 +21,7 @@ export default class VisGraph extends Vue {
       this.network = new Network(visuRef,{ 
         nodes:this.nodes, 
         edges:this.edges 
-      })
+      },{})
     }else{
       throw new Error("No visualization div inside VisGraph.")
     }
