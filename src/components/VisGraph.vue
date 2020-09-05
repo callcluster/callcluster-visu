@@ -1,5 +1,5 @@
 <template>
-  <div ref="visualization"></div>
+  <div ref="visualization" class="fit"></div>
 </template>
 
 <script lang="ts">
@@ -18,7 +18,10 @@ export default class VisGraph extends Vue {
   mounted(){
     let visuRef = this.$refs["visualization"];
     if(visuRef instanceof HTMLElement){
-      this.network = new Network(visuRef,{ nodes:this.nodes, edges:this.edges },{})
+      this.network = new Network(visuRef,{ 
+        nodes:this.nodes, 
+        edges:this.edges 
+      })
     }else{
       throw new Error("No visualization div inside VisGraph.")
     }

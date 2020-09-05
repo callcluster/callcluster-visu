@@ -4,6 +4,7 @@
       <q-splitter
         v-model="splitterModel"
         :limits="[0, 100]"
+        class="fullscreen"
       >
         <template v-slot:before>
           <div class="q-pa-xs">
