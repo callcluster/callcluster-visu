@@ -7,7 +7,7 @@
       >
         <template v-slot:before>
           <div class="q-pa-xs">
-            <file-structure/>
+            <file-structure v-on:change="changeSelected"/>
           </div>
         </template>
 
@@ -25,11 +25,15 @@ import EssentialLink from 'components/EssentialLink.vue'
 import FileStructure from 'components/FileStructure.vue'
 
 import { Vue, Component } from 'vue-property-decorator'
+import { Community } from '../Types';
 
 @Component({
   components: { EssentialLink, FileStructure }
 })
 export default class MainLayout extends Vue {
   splitterModel = 20;
+  changeSelected(community:Community){
+    console.log(community.name)
+  }
 }
 </script>

@@ -1,91 +1,90 @@
 <template>
-  <div class="q-gutter-sm">
+  <div class="q-pa-sm q-gutter-sm">
+     <q-input ref="filter" filled v-model="filter" label="Filter">
+      <template v-slot:append>
+        <q-icon v-if="filter !== ''" name="clear" class="cursor-pointer" @click="resetFilter" />
+      </template>
+    </q-input>
     <q-tree
-      :nodes="structure"
-      node-key="label"
+      :nodes = "structure"
+      node-key = "id"
+      :filter = "filter"
+      :selected.sync="selected"
     />
   </div>
 </template>
-
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator'
+import { Vue, Component, Model, Prop, Watch } from 'vue-property-decorator'
 import { mapState } from 'vuex';
-type Function = {
+import { StringDictionary } from 'quasar';
+import { Community, FunctionDefinition } from "../Types";
 
-}
-type Community = {
-  name:string,
-  communities?:Array<Community>,
-  functions?:Array<Function>
-}
 type TreeBranch = {
   label:string,
-  children?:Array<TreeBranch>
+  children?:Array<TreeBranch>,
+  id:number,
+  labelid:string
 }
+class CommunityMapper{
+  getCommunity(id: number): Community {
+    return this.communitiesWithId[id];
+  }
+  private communitiesWithId:{ [id: number] : Community; } ={};
+  constructor(private nextId:number){ }
+  public mapCommunity(community:Community):TreeBranch {
+    let myId = this.nextId;
+    this.nextId += 1;
+    this.communitiesWithId[myId] = community;
+    let ret:TreeBranch = {
+      label: community.name,
+      id: myId,
+      labelid: community.name + myId,
+      children: (community.communities || []).map((c) => this.mapCommunity(c))
+    };
+    return ret;
+  }
+}
+
 @Component
 export default class ClassComponent extends Vue {
+  private communityMapper:CommunityMapper=new CommunityMapper(1);
+  public selected = null;
+  public filter:string = '';
+  selectedCommunity:Community | null = null;
+
+  resetFilter () {
+    this.filter = '';
+    let filter = this.$refs["filter"];
+    if((filter as any).focus){
+      (filter as any).focus();
+    }
+  }
   get minedCommunity():Community{
     return this.$store.state.data.minedCommunity as Community
   }
-  get functions():Array<Function>{
+  get functions():Array<FunctionDefinition>{
     return this.$store.state.data.functions;
   }
-  private generateBranchFromCommunity(community:Community):TreeBranch {
-    return {
-      label:community.name,
-      children:(community.communities || []).map(this.generateBranchFromCommunity)
-    }
-  }
-
   get structure(){
-    let ret = [
+    this.communityMapper = new CommunityMapper(1);
+    return [
       {
         label:"Mined hierarchy",
-        children:[this.generateBranchFromCommunity(this.minedCommunity)]
+        id:0,
+        children:[this.communityMapper.mapCommunity(this.minedCommunity)]
       }
-    ]
-    console.log(ret)
-    return ret;
-
-
-    
-    return [
-        {
-          label: 'Satisfied customers (with avatar)',
-          avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
-          children: [
-            {
-              label: 'Good food (with icon)',
-              icon: 'restaurant_menu',
-              children: [
-                { label: 'Quality ingredients' },
-                { label: 'Good recipe' }
-              ]
-            },
-            {
-              label: 'Good service (disabled node with icon)',
-              icon: 'room_service',
-              disabled: true,
-              children: [
-                { label: 'Prompt attention' },
-                { label: 'Professional waiter' }
-              ]
-            },
-            {
-              label: 'Pleasant surroundings (with icon)',
-              icon: 'photo',
-              children: [
-                {
-                  label: 'Happy atmosphere (with image)',
-                  img: 'https://cdn.quasar.dev/img/logo_calendar_128px.png'
-                },
-                { label: 'Good table presentation' },
-                { label: 'Pleasing decor' }
-              ]
-            }
-          ]
-        }
-      ];
+    ];
+  }
+  @Watch("selected")
+  changeSelected(newSelected?:number,oldSelected?:number){
+    if(newSelected){
+      this.$emit(
+        'change', 
+        this.communityMapper.getCommunity(newSelected)
+      );
+    }else{
+      this.$emit('change', null);
+    }
   }
 }
 </script>

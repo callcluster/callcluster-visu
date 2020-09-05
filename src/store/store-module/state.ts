@@ -1,13 +1,13 @@
 export interface StoredStateInterface {
   minedCommunity?:any
-  functions?:any
-  calls?:any
+  functions?:Array<any>
+  calls?:Array<any>
 }
 
 const state: StoredStateInterface = {
-  minedCommunity:{},
-  functions:[],
-  calls:[]
+  minedCommunity: {},
+  functions: [],
+  calls: []
 }
 
 export default state
