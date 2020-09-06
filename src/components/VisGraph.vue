@@ -7,7 +7,7 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { Network } from "vis-network";
 import { VisData } from 'vis-network/declarations/network/gephiParser';
 export type VisNode = { id:number, label:string };
-export type VisEdge = { from:number, to:number };
+export type VisEdge = { from:number, to:number, arrows?:string };
 export type VisGraphData = { nodes:Array<VisNode>, edges:Array<VisEdge> }
 
 let networks:Map<symbol,Network|null>=new Map<symbol,Network|null>();

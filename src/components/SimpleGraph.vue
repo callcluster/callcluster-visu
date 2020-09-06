@@ -23,9 +23,11 @@ export default class ClassComponent extends Vue {
   }
 
   private getNodes(functions:Array<number>):Array<VisNode>{
+    let funcs = this.$store?.state?.data?.functions;
     return functions.map((f)=>{ return {
       id:f,
-      label:f+""
+      label:""
+      //label:funcs[f].name,
     }});
   }
   isVisEdgeArray(o: any): o is Array<VisEdge> {
@@ -38,10 +40,14 @@ export default class ClassComponent extends Vue {
   private getEdges(functions:Array<number>):Array<VisEdge>{
     let calls:any = this.$store?.state?.data?.calls;
     if(this.isVisEdgeArray(calls)){
-      return calls.filter(c => 
+      let filteredCalls = calls.filter(c => 
         "from" in c && functions.includes(c.from) &&
         "to" in c && functions.includes(c.to)
       )
+      filteredCalls.forEach(e=>{
+        e.arrows="to";
+      });
+      return filteredCalls;
     }else{
       return []
     }
