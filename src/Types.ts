@@ -7,3 +7,7 @@ export type Community = {
 export type FunctionDefinition = {
 
 }
+
+export type VisualizationDefinition = {
+  
+}

@@ -81,7 +81,20 @@ function createWindow () {
           accelerator:'CommandOrControl+I'
         })
       ]
+    }),
+    new MenuItem({
+      label:"Create",
+      submenu:[
+        new MenuItem({
+          label:"Visualization",
+          click:async () => {
+            mainWindow.webContents.send('create','visualization')
+          },
+          accelerator:'CommandOrControl+D'
+        })
+      ]
     })
+
   ])
   Menu.setApplicationMenu(menu)
 }

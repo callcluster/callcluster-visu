@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 import fullDataModule from './store-module'
 import { StoredStateInterface } from './store-module/state'
-
+import otherDataModule from './otherDataModule'
 /*
  * If not building with SSR mode, you can
  * directly export the Store instantiation
@@ -18,7 +18,8 @@ export default store(function ({ Vue }) {
 
   const Store = new Vuex.Store<StateInterface>({
     modules: {
-      data:fullDataModule
+      data:fullDataModule,
+      other:otherDataModule
     },
 
     // enable strict mode (adds overhead!)

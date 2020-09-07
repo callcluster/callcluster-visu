@@ -8,6 +8,9 @@ function register(store:Store<any>){
   ipcRenderer.on('data', function(ev,data){
     store.commit('data/setData', JSON.parse(data))
   })
+  ipcRenderer.on("create",(e,createdType)=>{
+    store.commit('other/setCreate', createdType)
+  })
 }
 
 
