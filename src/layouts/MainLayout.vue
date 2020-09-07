@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr fFf">
-    <visualization-create-dialog/>
+    <visualization-creation-dialog/>
     <q-page-container>
       <q-splitter
         v-model="splitterModel"
@@ -47,7 +47,7 @@ import EssentialLink from 'components/EssentialLink.vue'
 import FileStructure from 'components/FileStructure.vue'
 import SimpleGraph from 'components/SimpleGraph.vue'
 import VisualizationsList from "components/VisualizationsList.vue";
-import VisualizationCreateDialog from "components/VisualizationCreateDialog.vue";
+import VisualizationCreationDialog from "components/VisualizationCreationDialog.vue";
 
 import { Vue, Component, Model } from 'vue-property-decorator'
 import { Community } from '../Types';
@@ -58,7 +58,7 @@ import { Community } from '../Types';
     FileStructure, 
     SimpleGraph, 
     VisualizationsList,
-    VisualizationCreateDialog
+    VisualizationCreationDialog
   }
 })
 export default class MainLayout extends Vue {
