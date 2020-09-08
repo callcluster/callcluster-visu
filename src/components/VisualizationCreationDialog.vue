@@ -5,15 +5,20 @@
       vertical
       animated
     >
+      <q-toolbar>
+        <q-icon name="insert_chart_outlined" size="md"/>
+
+        <q-toolbar-title>Add visualization</q-toolbar-title>
+
+        <q-btn flat round dense icon="close" v-close-popup />
+      </q-toolbar>
       <q-step
         :name="1"
         title="Select visualization type"
         icon="insert_chart_outlined"
         :done="step > 1"
       >
-        For each ad campaign that you create, you can control how much you're willing to
-        spend on clicks and conversions, which networks and geographical locations you want
-        your ads to show on, and more.
+        <visu-type-chooser/>
 
         <q-stepper-navigation>
           <q-btn @click="step = 2" color="primary" label="Continue" />
@@ -67,12 +72,13 @@ import SelectableImageComponent from "components/SelectableImageComponent.vue"
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { Todo, Meta } from './models'
 import { ipcRenderer } from "electron";
+import VisuTypeChooser from "./VisuTypeChooser.vue";
 @Component({
-  components:{ simg: SelectableImageComponent }
+  components:{ VisuTypeChooser }
 })
 export default class VisualizationCreationDialog extends Vue {
   panel = "type";
-  step="1"
+  step=1
   get showDialog(){
     console.log("%%%%%%%%-------",this.$store.state.other.viewCreateVisualization)
     return this.$store.state.other.viewCreateVisualization;
