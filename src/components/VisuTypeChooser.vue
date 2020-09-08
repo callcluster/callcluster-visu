@@ -2,7 +2,7 @@
   <div class="row q-gutter-md">
     <div class="row items-center">
       <q-option-group
-        v-model="panel"
+        v-model="chosen"
         :options="[
           { label: 'Treemap', value: 'treemap' },
           { label: 'Histogram', value: 'histogram' },
@@ -13,7 +13,7 @@
         class="col"
       />
       
-      <q-tab-panels v-model="panel" animated class="col" style="height:25em">
+      <q-tab-panels v-model="chosen" animated class="col" style="height:25em">
         <q-tab-panel name="treemap">
           <q-card class="fit">
             <q-img src="graph.png" />
@@ -75,10 +75,11 @@ import { Vue, Component, Prop, Model, Watch } from 'vue-property-decorator'
 
 @Component
 export default class VisuTypeChooser extends Vue {
-  @Model('change') panel = "treemap"
-  @Watch('panel')
+  @Model('change', {type:String}) chosen!:string;
+  @Watch('chosen')
   panelChange(newVal:string,oldVal:string){
     this.$emit('change',newVal);
+    console.log("it changes!!!!!")
   }
 }
 </script>

@@ -18,7 +18,7 @@
         icon="insert_chart_outlined"
         :done="step > 1"
       >
-        <visu-type-chooser/>
+        <visu-type-chooser v-model="chosen"/>
 
         <q-stepper-navigation>
           <q-btn @click="step = 2" color="primary" label="Continue" />
@@ -77,8 +77,8 @@ import VisuTypeChooser from "./VisuTypeChooser.vue";
   components:{ VisuTypeChooser }
 })
 export default class VisualizationCreationDialog extends Vue {
-  panel = "type";
-  step=1
+  step=1;
+  chosen="treemap"
   get showDialog(){
     console.log("%%%%%%%%-------",this.$store.state.other.viewCreateVisualization)
     return this.$store.state.other.viewCreateVisualization;
