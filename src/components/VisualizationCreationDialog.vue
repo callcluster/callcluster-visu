@@ -1,9 +1,10 @@
 <template>
-  <q-dialog v-model="showDialog">
+  <q-dialog v-model="showDialog" >
     <q-stepper
       v-model="step"
       vertical
       animated
+      style="width:560px"
     >
       <q-toolbar>
         <q-icon name="insert_chart_outlined" size="md"/>
@@ -30,6 +31,7 @@
         :name="2"
         title="Customize"
         icon="assignment"
+        :caption="customizationDescription"
         :done="step > 2"
       >
         <visu-customization :chosen-type="chosen" v-model="parameters" />
@@ -82,13 +84,17 @@ import VisuCustomization from "./VisuCustomization.vue"
 export default class VisualizationCreationDialog extends Vue {
   step=1;
   chosen="treemap";
-  parameters={};
+  parameters={metric:null,community:null};
   get showDialog(){
     console.log("%%%%%%%%-------",this.$store.state.other.viewCreateVisualization)
     return this.$store.state.other.viewCreateVisualization;
   }
   set showDialog(v){
     this.$store.commit('other/setCreateVisualization', v)
+  }
+  get customizationDescription(){
+    let params = this.parameters;
+    return Object.keys(params).filter(k => params[k]!=null).map((k)=>k+": "+params[k]).join(", ")
   }
 }
 
