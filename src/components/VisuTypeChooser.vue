@@ -50,7 +50,7 @@
             <q-img src="graph.png" />
             <q-card-section>
               <div class="text-h6">Colored Hierarchical Graph</div>
-              A hierarchical graph that shows current what part of every "graphed" community corresponds to a different "colored" community.
+              A hierarchical graph that shows what part of every "graphed" community corresponds to a different "colored" community.
             </q-card-section>
           </q-card>
         </q-tab-panel>

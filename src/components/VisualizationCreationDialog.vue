@@ -16,6 +16,7 @@
         :name="1"
         title="Select visualization type"
         icon="insert_chart_outlined"
+        :caption="chosen"
         :done="step > 1"
       >
         <visu-type-chooser v-model="chosen"/>
@@ -27,12 +28,11 @@
 
       <q-step
         :name="2"
-        title="Create an ad group"
-        caption="Optional"
-        icon="create_new_folder"
+        title="Customize"
+        icon="assignment"
         :done="step > 2"
       >
-        An ad group contains one or more ads which target a shared set of keywords.
+        <visu-customization :chosen-type="chosen" v-model="parameters" />
 
         <q-stepper-navigation>
           <q-btn @click="step = 4" color="primary" label="Continue" />
@@ -42,8 +42,9 @@
 
       <q-step
         :name="3"
-        title="Ad template"
-        icon="assignment"
+        title="Set colored community"
+        caption="not necessary for this graph"
+        icon="format_list_bulleted"
         disable
       >
         This step won't show up because it is disabled.
@@ -51,7 +52,7 @@
 
       <q-step
         :name="4"
-        title="Create an ad"
+        title="Name the new visualization"
         icon="add_comment"
       >
         Try out different ad text to see what brings in the most customers, and learn how to
@@ -73,12 +74,15 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { Todo, Meta } from './models'
 import { ipcRenderer } from "electron";
 import VisuTypeChooser from "./VisuTypeChooser.vue";
+import VisuCustomization from "./VisuCustomization.vue"
+
 @Component({
-  components:{ VisuTypeChooser }
+  components:{ VisuTypeChooser, VisuCustomization }
 })
 export default class VisualizationCreationDialog extends Vue {
   step=1;
-  chosen="treemap"
+  chosen="treemap";
+  parameters={};
   get showDialog(){
     console.log("%%%%%%%%-------",this.$store.state.other.viewCreateVisualization)
     return this.$store.state.other.viewCreateVisualization;
