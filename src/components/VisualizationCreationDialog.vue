@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="showDialog" >
+  <q-dialog v-model="showDialog" ref="dialog">
     <q-stepper
       v-model="step"
       vertical
@@ -45,7 +45,7 @@
       <q-step
         :name="3"
         title="Set colored community"
-        caption="not necessary for this graph"
+        caption="Not necessary for this graph"
         icon="format_list_bulleted"
         disable
       >
@@ -57,12 +57,15 @@
         title="Name the new visualization"
         icon="add_comment"
       >
-        Try out different ad text to see what brings in the most customers, and learn how to
-        enhance your ads using features like ad extensions. If you run into any problems with
-        your ads, find out how to tell if they're running and how to resolve approval issues.
+        <q-input 
+          v-model="name" 
+          label="Visualization name" 
+          :rules="[val => !!val || 'Name is required']"
+          ref="nameInput"
+        />
 
         <q-stepper-navigation>
-          <q-btn color="primary" label="Finish" />
+          <q-btn @click="createVisualization" color="primary" label="Finish" />
           <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
         </q-stepper-navigation>
       </q-step>
@@ -82,6 +85,7 @@ import VisuCustomization from "./VisuCustomization.vue"
   components:{ VisuTypeChooser, VisuCustomization }
 })
 export default class VisualizationCreationDialog extends Vue {
+  name=null;
   step=1;
   chosen="treemap";
   parameters={metric:null,community:null};
@@ -95,6 +99,25 @@ export default class VisualizationCreationDialog extends Vue {
   get customizationDescription(){
     let params = this.parameters;
     return Object.keys(params).filter(k => params[k]!=null).map((k)=>k+": "+params[k]).join(", ")
+  }
+  createVisualization(){
+    console.log("createVisualization!!!!")
+    this.$refs["nameInput"].validate();
+    if(this.name){
+      //this.$refs["dialog"].hide();
+      this.showDialog = false;
+      this.$emit("finish",{
+        name:this.name,
+        visualizationType:this.chosen,
+        parameters:this.parameters,
+      })
+      this.name=null;
+      this.chosen="treemap";
+      this.parameters={metric:null,community:null};
+      this.step=1;
+    }else{
+      this.$refs["dialog"].shake();
+    }
   }
 }
 

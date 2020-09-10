@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr fFf">
-    <visualization-creation-dialog/>
+    <visualization-creation-dialog v-on:finish="finishCreation"/>
     <q-page-container>
       <q-splitter
         v-model="splitterModel"
@@ -67,7 +67,9 @@ export default class MainLayout extends Vue {
   tab="communities";
   changeSelected(community:Community){
     this.community = community;
-    console.log(community.name)
+  }
+  finishCreation(event:any){
+    this.$store.commit('data/createVisualization', event)
   }
 }
 </script>

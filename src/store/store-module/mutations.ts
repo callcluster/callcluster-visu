@@ -5,6 +5,9 @@ const mutation: MutationTree<StoredStateInterface> = {
     state.calls = payload.calls || state.calls;
     state.functions = payload.functions || state.functions;
     state.minedCommunity = payload?.community || state?.minedCommunity;
+  },
+  createVisualization(state:StoredStateInterface,payload:any){
+    state.visualizations.push(payload);
   }
 }
 

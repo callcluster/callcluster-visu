@@ -24,12 +24,8 @@ export default class ClassComponent extends Vue {
   community:string|null=null;
 
   mounted(){
-    if("metric" in this.parameters){
-      this.metric = this.parameters.metric;
-    }
-    if("community" in this.parameters){
-      this.community = this.parameters.community;
-    }
+    this.metric = this.parameters.metric || this.availableMetrics[0];
+    this.community = this.parameters.community || this.availableCommunities[0];
   }
 
   get availableMetrics():Array<string>{

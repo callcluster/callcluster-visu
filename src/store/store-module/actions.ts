@@ -5,7 +5,7 @@ import { ipcRenderer } from "electron"
 const actions: ActionTree<StoredStateInterface, StateInterface> = {
     setFilePath(context, path){
         ipcRenderer.send("setFilePath", path)
-    }
+    },
 }
 
 export default actions

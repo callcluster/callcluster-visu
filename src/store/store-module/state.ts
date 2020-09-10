@@ -9,7 +9,7 @@ const state: StoredStateInterface = {
   minedCommunity: null,
   functions: [],
   calls: [],
-  visualizations: ["holis","chauchis","visualis","visualardis"]
+  visualizations: []
 }
 
 export default state

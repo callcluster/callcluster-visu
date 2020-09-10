@@ -3,8 +3,8 @@
     <q-list separator>
       <q-item clickable v-ripple v-for="v in visualizations">
         <q-item-section>
-          <q-item-label>{{ v }}</q-item-label>
-          <q-item-label caption>Visualization type</q-item-label>
+          <q-item-label>{{ v.name }}</q-item-label>
+          <q-item-label caption>{{v.visualizationType}}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
