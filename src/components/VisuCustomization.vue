@@ -27,16 +27,8 @@ export default class ClassComponent extends Vue {
     this.metric = this.parameters.metric || this.availableMetrics[0];
     this.community = this.parameters.community || this.availableCommunities[0];
   }
-
   get availableMetrics():Array<string>{
-    return [
-      'Google', 
-      'Facebook', 
-      'Twitter', 
-      'Apple', 
-      'Oracle',
-      'holis'
-    ];
+    return this.$store.state.other.availableMetrics;
   }
   @Watch('metric')
   metricChange(newMetric:string,oldMetric:string){
@@ -52,12 +44,7 @@ export default class ClassComponent extends Vue {
 
   get availableCommunities():Array<string>{
     return [
-      'Google', 
-      'Facebook', 
-      'Twitter', 
-      'Apple', 
-      'Oracle',
-      'holis'
+      'mined community'
     ];
   }
 }

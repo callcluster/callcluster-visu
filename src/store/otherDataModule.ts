@@ -9,10 +9,14 @@ const otherDataModule = {
     },
     setCreateVisualization(state:any,value:boolean){
       state.viewCreateVisualization=value
+    },
+    setAvailableMetrics(state:any,value:Array<string>){
+      state.availableMetrics=value;
     }
   },
   state:{
-    viewCreateVisualization:false
+    viewCreateVisualization:false,
+    availableMetrics:[]
   }
 }
 

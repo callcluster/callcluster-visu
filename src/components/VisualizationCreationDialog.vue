@@ -104,7 +104,6 @@ export default class VisualizationCreationDialog extends Vue {
     console.log("createVisualization!!!!")
     this.$refs["nameInput"].validate();
     if(this.name){
-      //this.$refs["dialog"].hide();
       this.showDialog = false;
       this.$emit("finish",{
         name:this.name,

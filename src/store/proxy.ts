@@ -11,6 +11,9 @@ function register(store:Store<any>){
   ipcRenderer.on("create",(e,createdType)=>{
     store.commit('other/setCreate', createdType)
   })
+  ipcRenderer.on("availableMetrics",(e,availableMetrics)=>{
+    store.commit('other/setAvailableMetrics', availableMetrics)
+  })
 }
 
 

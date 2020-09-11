@@ -15,10 +15,19 @@ if (process.env.PROD) {
   global.__statics = __dirname
 }
 
+function getAvailableMetrics(analysisJson){
+  let metricsDict={}
+  analysisJson['functions'].forEach(f => {
+    Object.keys(f).forEach(k => {
+      metricsDict[k]=true
+    });
+  });
+  return Object.keys(metricsDict).filter(v=>!['location','name'].includes(v))
+}
 async function setAnalysisJson(path){
   let buffer = await fs.promises.readFile(path,'utf-8');
-  console.log("llamando a setData")
   mainWindow.webContents.send('data',buffer);
+  mainWindow.webContents.send('availableMetrics',getAvailableMetrics(JSON.parse(buffer)))
 }
 
 ipcMain.on("setFilePath",async (event,path)=>{
