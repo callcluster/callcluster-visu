@@ -6,6 +6,9 @@ const actions: ActionTree<StoredStateInterface, StateInterface> = {
     setFilePath(context, path){
         ipcRenderer.send("setFilePath", path)
     },
+    showVisualization(context,visualization){
+        ipcRenderer.send("showVisualization",visualization)
+    }
 }
 
 export default actions

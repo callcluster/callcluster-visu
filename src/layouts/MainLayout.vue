@@ -27,7 +27,7 @@
             </q-tab-panel>
 
             <q-tab-panel name="visualizations" class="q-pa-xs">
-              <visualizations-list />
+              <visualizations-list v-on:select="selectVisualization"/>
             </q-tab-panel>
           </q-tab-panels>
           
@@ -70,6 +70,9 @@ export default class MainLayout extends Vue {
   }
   finishCreation(event:any){
     this.$store.commit('data/createVisualization', event)
+  }
+  selectVisualization(visualization:any){
+    this.$store.dispatch('data/showVisualization',visualization)
   }
 }
 </script>

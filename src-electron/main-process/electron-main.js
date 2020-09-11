@@ -34,6 +34,11 @@ ipcMain.on("setFilePath",async (event,path)=>{
   setAnalysisJson(path)
 })
 
+ipcMain.on("showVisualization", (event,visualization)=>{
+  console.log("quiero mostrar esto:")
+  console.log(visualization)
+})
+
 
 let mainWindow
 
