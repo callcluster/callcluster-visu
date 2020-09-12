@@ -14,6 +14,9 @@ function register(store:Store<any>){
   ipcRenderer.on("availableMetrics",(e,availableMetrics)=>{
     store.commit('other/setAvailableMetrics', availableMetrics)
   })
+  ipcRenderer.on("setVisualization",(e,visualization)=>{
+    store.commit('other/setVisualization',visualization)
+  })
 }
 
 

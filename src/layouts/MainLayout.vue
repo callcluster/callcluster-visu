@@ -23,7 +23,7 @@
           <q-separator />
           <q-tab-panels v-model="tab" animated>
             <q-tab-panel name="communities" class="q-pa-xs">
-              <file-structure v-on:change="changeSelected"/>
+              <file-structure v-on:change="selectCommunity"/>
             </q-tab-panel>
 
             <q-tab-panel name="visualizations" class="q-pa-xs">
@@ -34,8 +34,9 @@
         </template>
 
         <template v-slot:after>
+          <visualization-view />
           <!-- <router-view /> -->
-          <simple-graph :community="community"/>
+          <!-- <simple-graph :community="community"/> -->
         </template>
       </q-splitter>
     </q-page-container>
@@ -48,7 +49,7 @@ import FileStructure from 'components/FileStructure.vue'
 import SimpleGraph from 'components/SimpleGraph.vue'
 import VisualizationsList from "components/VisualizationsList.vue";
 import VisualizationCreationDialog from "components/VisualizationCreationDialog.vue";
-
+import VisualizationView from 'components/VisualizationView.vue'
 import { Vue, Component, Model } from 'vue-property-decorator'
 import { Community } from '../Types';
 
@@ -58,14 +59,15 @@ import { Community } from '../Types';
     FileStructure, 
     SimpleGraph, 
     VisualizationsList,
-    VisualizationCreationDialog
+    VisualizationCreationDialog,
+    VisualizationView
   }
 })
 export default class MainLayout extends Vue {
   splitterModel = 20;
   community: Community|Object = {};
   tab="communities";
-  changeSelected(community:Community){
+  selectCommunity(community:Community){
     this.community = community;
   }
   finishCreation(event:any){

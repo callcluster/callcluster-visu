@@ -35,8 +35,8 @@ ipcMain.on("setFilePath",async (event,path)=>{
 })
 
 ipcMain.on("showVisualization", (event,visualization)=>{
-  console.log("quiero mostrar esto:")
   console.log(visualization)
+  mainWindow.webContents.send('setVisualization',visualization)
 })
 
 

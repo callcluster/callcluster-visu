@@ -12,11 +12,15 @@ const otherDataModule = {
     },
     setAvailableMetrics(state:any,value:Array<string>){
       state.availableMetrics=value;
+    },
+    setVisualization(state:any,visualization:any){
+      state.visualization=visualization
     }
   },
   state:{
     viewCreateVisualization:false,
-    availableMetrics:[]
+    availableMetrics:[],
+    visualization:{}
   }
 }
 

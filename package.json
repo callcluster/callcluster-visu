@@ -12,6 +12,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
+    "d3": "^6.1.1",
     "quasar": "^1.0.0",
     "vis-data": "^7.0.0",
     "vis-network": "^8.3.1",

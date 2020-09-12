@@ -11,7 +11,7 @@ const mutation: MutationTree<StoredStateInterface> = {
     let maxKey:number = keys.reduce((prev, curr) => Math.max(prev,curr),0) + 1;
     let nextVisualizations=Object.assign({},state.visualizations,{[maxKey]:visualization});
     state.visualizations = nextVisualizations;
-  }
+  },
 }
 
 export default mutation
