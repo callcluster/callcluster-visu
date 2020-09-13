@@ -3,7 +3,6 @@ const otherDataModule = {
   mutations:{
     setCreate(state:any,createdType:string) {
       if(createdType=='visualization'){
-        console.log("CREATEEEEEEE",state.viewCreateVisualization)
         state.viewCreateVisualization=true
       }
     },

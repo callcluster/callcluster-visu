@@ -1,6 +1,6 @@
 import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
-
+import { setAnalysisJson, getAvailableMetrics, makeVisualization } from './visualizations'
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
@@ -15,28 +15,20 @@ if (process.env.PROD) {
   global.__statics = __dirname
 }
 
-function getAvailableMetrics(analysisJson){
-  let metricsDict={}
-  analysisJson['functions'].forEach(f => {
-    Object.keys(f).forEach(k => {
-      metricsDict[k]=true
-    });
-  });
-  return Object.keys(metricsDict).filter(v=>!['location','name'].includes(v))
-}
-async function setAnalysisJson(path){
+async function loadAnalysisJson(path){
   let buffer = await fs.promises.readFile(path,'utf-8');
+  let analysisJson=JSON.parse(buffer);
+  setAnalysisJson(analysisJson)
   mainWindow.webContents.send('data',buffer);
-  mainWindow.webContents.send('availableMetrics',getAvailableMetrics(JSON.parse(buffer)))
+  mainWindow.webContents.send('availableMetrics',getAvailableMetrics())
 }
 
 ipcMain.on("setFilePath",async (event,path)=>{
-  setAnalysisJson(path)
+  loadAnalysisJson(path)
 })
 
 ipcMain.on("showVisualization", (event,visualization)=>{
-  console.log(visualization)
-  mainWindow.webContents.send('setVisualization',visualization)
+  mainWindow.webContents.send('setVisualization',makeVisualization(visualization))
 })
 
 
@@ -89,7 +81,7 @@ function createWindow () {
               ]
             })
             if(result.filePaths.length>=1){
-              setAnalysisJson(result.filePaths[0])
+              loadAnalysisJson(result.filePaths[0])
             }
           },
           accelerator:'CommandOrControl+I'

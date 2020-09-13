@@ -2,7 +2,9 @@
     <div v-if="visualization.id" class="full-height">
         <treemap-view 
         v-if="visualization.visualizationType=='treemap'"
-        class="full-height" 
+        class="full-height"
+        :visualization="visualization"
+        v-on:request="request"
         />
     </div>
 </template>
@@ -19,10 +21,8 @@ export default class VisualizationView extends Vue {
     get visualization(){
         return this.$store.state.other.visualization;
     }
-
-    @Watch('visualization')
-    changeVisualization(newVal:any,oldVal:any){
-
+    request(visualization:any){
+        this.$store.dispatch('data/showVisualization',visualization)
     }
 }
 </script>
