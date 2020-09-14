@@ -12,6 +12,13 @@ const mutation: MutationTree<StoredStateInterface> = {
     let nextVisualizations=Object.assign({},state.visualizations,{[maxKey]:visualization});
     state.visualizations = nextVisualizations;
   },
+  createCommunity(state:StoredStateInterface,community:any){
+    state.communities = Object.assign(
+      {},
+      state.communities,
+      {[community.id]:community}
+    );
+  }
 }
 
 export default mutation

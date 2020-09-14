@@ -17,6 +17,9 @@ function register(store:Store<any>){
   ipcRenderer.on("setVisualization",(e,visualization)=>{
     store.commit('other/setVisualization',visualization)
   })
+  ipcRenderer.on("createCommunity",(e,community)=>{
+    store.commit("data/createCommunity", community)
+  })
 }
 
 

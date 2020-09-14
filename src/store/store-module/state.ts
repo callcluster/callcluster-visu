@@ -2,14 +2,16 @@ export interface StoredStateInterface {
   minedCommunity?:any
   functions?:Array<any>
   calls?:Array<any>
-  visualizations:Record<number,any>
+  visualizations:Record<number,any>,
+  communities:Record<number,any>
 }
 
 const state: StoredStateInterface = {
   minedCommunity: null,
   functions: [],
   calls: [],
-  visualizations: {}
+  visualizations: {},
+  communities:{}
 }
 
 export default state

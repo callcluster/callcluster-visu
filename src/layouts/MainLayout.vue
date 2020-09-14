@@ -8,29 +8,10 @@
         class="fullscreen"
       >
         <template v-slot:before>
-          <q-tabs
-            v-model="tab"
-            dense
-            class="text-grey"
-            active-color="primary"
-            indicator-color="primary"
-            align="justify"
-            narrow-indicator
-          >
-            <q-tab name="communities" label="Communities" />
-            <q-tab name="visualizations" label="Visualizations" />
-          </q-tabs>
-          <q-separator />
-          <q-tab-panels v-model="tab" animated>
-            <q-tab-panel name="communities" class="q-pa-xs">
-              <file-structure v-on:change="selectCommunity"/>
-            </q-tab-panel>
-
-            <q-tab-panel name="visualizations" class="q-pa-xs">
-              <visualizations-list v-on:select="selectVisualization"/>
-            </q-tab-panel>
-          </q-tab-panels>
-          
+          <side-lists 
+            @select-commmunity="selectCommunity"
+            @select-visualization="selectVisualization"
+          />
         </template>
 
         <template v-slot:after>
@@ -47,28 +28,26 @@
 import EssentialLink from 'components/EssentialLink.vue'
 import FileStructure from 'components/FileStructure.vue'
 import SimpleGraph from 'components/SimpleGraph.vue'
-import VisualizationsList from "components/VisualizationsList.vue";
 import VisualizationCreationDialog from "components/VisualizationCreationDialog.vue";
 import VisualizationView from 'components/VisualizationView.vue'
 import { Vue, Component, Model } from 'vue-property-decorator'
-import { Community } from '../Types';
-
+import { Community } from '../Types'
+import SideLists from 'components/SideLists.vue'
 @Component({
   components: { 
     EssentialLink, 
     FileStructure, 
     SimpleGraph, 
-    VisualizationsList,
     VisualizationCreationDialog,
-    VisualizationView
+    VisualizationView,
+    SideLists
   }
 })
 export default class MainLayout extends Vue {
   splitterModel = 20;
-  community: Community|Object = {};
-  tab="communities";
+  
   selectCommunity(community:Community){
-    this.community = community;
+    console.log(community);
   }
   finishCreation(event:any){
     this.$store.commit('data/createVisualization', event)

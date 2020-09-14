@@ -19,7 +19,10 @@ async function loadAnalysisJson(path){
   let buffer = await fs.promises.readFile(path,'utf-8');
   let analysisJson=JSON.parse(buffer);
   setAnalysisJson(analysisJson)
-  mainWindow.webContents.send('data',buffer);
+  mainWindow.webContents.send('createCommunity',{
+    id:0,
+    name:"Mined community"
+  });
   mainWindow.webContents.send('availableMetrics',getAvailableMetrics())
 }
 
