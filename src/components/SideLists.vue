@@ -16,7 +16,14 @@
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="communities" class="q-pa-xs">
         <q-list separator>
-          <q-item clickable v-ripple v-for="c in communities" @click="selectCommunity(c)">
+          <q-item 
+          clickable 
+          v-ripple 
+          v-for="c in communities" 
+          @click="selectCommunity(c)"
+          active-class="bg-primary text-grey-1"
+          :active="selectedThing == c"
+          >
             <q-item-section>
               <q-item-label>{{ c.name }}</q-item-label>
               <q-item-label caption>Mined community</q-item-label>
@@ -27,7 +34,14 @@
 
       <q-tab-panel name="visualizations" class="q-pa-xs">
         <q-list separator>
-          <q-item clickable v-ripple v-for="v in visualizations" @click="selectVisualization(v)">
+          <q-item 
+            clickable 
+            v-ripple 
+            v-for="v in visualizations" 
+            @click="selectVisualization(v)"
+            active-class="bg-primary text-grey-1"
+            :active="selectedThing == v"
+          >
             <q-item-section>
               <q-item-label>{{ v.name }}</q-item-label>
               <q-item-label caption>{{v.visualizationType}}</q-item-label>
@@ -46,6 +60,7 @@ import { Todo, Meta } from './models'
 @Component
 export default class ClassComponent extends Vue {
   private tab:string = "communities";
+  selectedThing=null;
 
   get visualizations () {
     let visuDict = this.$store.state.data.visualizations;
@@ -54,9 +69,11 @@ export default class ClassComponent extends Vue {
   }
   selectVisualization(visualization:any){
     this.$emit('select-visualization',visualization)
+    this.selectedThing=visualization;
   }
   selectCommunity(community:any){
     this.$emit('select-community',community)
+    this.selectedThing=community;
   }
 
   get communities(){

@@ -16,8 +16,6 @@
 
         <template v-slot:after>
           <visualization-view />
-          <!-- <router-view /> -->
-          <!-- <simple-graph :community="community"/> -->
         </template>
       </q-splitter>
     </q-page-container>
