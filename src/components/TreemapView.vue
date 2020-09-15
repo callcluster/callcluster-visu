@@ -67,7 +67,8 @@ type Subject = {
     x:number,
     y:number,
     data:SubjectData,
-    selected:boolean
+    selected:boolean,
+    type:string
 }
 type TreemapVisualization = {
     subjects?:Array<Subject>,
@@ -93,6 +94,9 @@ export default class TreemapView extends Vue {
         }
     }
     navigate(subject:Subject){
+        if(subject.data.type=="function"){
+            return;
+        }
         let req={
             ...this.visualization,
             path:[...(this.visualization.path||[]), subject.data.name]

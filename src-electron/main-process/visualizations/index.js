@@ -50,10 +50,13 @@ function getSubjectsFor(visualization){
     const metric = visualization.parameters.metric;
     let community = getCommunity(visualization.path || [], analysisJson.community);
     const subjects = [
-        ...community.functions.map(id=>analysisJson.functions[id]), 
+        ...community.functions
+            .map(id=>analysisJson.functions[id])
+            .map(f=>({ ...f, type:"function"})), 
         ...community.communities
+            .map(f=>({ ...f, type: f.type || "community" })), 
     ]
-    .map(f=>({ name: f["name"], value: f[metric] }))
+    .map(f=>({ name: f.name, value: f[metric], type: f.type }))
     .filter(f=>f.value!=0)
     .sort( (a,b) => a.value - b.value )
 
