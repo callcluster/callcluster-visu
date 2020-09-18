@@ -1,5 +1,5 @@
 <template>
-  <div class="column fit relative-position">
+  <div class="column fit">
     <q-tabs
       v-model="tab"
       dense
@@ -54,30 +54,6 @@
         </q-scroll-area>
       </q-tab-panel>
     </q-tab-panels>
-    <q-card class="absolute-bottom q-ma-md bg-secondary text-white">
-      <q-toolbar>
-        <q-icon name="insert_chart_outlined" size="md"/>
-
-        <q-toolbar-title>Add visualization</q-toolbar-title>
-
-        <q-btn flat round dense icon="close" v-close-popup />
-      </q-toolbar>
-      <q-card-section>
-        <div class="text-h6">Our Changing Planet</div>
-        <div class="text-subtitle2">by John Doe</div>
-      </q-card-section>
-
-      <q-card-section>
-        holis holis holis
-      </q-card-section>
-
-      <q-separator dark />
-
-      <q-card-actions>
-        <q-btn flat>Action 1</q-btn>
-        <q-btn flat>Action 2</q-btn>
-      </q-card-actions>
-    </q-card>
   </div>
 </template>
 

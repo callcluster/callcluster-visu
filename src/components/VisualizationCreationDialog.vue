@@ -70,7 +70,7 @@
         </q-stepper-navigation>
       </q-step>
     </q-stepper>
-    </q-dialog>
+  </q-dialog>
 </template>
 
 <script>
@@ -122,6 +122,5 @@ export default class VisualizationCreationDialog extends Vue {
 
 </script>
 
-<style>
-
+<style scoped>
 </style>

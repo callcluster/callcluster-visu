@@ -1,6 +1,8 @@
 <template>
   <q-layout view="hHh Lpr fFf">
+    <details-popup/>
     <visualization-creation-dialog v-on:finish="finishCreation"/>
+    
     <q-page-container>
       <q-splitter
         v-model="splitterModel"
@@ -13,7 +15,6 @@
             @select-visualization="selectVisualization"
           />
         </template>
-
         <template v-slot:after>
           <visualization-view />
         </template>
@@ -31,6 +32,7 @@ import VisualizationView from 'components/VisualizationView.vue'
 import { Vue, Component, Model } from 'vue-property-decorator'
 import { Community } from '../Types'
 import SideLists from 'components/SideLists.vue'
+import DetailsPopup from 'components/DetailsPopup.vue'
 @Component({
   components: { 
     EssentialLink, 
@@ -38,7 +40,8 @@ import SideLists from 'components/SideLists.vue'
     SimpleGraph, 
     VisualizationCreationDialog,
     VisualizationView,
-    SideLists
+    SideLists,
+    DetailsPopup
   }
 })
 export default class MainLayout extends Vue {
