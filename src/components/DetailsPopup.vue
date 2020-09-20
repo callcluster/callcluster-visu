@@ -1,18 +1,25 @@
 <template>
-   <q-card 
-   :class="'q-ma-md bg-secondary text-white z-top small-card '+extraClass" 
+  <transition
+    appear
+    enter-active-class="animated bounceIn"
+    leave-active-class="animated fadeOut"
+  >
+   <q-card
+   class="q-ma-md bg-secondary text-white z-top small-card"
    draggable="true"
    @mousedown="mousedown"
    @mouseup="mouseup"
    @mousemove="mousemove"
+   v-if="opened"
    :style="style"
+   transition="jump-up"
    >
       <q-toolbar>
         <q-icon name="insert_chart_outlined" size="md"/>
 
         <q-toolbar-title>Add visualization</q-toolbar-title>
 
-        <q-btn flat round dense icon="close" v-close-popup />
+        <q-btn flat round dense icon="close" @click="close" />
       </q-toolbar>
       <q-card-section>
         <div class="text-h6">Our Changing Planet</div>
@@ -30,41 +37,60 @@
         <q-btn flat>Action 2</q-btn>
       </q-card-actions>
     </q-card>
+  </transition>
 </template>
 
 <script lang="ts">
+/// <reference lib="dom" />
 import { Vue, Component } from 'vue-property-decorator'
 declare var document: Document;
 @Component
 export default class DetailsPopup extends Vue {
-  extraClass='absolute-bottom'
   private dragging=false
+  private relativeMouseX=0
+  private relativeMouseY=0
   private top=0
   private left=0
-  get style():string{
+  private opened = true
+
+  get style ():string {
     return `top:${this.top}px;left:${this.left}px`
   }
-  mounted(){
-    document.addEventListener("mouseup",this.mouseup)
-    document.addEventListener("mousemove",this.mousemove)
+
+  boundMouseup = this.mouseup.bind(this)
+  boundMouseMove=this.mousemove.bind(this)
+
+  mounted () {
+    document.addEventListener('mouseup', this.boundMouseup)
+    document.addEventListener('mousemove', this.boundMouseMove)
   }
-  destroyed(){
-    document.removeEventListener("mouseup",this.mouseup)
-    document.removeEventListener("mousemove",this.mousemove)
+
+  destroyed () {
+    document.removeEventListener('mouseup', this.boundMouseup)
+    document.removeEventListener('mousemove', this.boundMouseMove)
   }
-  mousedown(e:any){
-    this.dragging=true;
+
+  mousedown (e:MouseEvent) {
+    this.dragging = true
+    this.relativeMouseX = e.clientX - this.left
+    this.relativeMouseY = e.clientY - this.top
     console.log(e)
   }
-  mouseup(e:any){
-    this.dragging=false;
+
+  mouseup (e:MouseEvent) {
+    this.dragging = false
     console.log(e)
   }
-  mousemove(e:any){
-    if(this.dragging){
-      this.top=e.clientY
-      this.left=e.clientX
+
+  mousemove (e:MouseEvent) {
+    if (this.dragging) {
+      this.top = e.clientY - this.relativeMouseY
+      this.left = e.clientX - this.relativeMouseX
     }
+  }
+
+  close () {
+    this.opened = false
   }
 }
 </script>
@@ -72,5 +98,6 @@ export default class DetailsPopup extends Vue {
 <style scoped>
 .small-card {
   width: 300px;
+  cursor: move;
 }
 </style>

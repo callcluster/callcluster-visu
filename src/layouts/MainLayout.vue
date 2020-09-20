@@ -2,7 +2,7 @@
   <q-layout view="hHh Lpr fFf">
     <details-popup/>
     <visualization-creation-dialog v-on:finish="finishCreation"/>
-    
+
     <q-page-container>
       <q-splitter
         v-model="splitterModel"
@@ -29,7 +29,7 @@ import FileStructure from 'components/FileStructure.vue'
 import SimpleGraph from 'components/SimpleGraph.vue'
 import VisualizationCreationDialog from "components/VisualizationCreationDialog.vue";
 import VisualizationView from 'components/VisualizationView.vue'
-import { Vue, Component, Model } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator'
 import { Community } from '../Types'
 import SideLists from 'components/SideLists.vue'
 import DetailsPopup from 'components/DetailsPopup.vue'
@@ -46,15 +46,17 @@ import DetailsPopup from 'components/DetailsPopup.vue'
 })
 export default class MainLayout extends Vue {
   splitterModel = 20;
-  
-  selectCommunity(community:Community){
-    console.log(community);
+
+  selectCommunity (community:Community) {
+    console.log(community)
   }
-  finishCreation(event:any){
+
+  finishCreation (event:any) {
     this.$store.commit('data/createVisualization', event)
   }
-  selectVisualization(visualization:any){
-    this.$store.dispatch('data/showVisualization',visualization)
+
+  async selectVisualization (visualization:any) {
+    await this.$store.dispatch('data/showVisualization', visualization)
   }
 }
 </script>
