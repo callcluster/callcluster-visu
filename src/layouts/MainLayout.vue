@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr fFf">
+  <q-layout view="hHh Lpr fFf" class="overflow-hidden">
     <details-popup/>
     <visualization-creation-dialog v-on:finish="finishCreation"/>
 
@@ -10,7 +10,7 @@
         class="fullscreen"
       >
         <template v-slot:before>
-          <side-lists 
+          <side-lists
             @select-commmunity="selectCommunity"
             @select-visualization="selectVisualization"
           />
@@ -27,17 +27,17 @@
 import EssentialLink from 'components/EssentialLink.vue'
 import FileStructure from 'components/FileStructure.vue'
 import SimpleGraph from 'components/SimpleGraph.vue'
-import VisualizationCreationDialog from "components/VisualizationCreationDialog.vue";
+import VisualizationCreationDialog from 'components/VisualizationCreationDialog.vue'
 import VisualizationView from 'components/VisualizationView.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import { Community } from '../Types'
 import SideLists from 'components/SideLists.vue'
 import DetailsPopup from 'components/DetailsPopup.vue'
 @Component({
-  components: { 
-    EssentialLink, 
-    FileStructure, 
-    SimpleGraph, 
+  components: {
+    EssentialLink,
+    FileStructure,
+    SimpleGraph,
     VisualizationCreationDialog,
     VisualizationView,
     SideLists,

@@ -18,8 +18,8 @@ export default store(function ({ Vue }) {
 
   const Store = new Vuex.Store<StateInterface>({
     modules: {
-      data:fullDataModule,
-      other:otherDataModule
+      data: fullDataModule,
+      other: otherDataModule
     },
 
     // enable strict mode (adds overhead!)
@@ -30,7 +30,7 @@ export default store(function ({ Vue }) {
   return Store
 })
 
-import {register as registerProxy} from './proxy'
+import { register as registerProxy } from './proxy'
 export {
   registerProxy
 }

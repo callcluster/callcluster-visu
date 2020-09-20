@@ -1,26 +1,37 @@
+export type OtherDataState = {
+  viewCreateVisualization:boolean,
+  availableMetrics:Array<string>,
+  visualization:Record<string, string>,
+  shownDetails:Record<string, string>|null,
+}
+const defaultState:OtherDataState = {
+  viewCreateVisualization: false,
+  availableMetrics: [],
+  visualization: {},
+  shownDetails: null
+}
 const otherDataModule = {
   namespaced: true,
-  mutations:{
-    setCreate(state:any,createdType:string) {
-      if(createdType=='visualization'){
-        state.viewCreateVisualization=true
+  mutations: {
+    setCreate (state:OtherDataState, createdType:string) {
+      if (createdType === 'visualization') {
+        state.viewCreateVisualization = true
       }
     },
-    setCreateVisualization(state:any,value:boolean){
-      state.viewCreateVisualization=value
+    setCreateVisualization (state:OtherDataState, value:boolean) {
+      state.viewCreateVisualization = value
     },
-    setAvailableMetrics(state:any,value:Array<string>){
-      state.availableMetrics=value;
+    setAvailableMetrics (state:OtherDataState, value:Array<string>) {
+      state.availableMetrics = value
     },
-    setVisualization(state:any,visualization:any){
-      state.visualization=visualization
+    setVisualization (state:OtherDataState, visualization:Record<string, string>) {
+      state.visualization = visualization
+    },
+    setDetails (state:OtherDataState, details:Record<string, string>) {
+      state.shownDetails = details
     }
   },
-  state:{
-    viewCreateVisualization:false,
-    availableMetrics:[],
-    visualization:{}
-  }
+  state: defaultState
 }
 
 export default otherDataModule

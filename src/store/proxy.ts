@@ -20,6 +20,9 @@ function register(store:Store<any>){
   ipcRenderer.on("createCommunity",(e,community)=>{
     store.commit("data/createCommunity", community)
   })
+  ipcRenderer.on("setDetails",(e,details)=>{
+    store.commit("other/setDetails", details)
+  })
 }
 
 

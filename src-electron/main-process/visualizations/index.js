@@ -1,11 +1,12 @@
 import Index from "./Indexer"
 import { getTreemap } from 'treemap-squarify';
 
-let analysisJson={};
+let analysisJson = {}
+let communityIndex = new Index();
 
-function prepareCommunityForTreemap(community,metrics,index){
-    community._treemap_id=index.nextId;
-    index.add(community);
+function prepareCommunityForTreemap (community, metrics, index) {
+    community._treemap_id = index.nextId
+    index.add(community)
     community.communities.forEach(c=>prepareCommunityForTreemap(c,metrics,index))
     metrics.forEach(m=>community[m]=0);
     community.communities.forEach(c => metrics.forEach(m => community[m] += c[m] ) )
@@ -13,14 +14,11 @@ function prepareCommunityForTreemap(community,metrics,index){
         .map(id=>analysisJson.functions[id])
         .forEach(f => metrics.forEach(m => community[m] += f[m] ) )
 }
-function prepareAnalysisForTreemap(){
-    let metrics = getAvailableMetrics();
-    let communityIndex = new Index();
-    prepareCommunityForTreemap(analysisJson.community,metrics,communityIndex)
-}
+
 function setAnalysisJson(localAnalysisJson){
     analysisJson=localAnalysisJson;
-    prepareAnalysisForTreemap();
+    let metrics = getAvailableMetrics();
+    prepareCommunityForTreemap(analysisJson.community,metrics,communityIndex)
 }
 function getAvailableMetrics(){
     let metricsDict={}
@@ -50,13 +48,18 @@ function getSubjectsFor(visualization){
     const metric = visualization.parameters.metric;
     let community = getCommunity(visualization.path || [], analysisJson.community);
     const subjects = [
-        ...community.functions
-            .map(id=>analysisJson.functions[id])
+        ...( community.functions || [] )
+            .map(id=>({ ...analysisJson.functions[id], id}))
             .map(f=>({ ...f, type:"function"})), 
-        ...community.communities
-            .map(f=>({ ...f, type: f.type || "community" })), 
+        ...( community.communities || [] )
+            .map(f=>{
+                let fr = { ...f }
+                delete fr.communities
+                delete fr.functions
+                return { ...fr, type: f.type || "community" }
+            }), 
     ]
-    .map(f=>({ name: f.name, value: f[metric], type: f.type }))
+    .map(f=>({...f, value: f[metric] }))
     .filter(f=>f.value!=0)
     .sort( (a,b) => a.value - b.value )
 
@@ -78,4 +81,15 @@ function makeVisualization(visualization){
     };
 }
 
-export { setAnalysisJson, getAvailableMetrics, makeVisualization };
+function getInfoFor(data){
+    if(data.type==='function'){
+        return analysisJson["functions"][data.id]
+    }else{
+        let info = { ...communityIndex.get(data._treemap_id) }
+        delete info.functions
+        delete info.communities
+        return info
+    }
+}
+
+export { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor };

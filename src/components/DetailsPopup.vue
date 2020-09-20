@@ -3,9 +3,10 @@
     appear
     enter-active-class="animated bounceIn"
     leave-active-class="animated fadeOut"
+    class="overflow-hidden"
   >
    <q-card
-   class="q-ma-md bg-secondary text-white z-top small-card"
+   class="q-ma-md bg-secondary text-white z-top small-card absolute"
    draggable="true"
    @mousedown="mousedown"
    @mouseup="mouseup"
@@ -13,25 +14,34 @@
    v-if="opened"
    :style="style"
    transition="jump-up"
+   :key="JSON.stringify(details)"
    >
       <q-toolbar>
         <q-icon name="insert_chart_outlined" size="md"/>
 
-        <q-toolbar-title>Add visualization</q-toolbar-title>
+        <q-toolbar-title>Inspection</q-toolbar-title>
 
         <q-btn flat round dense icon="close" @click="close" />
       </q-toolbar>
       <q-card-section>
-        <div class="text-h6">Our Changing Planet</div>
-        <div class="text-subtitle2">by John Doe</div>
+        <div class="text-h6 break-word">{{name}}</div>
+        <div class="text-subtitle2 break-word">{{objectType}}</div>
       </q-card-section>
 
-      <q-card-section>
-        holis holis holis
+      <q-card-section class="break-word">
+        {{location}}
       </q-card-section>
 
-      <q-separator dark />
-
+      
+      <q-table
+        :data="tableData"
+        :columns="tableColumns"
+        row-key="name"
+        hide-bottom
+        hide-header
+        class="bg-secondary"
+      />
+      <q-separator />
       <q-card-actions>
         <q-btn flat>Action 1</q-btn>
         <q-btn flat>Action 2</q-btn>
@@ -42,8 +52,8 @@
 
 <script lang="ts">
 /// <reference lib="dom" />
-import { Vue, Component } from 'vue-property-decorator'
-declare var document: Document;
+import { Vue, Component, Watch } from 'vue-property-decorator'
+declare var document: Document
 @Component
 export default class DetailsPopup extends Vue {
   private dragging=false
@@ -53,8 +63,34 @@ export default class DetailsPopup extends Vue {
   private left=0
   private opened = true
 
+  private tableColumns =[
+    { name: 'name', field:'name'},
+    { name: 'value', field:'value'},
+  ]
+
+  get tableData(){
+    return [
+      {
+        name:"hola",
+        value:"42"
+      },{
+        name:"chau",
+        value:"35"
+      }
+    ]
+  }
+
   get style ():string {
     return `top:${this.top}px;left:${this.left}px`
+  }
+
+  get details():Record<string,string> | null{
+    return this.$store.state.other.shownDetails
+  }
+
+  @Watch('details')
+  watchDetails (newVal:Record<string,string>|null, oldVal:Record<string,string>|null) {
+    this.opened = true;
   }
 
   boundMouseup = this.mouseup.bind(this)
@@ -92,6 +128,18 @@ export default class DetailsPopup extends Vue {
   close () {
     this.opened = false
   }
+
+  get name(){
+    return this.details?.["name"] || this.details?.["displayName"] || "no name"
+  }
+
+  get objectType(){
+    return this.details?.["type"] || "unknown type"
+  }
+
+  get location(){
+    return this.details?.["location"] || "unknown location"
+  }
 }
 </script>
 
@@ -99,5 +147,8 @@ export default class DetailsPopup extends Vue {
 .small-card {
   width: 300px;
   cursor: move;
+}
+.break-word {
+  overflow-wrap: break-word;
 }
 </style>

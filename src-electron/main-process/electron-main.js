@@ -1,6 +1,6 @@
 import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
-import { setAnalysisJson, getAvailableMetrics, makeVisualization } from './visualizations'
+import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor } from './visualizations'
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
@@ -32,6 +32,9 @@ ipcMain.on("setFilePath",async (event,path)=>{
 
 ipcMain.on("showVisualization", (event,visualization)=>{
   mainWindow.webContents.send('setVisualization',makeVisualization(visualization))
+})
+ipcMain.on("selectObject", (event,data) => {
+  mainWindow.webContents.send('setDetails',getInfoFor(data))
 })
 
 
