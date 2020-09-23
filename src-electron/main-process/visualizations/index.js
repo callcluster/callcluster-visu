@@ -71,7 +71,6 @@ function getSubjectsFor(visualization){
 }
 
 function makeVisualization(visualization){
-    console.log(visualization);
     return {
         subjects: getSubjectsFor(visualization),
         visualizationType: visualization.visualizationType,
@@ -83,12 +82,15 @@ function makeVisualization(visualization){
 
 function getInfoFor(data){
     if(data.type==='function'){
-        return analysisJson["functions"][data.id]
+        return { ...analysisJson["functions"][data.id], type: 'function' }
     }else{
         let info = { ...communityIndex.get(data._treemap_id) }
         delete info.functions
         delete info.communities
-        return info
+        return { 
+            ...info,
+            type: info['type'] || 'community'
+        }
     }
 }
 
