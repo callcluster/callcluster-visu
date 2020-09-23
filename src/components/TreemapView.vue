@@ -24,33 +24,64 @@
         </q-breadcrumbs-el>
       </q-breadcrumbs>
     </q-toolbar>
-
-    <div class="col">
-      <svg width="100%" height="100%" >
-        <g v-for="subject in visualization.subjects || []" :key="JSON.stringify(subject)">
-          <rect
-            :x="subject.x+'%'"
-            :y="subject.y+'%'"
-            :width="subject.width+'%'"
-            :height="subject.height+'%'"
-            style="stroke-width:1;stroke:white"
-            :class="(
-                (selectedSubject == subject)?'selected':'unselected'
-                )"
-            @dblclick="navigate(subject)"
-            @click="select(subject)"
-            />
-          <text
-            :x="(subject.x + subject.width / 2)+'%'"
-            :y="(subject.y + subject.height / 2)+'%'"
-            fill="white"
-            class="svgText"
+    <div class="col-grow relative-position overflow-hidden">
+    <transition
+        mode="out-in"
+        enter-active-class="animated zoomIn"
+        leave-active-class="animated fadeOut"
+        duration="200"
+      >
+    <div :key="JSON.stringify(shownPaths)" class="absolute-full">
+        <svg
+        width="100%"
+        height="100%"
+        viewBox="0 0 100 100"
+        >
+          <g
+            v-for="(subject,index) in subjects"
+            :key="index"
+          >
+            <rect
+              :x="subject.x"
+              :y="subject.y"
+              :width="subject.width"
+              :height="subject.height"
+              style="stroke-width:0.5;stroke:white"
+              :class="(
+                  (selectedSubject == subject)?'selected':'unselected'
+                  )"
+              @dblclick="navigate(subject)"
+              @click="select(subject)"
+              rx="2"
+              />
+            <text
+              :x="(subject.x + subject.width / 2)"
+              :y="(subject.y + subject.height / 2)"
+              fill="white"
+              class="svgText"
+              :style="`clip-path: url(#path-${index}); -webkit-clip-path: url(#path-${index});`"
+              >
+              {{subject.data.name}}
+            </text>
+          </g>
+          <defs>
+            <clipPath
+            v-for="(subject,index) in subjects"
+            :key="index"
+            :id="`path-${index}`"
             >
-            {{subject.data.name}}
-          </text>
-        </g>
-        Sorry, your browser does not support inline SVG.
-      </svg>
+            <rect
+              :x="subject.x"
+              :y="subject.y"
+              :width="subject.width"
+              :height="subject.height"
+              />
+            </clipPath>
+          </defs>
+          Sorry, your browser does not support inline SVG.
+        </svg>
+    </div>
+    </transition>
     </div>
   </div>
 </template>
@@ -107,6 +138,10 @@ export default class TreemapView extends Vue {
       this.$emit('request', req)
     }
 
+    get subjects () {
+      return this.visualization?.subjects || []
+    }
+
     get shownPaths ():Array<PathItem> {
       let arr:Array<PathItem> = (this.visualization.path || []).map((v, i, a) => ({
         name: v,
@@ -134,11 +169,15 @@ export default class TreemapView extends Vue {
 .svgText {
   pointer-events: none;
   user-select: none;
+  text-anchor: middle;
+  font-family: "Roboto", "-apple-system", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color:#fafafa;
+  font-size: 2px;
 }
 .selected {
-  fill: aqua;
+  fill: var(--q-color-secondary);
 }
 .unselected {
-  fill: blue;
+  fill: var(--q-color-primary);
 }
 </style>

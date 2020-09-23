@@ -61,7 +61,7 @@ export default class DetailsPopup extends Vue {
   private relativeMouseY=0
   private top=0
   private left=0
-  private opened = true
+  private opened = false
 
   private tableColumns =[
     { name: 'name', field: 'name' },

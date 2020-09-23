@@ -1,5 +1,5 @@
 <template>
-    <div v-if="visualization.id" class="full-height">
+    <div v-if="visualization.id" class="full-height overflow-hidden" >
         <treemap-view
         v-if="visualization.visualizationType=='treemap'"
         class="full-height"
