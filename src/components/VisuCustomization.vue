@@ -14,38 +14,46 @@
 
 <script lang="ts">
 import { Vue, Component, Model, Prop, Watch } from 'vue-property-decorator'
-
+type OptionType = {
+  label:string,
+  value:string
+}
 @Component
 export default class ClassComponent extends Vue {
-  @Model('change', {type:Object}) readonly parameters!: any;
+  @Model('change', { type: Object }) readonly parameters!: Record<string, string>;
   @Prop({ type: String, required: true }) readonly chosenType!: string;
 
   metric:string|null=null;
   community:string|null=null;
 
-  mounted(){
-    this.metric = this.parameters.metric || this.availableMetrics[0];
-    this.community = this.parameters.community || this.availableCommunities[0];
+  mounted () {
+    this.metric = this.parameters.metric || this.availableMetrics[0]
+    this.community = this.parameters.community || this.availableCommunities[0]
   }
-  get availableMetrics():Array<string>{
-    return this.$store.state.other.availableMetrics;
+
+  get availableMetrics ():Array<OptionType> {
+    return this.$store.state.other.availableMetrics.map( v => ({
+      label:v.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(),
+      value:v
+    }));
   }
+
   @Watch('metric')
-  metricChange(newMetric:string,oldMetric:string){
-    this.parameters.metric = newMetric;
-    this.$emit('change',this.parameters)
+  metricChange (newMetric:OptionType, oldMetric:OptionType) {
+    this.parameters.metric = newMetric.value
+    this.$emit('change', this.parameters)
   }
 
   @Watch('community')
-  communityChange(newCommunity:string,oldCommunity:string){
-    this.parameters.community = newCommunity;
-    this.$emit('change',this.parameters)
+  communityChange (newCommunity:string, oldCommunity:string) {
+    this.parameters.community = newCommunity
+    this.$emit('change', this.parameters)
   }
 
-  get availableCommunities():Array<string>{
+  get availableCommunities ():Array<string> {
     return [
       'mined community'
-    ];
+    ]
   }
 }
 </script>

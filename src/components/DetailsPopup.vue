@@ -108,12 +108,10 @@ export default class DetailsPopup extends Vue {
     this.dragging = true
     this.relativeMouseX = e.clientX - this.left
     this.relativeMouseY = e.clientY - this.top
-    console.log(e)
   }
 
   mouseup (e:MouseEvent) {
     this.dragging = false
-    console.log(e)
   }
 
   mousemove (e:MouseEvent) {
