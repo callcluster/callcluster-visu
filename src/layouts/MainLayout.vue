@@ -1,7 +1,10 @@
 <template>
   <q-layout view="hHh Lpr fFf" class="overflow-hidden">
     <details-popup/>
-    <visualization-creation-dialog v-on:finish="finishCreation"/>
+    <visualization-creation-dialog 
+      v-on:finish="finishCreation"
+      ref="creation-dialog"
+    />
 
     <q-page-container>
       <q-splitter
@@ -13,6 +16,8 @@
           <side-lists
             @select-commmunity="selectCommunity"
             @select-visualization="selectVisualization"
+            @edit-visualization="editVisualization"
+            @delete-visualization="deleteVisualization"
           />
         </template>
         <template v-slot:after>
@@ -52,11 +57,21 @@ export default class MainLayout extends Vue {
   }
 
   finishCreation (event:any) {
-    this.$store.commit('data/createVisualization', event)
+    this.$store.commit('data/createOrEditVisualization', event)
   }
 
   async selectVisualization (visualization:any) {
     await this.$store.dispatch('data/showVisualization', visualization)
+  }
+
+  editVisualization (id:string) {
+    const dialog = this.$refs['creation-dialog'] as VisualizationCreationDialog
+    const visu = {...this.$store.state.data.visualizations[id]}
+    dialog.editVisualization(visu.name,visu.visualizationType,{ ...visu.parameters},id)
+  }
+
+  deleteVisualization (id:string) {
+    console.log(id)
   }
 }
 </script>

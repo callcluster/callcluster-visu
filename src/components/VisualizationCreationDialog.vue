@@ -73,7 +73,7 @@
   </q-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import SelectableImageComponent from "components/SelectableImageComponent.vue"
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { Todo, Meta } from './models'
@@ -85,38 +85,63 @@ import VisuCustomization from "./VisuCustomization.vue"
   components:{ VisuTypeChooser, VisuCustomization }
 })
 export default class VisualizationCreationDialog extends Vue {
-  name=null;
+  editVisualization (name:string, visualizationType:string, parameters:Record<string, string|null>, edited:number) {
+    this.showDialog = true
+    this.$nextTick(() => {
+      this.name = name
+      this.chosen = visualizationType
+      this.parameters = { ...parameters}
+      this.edited = edited
+    })
+  }
+
+  name: string | null = null;
   step=1;
-  chosen="treemap";
-  parameters={metric:null,community:null};
-  get showDialog(){
-    console.log("%%%%%%%%-------",this.$store.state.other.viewCreateVisualization)
+  chosen='treemap'
+  edited:number|null = null
+
+  parameters:Record<string, string|null> = { metric: null, community: null }
+
+  get showDialog () {
     return this.$store.state.other.viewCreateVisualization;
   }
-  set showDialog(v){
+
+  set showDialog (v) {
     this.$store.commit('other/setCreateVisualization', v)
   }
+
+  @Watch('showDialog')
+  changeShowDialog () {
+    this.resetContent()
+  }
+
   get customizationDescription(){
     let params = this.parameters;
     return Object.keys(params).filter(k => params[k]!=null).map((k)=>k+": "+params[k]).join(", ")
   }
-  createVisualization(){
-    console.log("createVisualization!!!!")
-    this.$refs["nameInput"].validate();
+
+  createVisualization () {
+    this.$refs['nameInput'].validate()
     if(this.name){
       this.showDialog = false;
       this.$emit("finish",{
+        id:this.edited,
         name:this.name,
         visualizationType:this.chosen,
         parameters:this.parameters,
       })
-      this.name=null;
-      this.chosen="treemap";
-      this.parameters={metric:null,community:null};
-      this.step=1;
+      this.resetContent()
     }else{
-      this.$refs["dialog"].shake();
+      this.$refs["dialog"].shake()
     }
+  }
+
+  private resetContent () {
+    this.name = null
+    this.chosen = 'treemap'
+    this.parameters = { metric: null, community: null }
+    this.step = 1
+    this.edited = null
   }
 }
 

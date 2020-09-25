@@ -23,12 +23,20 @@ export default class ClassComponent extends Vue {
   @Model('change', { type: Object }) readonly parameters!: Record<string, string>;
   @Prop({ type: String, required: true }) readonly chosenType!: string;
 
-  metric:string|null=null;
+  metric:OptionType|null=null;
   community:string|null=null;
 
   mounted () {
-    this.metric = this.parameters.metric || this.availableMetrics[0]
+    this.metric = this.valueToMetric(this.parameters.metric) || this.availableMetrics[0]
     this.community = this.parameters.community || this.availableCommunities[0]
+  }
+
+  private valueToMetric (value?:string):OptionType|null {
+    if (value) {
+      return this.availableMetrics.filter(o => o.value === value)[0]
+    } else {
+      return null
+    }
   }
 
   get availableMetrics ():Array<OptionType> {
@@ -36,6 +44,12 @@ export default class ClassComponent extends Vue {
       label:v.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(),
       value:v
     }));
+  }
+
+  @Watch('parameters')
+  parametersChange (newVal:Record<string, string>, oldVal:Record<string, string>) {
+    this.metric = this.valueToMetric(newVal.metric)
+    this.community = newVal.community
   }
 
   @Watch('metric')

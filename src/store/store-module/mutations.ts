@@ -6,11 +6,15 @@ const mutation: MutationTree<StoredStateInterface> = {
     state.functions = payload.functions || state.functions;
     state.minedCommunity = payload?.community || state?.minedCommunity;
   },
-  createVisualization(state:StoredStateInterface,visualization:any){
-    let keys:number[] = Object.keys(state.visualizations).map(s=>parseInt(s))
-    let maxKey:number = keys.reduce((prev, curr) => Math.max(prev,curr),0) + 1;
-    let nextVisualizations=Object.assign({},state.visualizations,{[maxKey]:visualization});
-    state.visualizations = nextVisualizations;
+  createOrEditVisualization(state:StoredStateInterface,visualization:any){
+    if(visualization.id==null){
+      let keys:number[] = Object.keys(state.visualizations).map(s=>parseInt(s))
+      let maxKey:number = keys.reduce((prev, curr) => Math.max(prev,curr),0) + 1;
+      let nextVisualizations=Object.assign({},state.visualizations,{[maxKey]:visualization});
+      state.visualizations = nextVisualizations;
+    }else{
+      state.visualizations = { ... state.visualizations, [visualization.id]:visualization}
+    }
   },
   createCommunity(state:StoredStateInterface,community:any){
     state.communities = Object.assign(

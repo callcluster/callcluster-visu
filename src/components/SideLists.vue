@@ -108,11 +108,11 @@ export default class ClassComponent extends Vue {
   }
 
   editVisu (id:string) {
-    this.$emit('edit-visu', id)
+    this.$emit('edit-visualization', id)
   }
 
   deleteVisu (id:string) {
-    this.$emit('delete-visu', id)
+    this.$emit('delete-visualization', id)
   }
 }
 </script>
