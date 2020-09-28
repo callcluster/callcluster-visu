@@ -22,6 +22,12 @@ const mutation: MutationTree<StoredStateInterface> = {
       state.communities,
       {[community.id]:community}
     );
+  },
+
+  deleteVisualization (state:StoredStateInterface, id:number) {
+    const visus = { ...state.visualizations }
+    delete visus[id]
+    state.visualizations = visus
   }
 }
 

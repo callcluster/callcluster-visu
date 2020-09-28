@@ -3,12 +3,14 @@ export type OtherDataState = {
   availableMetrics:Array<string>,
   visualization:Record<string, string>,
   shownDetails:Record<string, string>|null,
+  deletableVisualization:number | null
 }
 const defaultState:OtherDataState = {
   viewCreateVisualization: false,
   availableMetrics: [],
   visualization: {},
-  shownDetails: null
+  shownDetails: null,
+  deletableVisualization: null
 }
 const otherDataModule = {
   namespaced: true,
@@ -29,6 +31,9 @@ const otherDataModule = {
     },
     setDetails (state:OtherDataState, details:Record<string, string>) {
       state.shownDetails = details
+    },
+    setDeletableVisualization (state:OtherDataState, id:number|null) {
+      state.deletableVisualization = id
     }
   },
   state: defaultState

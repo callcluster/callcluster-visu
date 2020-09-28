@@ -1,15 +1,16 @@
 <template>
   <q-layout view="hHh Lpr fFf" class="overflow-hidden">
     <details-popup/>
-    <visualization-creation-dialog 
+    <visualization-creation-dialog
       v-on:finish="finishCreation"
       ref="creation-dialog"
     />
+    <visualization-deletion-dialog />
 
     <q-page-container>
       <q-splitter
         v-model="splitterModel"
-        :limits="[0, 100]"
+        :limits="[30, 100]"
         class="fullscreen"
       >
         <template v-slot:before>
@@ -38,6 +39,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { Community } from '../Types'
 import SideLists from 'components/SideLists.vue'
 import DetailsPopup from 'components/DetailsPopup.vue'
+import VisualizationDeletionDialog from 'components/VisualizationDeletionDialog.vue'
 @Component({
   components: {
     EssentialLink,
@@ -46,7 +48,8 @@ import DetailsPopup from 'components/DetailsPopup.vue'
     VisualizationCreationDialog,
     VisualizationView,
     SideLists,
-    DetailsPopup
+    DetailsPopup,
+    VisualizationDeletionDialog
   }
 })
 export default class MainLayout extends Vue {
@@ -71,7 +74,7 @@ export default class MainLayout extends Vue {
   }
 
   deleteVisualization (id:string) {
-    console.log(id)
+    this.$store.commit('other/setDeletableVisualization', id)
   }
 }
 </script>
