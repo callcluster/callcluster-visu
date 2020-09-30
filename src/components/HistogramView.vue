@@ -20,19 +20,26 @@ export default class HistogramView extends Vue {
       type: 'bar',
       data: {
         labels: this.visualization.bars.map(b => {
-          if (b.min !== b.max) {
+          if (b.max - b.min === 1) {
+            return b.max.toString()
+          } else if (b.min !== b.max) {
             return `${b.min}-${b.max}`
           } else {
             return b.min
           }
         }),
         datasets: [{
-          data: this.visualization.bars.map(({ min, y }) => ({ x: min, y }))
+          data: this.visualization.bars.map(({ min, y }) => ({ x: min, y })),
+          backgroundColor: '#1976D2',
+          borderColor: '#1976D2',
         }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        legend: {
+          display: false
+        }
       }
     })
   }

@@ -1,13 +1,18 @@
 <template>
   <div class="col">
     <q-form
-      class="q-gutter-md row"
     >
-      <q-select v-model="metric" :options="availableMetrics" label="Metric" class="col" hint="Metric representing size">
-      </q-select>
+      <div class="q-gutter-md row">
+        <q-select v-model="metric" :options="availableMetrics" label="Metric" class="col" hint="Metric representing size">
+        </q-select>
 
-      <q-select v-model="community" :options="availableCommunities" label="Community" class="col" hint="Top level community that will be represented">
-      </q-select>
+        <q-select v-model="community" :options="availableCommunities" label="Community" class="col" hint="Top level community that will be represented">
+        </q-select>
+      </div>
+      <div class="q-gutter-md row">
+        <q-select v-model="scaling" :options="availableScalings" label="Scaling" class="col" hint="Scaling that will be applied to the metric">
+        </q-select>
+      </div>
     </q-form>
   </div>
 </template>
@@ -25,10 +30,16 @@ export default class ClassComponent extends Vue {
 
   metric:OptionType|null=null;
   community:string|null=null;
+  scaling:string|null=null;
 
   mounted () {
     this.metric = this.valueToMetric(this.parameters.metric) || this.availableMetrics[0]
     this.community = this.parameters.community || this.availableCommunities[0]
+    this.scaling = this.parameters.scaling || this.availableScalings[0]
+  }
+
+  get availableScalings ():Array<string> {
+    return ['log2', 'log10', 'linear']
   }
 
   private valueToMetric (value?:string):OptionType|null {
@@ -50,6 +61,7 @@ export default class ClassComponent extends Vue {
   parametersChange (newVal:Record<string, string>, oldVal:Record<string, string>) {
     this.metric = this.valueToMetric(newVal.metric)
     this.community = newVal.community
+    this.scaling = newVal.scaling
   }
 
   @Watch('metric')
@@ -61,6 +73,12 @@ export default class ClassComponent extends Vue {
   @Watch('community')
   communityChange (newCommunity:string, oldCommunity:string) {
     this.parameters.community = newCommunity
+    this.$emit('change', this.parameters)
+  }
+
+  @Watch('scaling')
+  scalingChange (newVal:string, oldVal:string) {
+    this.parameters.scaling = newVal
     this.$emit('change', this.parameters)
   }
 

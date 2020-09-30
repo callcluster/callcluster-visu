@@ -90,7 +90,7 @@ export default class VisualizationCreationDialog extends Vue {
     this.$nextTick(() => {
       this.name = name
       this.chosen = visualizationType
-      this.parameters = { ...parameters}
+      this.parameters = { ...parameters }
       this.edited = edited
     })
   }
@@ -100,7 +100,7 @@ export default class VisualizationCreationDialog extends Vue {
   chosen='treemap'
   edited:number|null = null
 
-  parameters:Record<string, string|null> = { metric: null, community: null }
+  parameters:Record<string, string|null> = { metric: null, community: null, scaling: null }
 
   get showDialog () {
     return this.$store.state.other.viewCreateVisualization;
