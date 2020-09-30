@@ -59,7 +59,7 @@ function getSubjectsFor(visualization){
                 return { ...fr, type: f.type || "community" }
             }), 
     ]
-    .map(f=>({...f, value: f[metric] }))
+    .map(f=>({...f, value: scale(visualization.parameters.scaling, f[metric]) }))
     .filter(f=>f.value!=0)
     .sort( (a,b) => a.value - b.value )
 
@@ -71,13 +71,67 @@ function getSubjectsFor(visualization){
 }
 
 function makeVisualization(visualization){
-    return {
-        subjects: getSubjectsFor(visualization),
-        visualizationType: visualization.visualizationType,
-        id: visualization.id,
-        parameters: visualization.parameters,
-        path: visualization.path
-    };
+    console.log(visualization)
+    if(visualization.visualizationType=='treemap'){
+        return {
+            subjects: getSubjectsFor(visualization),
+            visualizationType: visualization.visualizationType,
+            id: visualization.id,
+            parameters: visualization.parameters,
+            path: visualization.path
+        };
+    } else {
+        return {
+            bars: getBarsFor(visualization.parameters),
+            visualizationType: visualization.visualizationType,
+            id: visualization.id,
+            parameters: visualization.parameters,
+        }
+    }
+}
+
+function scale(scaling,num) {
+    if ( scaling === 'log10' ) {
+        return Math.log10(num)
+    } else if ( scaling === 'log2' ) {
+        return Math.log2(num)
+    }
+    return num
+}
+
+function getBarsFor({community, metric, bins=100, scaling='linear'}){
+    let min = Infinity
+    let max = -Infinity
+    for(const func of analysisJson["functions"]){
+        const val = scale(scaling,func[metric])
+        if(!isNaN(val) && val < 100000){
+            min = Math.min(val, min)
+            max = Math.max(val, max)
+        }
+    }
+    let binSize = (max - min) / bins
+    if(binSize<1){
+        binSize = 1
+        bins = Math.ceil(max - min)
+    }
+    const histogram = new Array(bins).fill(0).map((v,i)=>({
+        y:0,
+        min:(min + binSize * i),
+        max:(min + binSize * (i + 1))
+    }))
+    for(const func of analysisJson["functions"]){
+        const x = scale(scaling,func[metric])
+        const bin = Math.floor((x-min)/binSize)
+        const realBin = Math.min(bin, histogram.length - 1)
+        if(histogram[realBin]){
+            histogram[realBin].y += 1
+        }else{
+            console.log("Bin "+realBin+" doesn't exist!")
+            console.log(min,max,binSize,bins)
+        }
+        
+    }
+    return histogram
 }
 
 function getInfoFor(data){

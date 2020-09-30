@@ -7,15 +7,22 @@
         v-on:request="request"
         v-on:select="select"
         />
+        <histogram-view
+        v-if="visualization.visualizationType=='histogram'"
+        class="full-height"
+        :visualization="visualization"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import TreemapView from 'components/TreemapView.vue'
+import HistogramView from 'components/HistogramView.vue'
 @Component({
   components: {
-    TreemapView
+    TreemapView,
+    HistogramView
   }
 })
 export default class VisualizationView extends Vue {
