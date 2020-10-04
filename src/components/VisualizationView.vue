@@ -1,28 +1,35 @@
 <template>
-    <div v-if="visualization.id" class="full-height overflow-hidden" >
-        <treemap-view
+  <div v-if="visualization.id" class="full-height overflow-hidden" >
+      <treemap-view
         v-if="visualization.visualizationType=='treemap'"
         class="full-height"
         :visualization="visualization"
         v-on:request="request"
         v-on:select="select"
-        />
-        <histogram-view
+      />
+      <histogram-view
         v-if="visualization.visualizationType=='histogram'"
         class="full-height"
         :visualization="visualization"
-        />
-    </div>
+      />
+      <hierarchical-graph-view
+        v-if="visualization.visualizationType=='hierarchical'"
+        class="full-height"
+        :visualization="visualization"
+      />
+  </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import TreemapView from 'components/TreemapView.vue'
 import HistogramView from 'components/HistogramView.vue'
+import HierarchicalGraphView from 'components/HierarchicalGraphView.vue'
 @Component({
   components: {
     TreemapView,
-    HistogramView
+    HistogramView,
+    HierarchicalGraphView
   }
 })
 export default class VisualizationView extends Vue {

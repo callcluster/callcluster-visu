@@ -80,13 +80,36 @@ function makeVisualization(visualization){
             parameters: visualization.parameters,
             path: visualization.path
         };
-    } else {
+    } else if(visualization.visualizationType=='histogram') {
         return {
             bars: getBarsFor(visualization.parameters),
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
         }
+    } else if(visualization.visualizationType=='hierarchical') {
+        return {
+            ...(getNodesAndEdgesFor(visualization.parameters,visualization.path)),
+            path: visualization.path,
+            visualizationType: visualization.visualizationType,
+            id: visualization.id,
+            parameters: visualization.parameters,
+        }
+    }
+}
+
+function getNodesAndEdgesFor(parameters,path){
+    return {
+        nodes: [
+            {id: 0, label:"0"},
+            {id: 1, label:"1"},
+            {id: 2, label:"2"}
+        ],
+        edges: [
+            {from:0, to:1, arrows:"to"},
+            {from:1, to:2, arrows:"to"},
+            {from:2, to:2, arrows:"to"},
+        ]
     }
 }
 
