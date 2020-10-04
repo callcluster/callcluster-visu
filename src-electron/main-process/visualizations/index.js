@@ -44,13 +44,20 @@ function getCommunity(path, community){
     }
 }
 
+function getSubjectForFunction(id){
+    return {
+        ...analysisJson.functions[id],
+        type: 'function',
+        id:`f${id}`
+    }
+}
+
 function getSubjectsFor(visualization){
     const metric = visualization.parameters.metric;
     let community = getCommunity(visualization.path || [], analysisJson.community);
     const subjects = [
         ...( community.functions || [] )
-            .map(id=>({ ...analysisJson.functions[id], id}))
-            .map(f=>({ ...f, type:"function"})), 
+        .map(getSubjectForFunction),
         ...( community.communities || [] )
             .map(f=>{
                 let fr = { ...f }
@@ -98,18 +105,66 @@ function makeVisualization(visualization){
     }
 }
 
+function getAllFunctions (community) {
+    return [
+        ...community.functions,
+        ...(
+            community.communities
+            .map(getAllFunctions)
+            .reduce((a,b)=>[...a, ...b],[])
+        )
+    ]
+}
+
 function getNodesAndEdgesFor(parameters,path){
+    let community = getCommunity(path || [], analysisJson.community);
+
+    let nodes = [
+        ...(community.functions || [])
+        .map(getSubjectForFunction)
+        .map( c => ({ ...c, functions: new Set([c.id])}) ),
+        ...(community.communities || []).map( c =>{
+            let ret  = { ...c }
+            let totalFunctions =  getAllFunctions(c)
+            delete ret.communities
+            delete ret.functions
+            delete ret.id
+            return {
+                ...ret,
+                id: `c${c._treemap_id}`,
+                functions: new Set(totalFunctions)
+            }
+        })
+    ]
+
+    let allFunctionsSet = new Set(
+        nodes
+        .map(n=>n.functions)
+        .reduce((a,b)=>[...a,...b],[])
+    )
+
+    function findNode(funId){
+        return nodes.find((n)=>n.functions.has(funId))
+    }
+
     return {
-        nodes: [
-            {id: 0, label:"0"},
-            {id: 1, label:"1"},
-            {id: 2, label:"2"}
-        ],
-        edges: [
-            {from:0, to:1, arrows:"to"},
-            {from:1, to:2, arrows:"to"},
-            {from:2, to:2, arrows:"to"},
-        ]
+        nodes: nodes.map(v => {
+            let ret = {...v}
+            delete ret.functions
+            ret.label = ret.name
+            return ret
+        }),
+        edges:analysisJson.calls
+        .filter( ({from,_}) => allFunctionsSet.has(from))
+        .filter( ({_,to}) => allFunctionsSet.has(to))
+        .map( ({from, to}) => ({fromNode: findNode(from), to}))
+        .filter(({fromNode,to})=> !fromNode.functions.has(to))//filter internal edges
+        .map( ({fromNode, to}) => ({fromNode, toNode: findNode(to)}))
+        .map(({fromNode,toNode})=>({
+            from: fromNode.id,
+            to: toNode.id,
+            arrows:"to"
+        }))
     }
 }
 
