@@ -16,6 +16,8 @@
         v-if="visualization.visualizationType=='hierarchical'"
         class="full-height"
         :visualization="visualization"
+        v-on:request="request"
+        v-on:select="select"
       />
   </div>
 </template>

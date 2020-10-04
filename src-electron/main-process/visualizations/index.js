@@ -154,17 +154,20 @@ function getNodesAndEdgesFor(parameters,path){
             ret.label = ret.name
             return ret
         }),
-        edges:analysisJson.calls
-        .filter( ({from,_}) => allFunctionsSet.has(from))
-        .filter( ({_,to}) => allFunctionsSet.has(to))
-        .map( ({from, to}) => ({fromNode: findNode(from), to}))
-        .filter(({fromNode,to})=> !fromNode.functions.has(to))//filter internal edges
-        .map( ({fromNode, to}) => ({fromNode, toNode: findNode(to)}))
-        .map(({fromNode,toNode})=>({
-            from: fromNode.id,
-            to: toNode.id,
-            arrows:"to"
-        }))
+        edges: [ ...new Set([ 
+            ...analysisJson.calls
+            .filter( ({from,_}) => allFunctionsSet.has(from))
+            .filter( ({_,to}) => allFunctionsSet.has(to))
+            .map( ({from, to}) => ({fromNode: findNode(from), to}))
+            .filter(({fromNode,to})=> !fromNode.functions.has(to))//filter internal edges
+            .map( ({fromNode, to}) => ({fromNode, toNode: findNode(to)}))
+            .map(({fromNode,toNode})=>({
+                from: fromNode.id,
+                to: toNode.id,
+                arrows:"to"
+            }))
+            .map(JSON.stringify)
+        ])].map(JSON.parse)
     }
 }
 
