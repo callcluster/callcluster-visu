@@ -1,28 +1,7 @@
 <template>
   <div class="column">
     <q-toolbar class="">
-      <q-breadcrumbs active-color="primary">
-        <template v-slot:separator>
-          <q-icon
-          size="1.5em"
-          name="chevron_right"
-          color="primary"
-          />
-        </template>
-        <q-breadcrumbs-el
-          v-for="part in shownPaths"
-          :key="JSON.stringify(part)"
-        >
-          <a
-            style="max-width:120px; direction:rtl; cursor:pointer"
-            class="ellipsis"
-            @click="clickShown(part.path)"
-          ><q-icon :name="part.icon" /> {{part.name}}</a>
-          <q-tooltip>
-            {{part.name}}
-          </q-tooltip>
-        </q-breadcrumbs-el>
-      </q-breadcrumbs>
+      <path-navigator v-model="path"/>
     </q-toolbar>
     <div class="col-grow relative-position overflow-hidden">
     <transition
@@ -31,7 +10,7 @@
         leave-active-class="animated fadeOut"
         duration="200"
       >
-    <div :key="JSON.stringify(shownPaths)" class="absolute-full">
+    <div :key="JSON.stringify(path)" class="absolute-full">
         <svg
         width="100%"
         height="100%"
@@ -87,7 +66,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import PathNavigator from 'components/PathNavigator.vue'
 type SubjectData = {
   name:string,
   value:number,
@@ -108,60 +88,51 @@ type TreemapVisualization = {
   path?:Array<string>,
   parameters:Record<string, string>
 }
-type PathItem = {
-  name?:string,
-  icon?:string,
-  path:Array<string>
-}
-@Component
+@Component({
+  components:{PathNavigator}
+})
 export default class TreemapView extends Vue {
-    @Prop({ required: true, type: Object }) visualization!:TreemapVisualization;
-    selectedSubject:Subject|null=null;
-    select (subject:Subject) {
-      if (this.selectedSubject === subject) {
-        this.selectedSubject = null
-      } else {
-        this.selectedSubject = subject
-        this.$emit('select', subject.data)
-      }
+  @Prop({ required: true, type: Object }) visualization!:TreemapVisualization;
+  selectedSubject:Subject|null=null;
+  select (subject:Subject) {
+    if (this.selectedSubject === subject) {
+      this.selectedSubject = null
+    } else {
+      this.selectedSubject = subject
+      this.$emit('select', subject.data)
     }
+  }
 
-    navigate (subject:Subject) {
-      if (subject.data.type === 'function') {
-        return
-      }
-      const req = {
-        ...this.visualization,
-        path: [...(this.visualization.path || []), subject.data.name]
-      }
-      delete req.subjects
-      this.$emit('request', req)
+  navigate (subject:Subject) {
+    if (subject.data.type === 'function') {
+      return
     }
+    const req = {
+      ...this.visualization,
+      path: [...(this.visualization.path || []), subject.data.name]
+    }
+    delete req.subjects
+    this.$emit('request', req)
+  }
 
-    get subjects () {
-      return this.visualization?.subjects || []
-    }
+  get subjects () {
+    return this.visualization?.subjects || []
+  }
 
-    get shownPaths ():Array<PathItem> {
-      let arr:Array<PathItem> = (this.visualization.path || []).map((v, i, a) => ({
-        name: v,
-        path: a.slice(0, i + 1)
-      }))
-      arr = [{
-        icon: 'home',
-        path: []
-      }, ...arr]
-      return arr.slice(Math.max(0, arr.length - 5))
-    }
+  get path():Array<string> {
+    return this.visualization.path || []
+  }
 
-    clickShown (path:Array<string>) {
-      const req = {
-        ...this.visualization,
-        path
-      }
-      delete req.subjects
-      this.$emit('request', req)
+  set path(p:Array<string>) {
+    this.visualization.path = p
+    const req = {
+      ...this.visualization,
+      path:p
     }
+    delete req.subjects
+    this.$emit('request', req)
+  }
+
 }
 </script>
 

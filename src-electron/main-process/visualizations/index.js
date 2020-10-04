@@ -214,7 +214,7 @@ function getBarsFor({community, metric, bins=100, scaling='linear'}){
 
 function getInfoFor(data){
     if(data.type==='function'){
-        return { ...analysisJson["functions"][data.id], type: 'function' }
+        return { ...analysisJson["functions"][(data.id+"").replace("f","")], type: 'function' }
     }else{
         let info = { ...communityIndex.get(data._treemap_id) }
         delete info.functions
