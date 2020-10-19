@@ -1,5 +1,7 @@
 <template>
-  <canvas ref="visualization" />
+  <div class="q-pa-md">
+    <canvas ref="visualization"/>
+  </div>
 </template>
 
 <script lang="ts">
@@ -24,10 +26,10 @@ export default class HistogramView extends Vue {
         labels: this.visualization.bars.map(b => {
           if (b.max - b.min === 1) {
             return b.max.toString()
-          } else if (b.min !== b.max) {
-            return `${b.min}-${b.max}`
-          } else {
+          } else if (b.min === b.max) {
             return b.min
+          } else {
+            return `${Math.floor(b.min)}-${Math.floor(b.max)}`
           }
         }),
         datasets: [{
@@ -47,7 +49,7 @@ export default class HistogramView extends Vue {
             display: true,
             scaleLabel:{
               display:true,
-              labelString: currentMetricName(this.visualization)
+              labelString: currentMetricName(this.visualization),
             }
           }],
           yAxes: [{
