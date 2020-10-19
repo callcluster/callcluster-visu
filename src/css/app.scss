@@ -5,3 +5,12 @@
 .q-menu {
     z-index: 10000;
 }
+
+.small-card table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.small-card table td {
+    overflow: hidden;
+}

@@ -44,7 +44,17 @@
         hide-header
         class="bg-secondary"
         dark
-      />
+        dense
+      >
+        <template v-slot:body-cell="props">
+          <q-td :props="props">
+            {{props.value}}
+            <q-tooltip anchor="center right" self="center left" :offset="[10, 10]">
+              {{props.value}}
+            </q-tooltip>
+          </q-td>
+        </template>
+      </q-table>
     </q-card>
   </transition>
 </template>
