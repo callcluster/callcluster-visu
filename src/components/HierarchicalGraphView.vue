@@ -10,7 +10,7 @@
         duration="200"
       >
     <div :key="JSON.stringify(path)" class="col">
-      <vis-graph :visData="visData" @select="select" @request="request" :options="options"/>
+      <vis-graph :visData="visData" @select="select" @explode="explode" @request="request" :options="options"/>
     </div>
   </transition>
 </div>
@@ -27,6 +27,7 @@ type HierarchicalGraphVisualization = {
   id:number,
   visualizationType:'hierarchical',
   path?:Array<string>,
+  openedCommunities?:Array<Array<string>>,
   parameters:Record<string, string>
 }
 @Component({
@@ -50,16 +51,16 @@ export default class HierarchicalGraphView extends Vue {
           background:"#1976D2"
         },
         font:{
-          color:"white"
+          color:"black"
         },
-        shape:"circle",
+        shape:"dot",
         scaling:{
           min:2,
           max:30,
           label:{
             enabled:true,
             min:5,
-            max:30
+            max:15
           }
         }
       }
@@ -77,34 +78,46 @@ export default class HierarchicalGraphView extends Vue {
     return this.visualization.path || []
   }
 
+  get openedCommunities():Array<string>{
+    return this.visualization.openedCommunities || []
+  }
+
   set path(p:Array<string>) {
     this.visualization.path = p
     const req = {
       ...this.visualization,
+      openedCommunities:[],
       path:p
     }
     this.$emit('request', req)
   }
 
-  select(obj:any) {
+  emitClickEvent (obj:any,evName:string,payloadFunction:any){
     if(obj?.nodes.length==0){
       return
     }
-    this.$emit('select', this.visualization.nodes.find(n=> n?.id === obj?.nodes?.[0]) )
+    const node = this.visualization.nodes.find(n=> n?.id === obj?.nodes?.[0])
+    this.$emit(evName, payloadFunction(node) )
+  }
+
+  select(obj:any) {
+    this.emitClickEvent(obj,'select',(n)=>n)
+  }
+
+  explode(obj:any) {
+    console.log("BOOOOM")
+    this.emitClickEvent(obj,'request',(node)=>({
+      ...this.visualization,
+      openedCommunities:[...this.visualization.openedCommunities, node.id]
+    }))
   }
 
   request(obj:any) {
-    let node = this.visualization.nodes.find(n=> n?.id === obj?.nodes?.[0])
-    if(!node){
-      return
-    }
-    if (node.type === 'function') {
-      return
-    }
-    this.$emit('request', {
+    this.emitClickEvent(obj,'request',(node)=>({
       ...this.visualization,
-      path:[ ...this.path, node.name]
-    })
+      path:[ ...this.path, node.name ],
+      openedCommunities:[]
+    }))
   }
 }
 </script>

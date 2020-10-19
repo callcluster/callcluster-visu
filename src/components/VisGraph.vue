@@ -26,8 +26,20 @@ export default class VisGraph extends Vue {
     if(visuRef instanceof HTMLElement){
       let nw = new Network(visuRef,this.visData,this.options)
       networks.set(this.networkKey,nw)
-      nw.on('selectNode',(e)=>this.$emit('select',e))
-      nw.on('doubleClick',(e)=>this.$emit('request',e))
+      nw.on('selectNode',(e)=>{
+        if (e.event.srcEvent.ctrlKey) {
+          this.$emit('explode',e)
+        } else {
+          this.$emit('select',e)
+        }
+      })
+      nw.on('doubleClick',(e)=>{
+        if (e.event.srcEvent.ctrlKey) {
+          this.$emit('explode',e)
+        } else {
+          this.$emit('request',e)
+        }
+      })
     }else{
       throw new Error("No visualization div inside VisGraph.")
     }

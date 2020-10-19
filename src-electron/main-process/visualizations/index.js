@@ -100,11 +100,12 @@ function makeVisualization(visualization){
         }
     } else if(visualization.visualizationType=='hierarchical') {
         return {
-            ...(getNodesAndEdgesFor(visualization.parameters,visualization.path)),
+            ...(getNodesAndEdgesFor(visualization.parameters,visualization.path,visualization.openedCommunities)),
             path: visualization.path,
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
+            openedCommunities: visualization.openedCommunities || [],
         }
     }
 }
@@ -120,15 +121,19 @@ function getAllFunctions (community) {
     ]
 }
 
-function getNodesAndEdgesFor(parameters,path){
-    const community = getCommunity(path || [], analysisJson.community);
-    const {scaling, metric} = parameters
-
-    const nodes = [
+function getNodesForCommunity(community, excludedIds){
+    console.log("%%%%%")
+    console.log(excludedIds)
+    console.log(community.communities)
+    return [
         ...(community.functions || [])
-        .map(getSubjectForFunction)
-        .map( c => ({ ...c, functions: new Set([c.id])}) ),
-        ...(community.communities || []).map( c =>{
+        .map( id => ({ 
+            ...getSubjectForFunction(id), 
+            functions: new Set([id])}) 
+        ),
+        ...(community.communities || [])
+        .filter((c)=>!(excludedIds || []).includes("c"+c._treemap_id))
+        .map( c =>{
             let ret  = { ...c }
             let totalFunctions =  getAllFunctions(c)
             delete ret.communities
@@ -139,14 +144,35 @@ function getNodesAndEdgesFor(parameters,path){
                 id: `c${c._treemap_id}`,
                 functions: new Set(totalFunctions)
             }
-        })
+        }),
     ]
 
-    let allFunctionsSet = new Set(
-        nodes
-        .map(n=>n.functions)
+}
+
+function getNodesAndEdgesFor(parameters, path, openedCommunities){
+    const community = getCommunity(path || [], analysisJson.community);
+    const {scaling, metric} = parameters
+
+    const nodes = [
+        ...getNodesForCommunity(community, openedCommunities),
+        ...(openedCommunities || [])
+        .map((id)=>communityIndex.get(id.replace("c","")))
+        .map((id)=>getNodesForCommunity(id,openedCommunities))
         .reduce((a,b)=>[...a,...b],[])
-    )
+    ]
+
+    const nodeIdDict={}
+    nodes.forEach(node => {
+        node.functions.forEach((fid)=>{
+            nodeIdDict[Number.parseInt(fid)]=node.id
+        })
+    });
+
+    console.log(nodeIdDict)
+    console.log(analysisJson.calls
+        .filter( ({from,_}) => Object.keys(nodeIdDict).includes(""+from))
+        .filter( ({_,to}) => Object.keys(nodeIdDict).includes(""+to)))
+
 
     function findNode(funId){
         return nodes.find((n)=>n.functions.has(funId))
@@ -162,14 +188,12 @@ function getNodesAndEdgesFor(parameters,path){
         }),
         edges: [ ...new Set([ 
             ...analysisJson.calls
-            .filter( ({from,_}) => allFunctionsSet.has(from))
-            .filter( ({_,to}) => allFunctionsSet.has(to))
-            .map( ({from, to}) => ({fromNode: findNode(from), to}))
-            .filter(({fromNode,to})=> !fromNode.functions.has(to))//filter internal edges
-            .map( ({fromNode, to}) => ({fromNode, toNode: findNode(to)}))
-            .map(({fromNode,toNode})=>({
-                from: fromNode.id,
-                to: toNode.id,
+            .filter( ({from,_}) => Object.keys(nodeIdDict).includes(""+from))
+            .filter( ({_,to}) => Object.keys(nodeIdDict).includes(""+to))
+            .filter( ({from,to}) => from !== to )
+            .map(({from,to})=>({
+                from:nodeIdDict[""+from],
+                to:nodeIdDict[""+to],
                 arrows:"to"
             }))
             .map(JSON.stringify)
