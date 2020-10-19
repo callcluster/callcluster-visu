@@ -23,7 +23,11 @@ function setAnalysisJson(localAnalysisJson){
 function getAvailableMetrics(){
     let metricsDict={}
     analysisJson['functions'].forEach(f => {
-        Object.keys(f).forEach(k => {
+        Object.keys(f)
+        .filter( k => {
+            return !Number.isNaN(Number.parseFloat(f[k]))
+        })
+        .forEach(k => {
             metricsDict[k]=true
         });
     });
