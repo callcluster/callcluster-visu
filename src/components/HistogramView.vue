@@ -20,6 +20,7 @@ export default class HistogramView extends Vue {
   }
 
   makeGraph2D (visuRef:HTMLCanvasElement):ChartJS {
+    let metricName = currentMetricName(this.visualization);
     return new ChartJS(visuRef, {
       type: 'bar',
       data: {
@@ -39,6 +40,12 @@ export default class HistogramView extends Vue {
         }]
       },
       options: {
+        tooltips:{
+          callbacks:{
+            title:(item,data)=>`"${metricName}" in the range ${item[0].label}`,
+            label:(item,data)=>`${item.yLabel} functions`
+          }
+        },
         responsive: true,
         maintainAspectRatio: false,
         legend: {
@@ -49,7 +56,7 @@ export default class HistogramView extends Vue {
             display: true,
             scaleLabel:{
               display:true,
-              labelString: currentMetricName(this.visualization),
+              labelString: metricName,
             }
           }],
           yAxes: [{
