@@ -39,7 +39,7 @@ export default class ClassComponent extends Vue {
   }
 
   get availableScalings ():Array<string> {
-    return ['log2', 'log10', 'linear']
+    return ['linear', 'log2', 'log10']
   }
 
   private valueToMetric (value?:string):OptionType|null {
