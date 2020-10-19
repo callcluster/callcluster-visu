@@ -1,17 +1,18 @@
 <template>
   <div class="column fit">
-    <q-tabs
-      v-model="tab"
-      dense
-      class="text-grey col-auto"
-      active-color="primary"
-      indicator-color="primary"
-      align="justify"
-      narrow-indicator
-    >
-      <q-tab name="communities" label="Communities" />
-      <q-tab name="visualizations" label="Visualizations" />
-    </q-tabs>
+    <q-toolbar>
+      <q-tabs
+        v-model="tab"
+        class="text-grey col"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab name="communities" label="Communities" />
+        <q-tab name="visualizations" label="Visualizations" />
+      </q-tabs>
+    </q-toolbar>
     <q-separator />
     <q-tab-panels v-model="tab" animated class="col">
       <q-tab-panel name="communities" class="q-pa-xs">
@@ -45,7 +46,7 @@
             >
               <q-item-section>
                 <q-item-label>{{ v.name }}</q-item-label>
-                <q-item-label caption>{{v.visualizationType}}</q-item-label>
+                <q-item-label caption v-html="description(v)"></q-item-label>
               </q-item-section>
               <q-item-section avatar>
                  <q-btn flat round icon="more_vert">
@@ -80,6 +81,7 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { descriptionOfVisualization } from './Utils'
 
 @Component
 export default class ClassComponent extends Vue {
@@ -113,6 +115,10 @@ export default class ClassComponent extends Vue {
 
   deleteVisu (id:string) {
     this.$emit('delete-visualization', id)
+  }
+
+  description (visualization:Record<string, any>) {
+    return descriptionOfVisualization(visualization)
   }
 }
 </script>

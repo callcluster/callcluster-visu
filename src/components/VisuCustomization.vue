@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { Vue, Component, Model, Prop, Watch } from 'vue-property-decorator'
+import { normalCasing } from "./Utils";
 type OptionType = {
   label:string,
   value:string
@@ -52,8 +53,8 @@ export default class ClassComponent extends Vue {
 
   get availableMetrics ():Array<OptionType> {
     return this.$store.state.other.availableMetrics.map( v => ({
-      label:v.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(),
-      value:v
+      label: normalCasing(v),
+      value: v
     }));
   }
 
