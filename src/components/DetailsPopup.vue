@@ -63,6 +63,7 @@
 /// <reference lib="dom" />
 import { Vue, Component, Watch } from 'vue-property-decorator'
 import { copyToClipboard } from 'quasar'
+import { normalCasing } from './Utils'
 declare var document: Document
 @Component
 export default class DetailsPopup extends Vue {
@@ -74,16 +75,17 @@ export default class DetailsPopup extends Vue {
   private opened = false
 
   private tableColumns =[
-    { name: 'name', field: 'name' },
-    { name: 'value', field: 'value' }
+    { name: 'name', field: 'name', style: 'width:65%;' },
+    { name: 'value', field: 'value', style: 'width:35%;' }
   ]
 
   get tableData () {
     const bannedKeys = ['name', 'type', 'displayName', 'location']
+    const extra = (this.objectType === "function") ? "" : " (sum)"
     return Object.entries(this.details || {}).filter(([k]) => {
       return k[0] !== '_' && !bannedKeys.includes(k)
     }).map(([k, v]) => ({
-      name: k.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase(),
+      name: normalCasing(k) + extra,
       value: v
     }))
   }
