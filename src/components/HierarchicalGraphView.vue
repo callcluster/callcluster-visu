@@ -51,6 +51,16 @@ export default class HierarchicalGraphView extends Vue {
         },
         font:{
           color:"white"
+        },
+        shape:"circle",
+        scaling:{
+          min:2,
+          max:30,
+          label:{
+            enabled:true,
+            min:5,
+            max:30
+          }
         }
       }
     }

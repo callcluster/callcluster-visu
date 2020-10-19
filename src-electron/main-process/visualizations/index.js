@@ -121,9 +121,10 @@ function getAllFunctions (community) {
 }
 
 function getNodesAndEdgesFor(parameters,path){
-    let community = getCommunity(path || [], analysisJson.community);
+    const community = getCommunity(path || [], analysisJson.community);
+    const {scaling, metric} = parameters
 
-    let nodes = [
+    const nodes = [
         ...(community.functions || [])
         .map(getSubjectForFunction)
         .map( c => ({ ...c, functions: new Set([c.id])}) ),
@@ -156,6 +157,7 @@ function getNodesAndEdgesFor(parameters,path){
             let ret = {...v}
             delete ret.functions
             ret.label = ret.name
+            ret.value = scale(scaling, ret[metric])
             return ret
         }),
         edges: [ ...new Set([ 
