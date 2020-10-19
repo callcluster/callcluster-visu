@@ -5,6 +5,8 @@
 <script lang="ts">
 import ChartJS from 'chart.js'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import { currentMetricName } from './Utils'
+
 const data = new Map<HistogramView, ChartJS|null>()
 type VisualizationType = { bars:{min:number, max:number, y:number}[] }
 @Component({})
@@ -39,6 +41,23 @@ export default class HistogramView extends Vue {
         maintainAspectRatio: false,
         legend: {
           display: false
+        },
+        scales: {
+          xAxes: [{
+            display: true,
+            scaleLabel:{
+              display:true,
+              labelString: currentMetricName(this.visualization)
+            }
+          }],
+          yAxes: [{
+            display: true,
+            type: 'logarithmic',
+            scaleLabel:{
+              display:true,
+              labelString:"Number of functions"
+            }
+          }]
         }
       }
     })

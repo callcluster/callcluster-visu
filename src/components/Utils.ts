@@ -1,3 +1,7 @@
+export function currentMetricName (visualization:Record<string, any>):string {
+  return `${normalCasing(visualization.parameters.metric)} (${visualization.parameters.scaling} scaling)`;
+}
+
 export function descriptionOfVisualization (visualization:Record<string, any>):string {
   return `<strong>${normalCasing(visualization.visualizationType)}</strong> of ${visualization.parameters.scaling} <strong>${normalCasing(visualization.parameters.metric)}</strong> on ${visualization.parameters.community}`;
 }
