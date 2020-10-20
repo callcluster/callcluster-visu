@@ -70,7 +70,8 @@ export default class HierarchicalGraphView extends Vue {
   get visData () {
     return {
       nodes: this.visualization.nodes,
-      edges: this.visualization.edges
+      edges: this.visualization.edges,
+      openedCommunities: this.visualization.openedCommunities
     }
   }
 

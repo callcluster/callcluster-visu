@@ -120,16 +120,15 @@ function getAllFunctions (community) {
         )
     ]
 }
-
+function getColor(seed){
+    return "#"+Math.floor((Math.abs(Math.sin(seed+1000) * 16777215)) % 16777215).toString(16);
+}
 function getNodesForCommunity(community, excludedIds){
-    console.log("%%%%%")
-    console.log(excludedIds)
-    console.log(community.communities)
     return [
         ...(community.functions || [])
         .map( id => ({ 
             ...getSubjectForFunction(id), 
-            functions: new Set([id])}) 
+            functions: new Set([id])}) ,
         ),
         ...(community.communities || [])
         .filter((c)=>!(excludedIds || []).includes("c"+c._treemap_id))
@@ -141,11 +140,16 @@ function getNodesForCommunity(community, excludedIds){
             delete ret.id
             return {
                 ...ret,
+                
                 id: `c${c._treemap_id}`,
                 functions: new Set(totalFunctions)
             }
         }),
-    ]
+    ].map(n =>({
+        ...n,
+        parent: `c${community._treemap_id}`,
+        color:getColor(community._treemap_id)
+    }))
 
 }
 
@@ -157,26 +161,18 @@ function getNodesAndEdgesFor(parameters, path, openedCommunities){
         ...getNodesForCommunity(community, openedCommunities),
         ...(openedCommunities || [])
         .map((id)=>communityIndex.get(id.replace("c","")))
-        .map((id)=>getNodesForCommunity(id,openedCommunities))
+        .map((community)=>getNodesForCommunity(community,openedCommunities))
         .reduce((a,b)=>[...a,...b],[])
     ]
 
     const nodeIdDict={}
+    const allFunctions = new Set()
     nodes.forEach(node => {
         node.functions.forEach((fid)=>{
-            nodeIdDict[Number.parseInt(fid)]=node.id
+            nodeIdDict[fid]=node.id
+            allFunctions.add(Number.parseInt(fid))
         })
     });
-
-    console.log(nodeIdDict)
-    console.log(analysisJson.calls
-        .filter( ({from,_}) => Object.keys(nodeIdDict).includes(""+from))
-        .filter( ({_,to}) => Object.keys(nodeIdDict).includes(""+to)))
-
-
-    function findNode(funId){
-        return nodes.find((n)=>n.functions.has(funId))
-    }
 
     return {
         nodes: nodes.map(v => {
@@ -188,14 +184,15 @@ function getNodesAndEdgesFor(parameters, path, openedCommunities){
         }),
         edges: [ ...new Set([ 
             ...analysisJson.calls
-            .filter( ({from,_}) => Object.keys(nodeIdDict).includes(""+from))
-            .filter( ({_,to}) => Object.keys(nodeIdDict).includes(""+to))
             .filter( ({from,to}) => from !== to )
+            .filter( ({from,_}) => allFunctions.has(from))
+            .filter( ({_,to}) => allFunctions.has(to))
             .map(({from,to})=>({
                 from:nodeIdDict[""+from],
                 to:nodeIdDict[""+to],
                 arrows:"to"
             }))
+            .filter(({from,to})=>from !== to)
             .map(JSON.stringify)
         ])].map(JSON.parse)
     }
