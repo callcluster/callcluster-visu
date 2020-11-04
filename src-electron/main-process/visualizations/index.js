@@ -123,15 +123,26 @@ function getAllFunctions (community) {
 function getColor(seed){
     return "#"+Math.floor((Math.abs(Math.sin(seed+1000) * 16777215)) % 16777215).toString(16);
 }
+
+function isWritten(func){
+    return func.written==undefined || func.written==true;
+}
+
+function isAbstract(community){
+    return community.communities.length==0 && community.functions.every(f=>!isWritten(analysisJson["functions"][f]))
+}
+
 function getNodesForCommunity(community, excludedIds){
     return [
         ...(community.functions || [])
+        .filter(f=>isWritten(f))
         .map( id => ({ 
             ...getSubjectForFunction(id), 
             functions: new Set([id])}) ,
         ),
         ...(community.communities || [])
         .filter((c)=>!(excludedIds || []).includes("c"+c._treemap_id))
+        .filter(c=>!isAbstract(c))
         .map( c =>{
             let ret  = { ...c }
             let totalFunctions =  getAllFunctions(c)
@@ -210,7 +221,7 @@ function scale(scaling,num) {
 function getBarsFor({community, metric, bins=100, scaling='linear'}){
     let min = Infinity
     let max = -Infinity
-    for(const func of analysisJson["functions"]){
+    for(const func of analysisJson["functions"].filter(isWritten)){
         const val = scale(scaling,func[metric])
         if(!isNaN(val) && val < 100000){
             min = Math.min(val, min)
@@ -227,7 +238,7 @@ function getBarsFor({community, metric, bins=100, scaling='linear'}){
         min:(min + binSize * i),
         max:(min + binSize * (i + 1))
     }))
-    for(const func of analysisJson["functions"]){
+    for(const func of analysisJson["functions"].filter(isWritten)){
         const x = scale(scaling,func[metric])
         const bin = Math.floor((x-min)/binSize)
         const realBin = Math.min(bin, histogram.length - 1)

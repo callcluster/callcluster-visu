@@ -98,6 +98,8 @@ export default class HierarchicalGraphView extends Vue {
       return
     }
     const node = this.visualization.nodes.find(n=> n?.id === obj?.nodes?.[0])
+    console.log("Clicked:")
+    console.log(obj?.nodes?.[0])
     this.$emit(evName, payloadFunction(node) )
   }
 
