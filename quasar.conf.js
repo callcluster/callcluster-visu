@@ -171,6 +171,11 @@ module.exports = configure(function (ctx) {
       hideSplashscreen: true
     },
 
+    sourceFiles: {
+      //electronMainDev:'src-electron/main-process/electron-main.dev',
+      //electronMainProd:'src-electron/main-process/electron-main',
+    },
+
     // Full list of options: https://quasar.dev/quasar-cli/developing-electron-apps/configuring-electron
     electron: {
       bundler: 'packager', // 'packager' or 'builder'

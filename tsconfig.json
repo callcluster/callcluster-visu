@@ -1,7 +1,9 @@
 {
   "extends": "@quasar/app/tsconfig-preset",
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
+    "allowJs": true,
     "experimentalDecorators": true,
     "lib": [
       "es2019"
