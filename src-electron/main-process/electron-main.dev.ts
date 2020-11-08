@@ -16,7 +16,7 @@ electronDebug({ showDevTools: true })
 app.whenReady().then(() => {
   installExtension(VUEJS_DEVTOOLS)
     .then(ext => {
-      console.log(`Added Extension: ${ext.name}`)
+      console.log(`Added Extension: ${ext}`)
     })
     .catch(err => {
       console.log('An error occurred: ', err)

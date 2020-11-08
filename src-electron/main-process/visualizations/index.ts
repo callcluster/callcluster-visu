@@ -1,10 +1,46 @@
 import Index from "./Indexer"
 import { getTreemap } from 'treemap-squarify';
 
-let analysisJson = {}
+type CommunityName=string;
+
+interface Call {
+    from:number,
+    to:number
+}
+
+interface FunctionFields {
+    location:string,
+    name:string,
+    written:boolean,
+}
+
+type Function = {
+    [key:string]:number|null
+} & FunctionFields
+
+type Community = {
+    [key:string]:number
+} & CommunityFields
+
+interface CommunityFields {
+    "name":CommunityName,
+    "functions":number[],
+    "communities":Community[],
+    _treemap_id?:number
+}
+
+interface OriginalAnalysisJson {
+    calls:Call[],
+    functions:Function[],
+    community:Community
+}
+
+let analysisJson:OriginalAnalysisJson;
 let communityIndex = new Index();
 
-function prepareCommunityForTreemap (community, metrics, index) {
+type Metric=string;
+
+function prepareCommunityForTreemap (community:Community, metrics:Metric[], index:Index) {
     community._treemap_id = index.nextId
     index.add(community)
     community.communities.forEach(c=>prepareCommunityForTreemap(c,metrics,index))
@@ -12,29 +48,30 @@ function prepareCommunityForTreemap (community, metrics, index) {
     community.communities.forEach(c => metrics.forEach(m => community[m] += c[m] ) )
     community.functions
         .map(id=>analysisJson.functions[id])
-        .forEach(f => metrics.forEach(m => community[m] += f[m] ) )
+        .forEach(func => metrics.forEach(metric => community[metric] += func[metric] ?? 0 ) )
 }
 
-function setAnalysisJson(localAnalysisJson){
+function setAnalysisJson(localAnalysisJson:any){
     analysisJson=localAnalysisJson;
     let metrics = getAvailableMetrics();
     prepareCommunityForTreemap(analysisJson.community,metrics,communityIndex)
 }
-function getAvailableMetrics(){
-    let metricsDict={}
-    analysisJson['functions'].forEach(f => {
+function getAvailableMetrics():Metric[]{
+    let metricsDict:Record<string,boolean>={}
+
+    analysisJson.functions.forEach(f => {
         Object.keys(f)
         .filter( k => {
-            return !Number.isNaN(Number.parseFloat(f[k]))
+            return !Number.isNaN(f[k])
         })
         .forEach(k => {
             metricsDict[k]=true
         });
     });
-    return Object.keys(metricsDict).filter(v=>!['location','name'].includes(v))
+    return Object.keys(metricsDict).filter(v=>!['location','name', 'written'].includes(v))
 }
 
-function getCommunity(path, community){
+function getCommunity(path:CommunityName[], community:Community):Community{
     if(path.length==0){
         return community;
     }else{
@@ -48,27 +85,46 @@ function getCommunity(path, community){
     }
 }
 
-function getSubjectForFunction(id){
+interface SubjectFields {
+    id:string
+    type:string,
+}
+
+type Subject= {
+    [key:string]:number | null
+} & SubjectFields
+/*
+SubjectFields &
+Partial<CommunityFields> &
+Partial<FunctionFields> & 
+*/
+function getSubjectForFunction(id:number):Subject{
     return {
         ...analysisJson.functions[id],
+        id:`f${id}`,
         type: 'function',
-        id:`f${id}`
     }
 }
 
-function getSubjectsFor(visualization){
+function getSubjectForCommunity(community:Community):Subject{
+    return {
+        ...community,
+        id:"c"+community._treemap_id,
+        communities:undefined,
+        functions:undefined,
+        type:"community"
+    }
+}
+
+
+function getSubjectsFor(visualization:Visualization){
     const metric = visualization.parameters.metric;
     let community = getCommunity(visualization.path || [], analysisJson.community);
     const subjects = [
         ...( community.functions || [] )
         .map(getSubjectForFunction),
         ...( community.communities || [] )
-            .map(f=>{
-                let fr = { ...f }
-                delete fr.communities
-                delete fr.functions
-                return { ...fr, type: f.type || "community" }
-            }), 
+        .map(getSubjectForCommunity), 
     ]
     .map(f=>({...f, value: scale(visualization.parameters.scaling, f[metric]) }))
     .filter(f=>f.value!=0)
@@ -81,7 +137,15 @@ function getSubjectsFor(visualization){
     });
 }
 
-function makeVisualization(visualization){
+interface Visualization {
+    visualizationType:string,
+    id:number,
+    parameters:Record<string,unknown>,
+    path:CommunityName[],
+    openedCommunities:string[]
+}
+
+function makeVisualization(visualization:Visualization){
     console.log(visualization)
     if(visualization.visualizationType=='treemap'){
         return {

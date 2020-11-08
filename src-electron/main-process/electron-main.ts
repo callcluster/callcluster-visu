@@ -15,8 +15,15 @@ if (process.env.PROD) {
   global.__statics = __dirname
 }
 
-async function loadAnalysisJson(path){
+let mainWindow:BrowserWindow|null = null;
+
+async function loadAnalysisJson(path:string){
+  if(mainWindow==null) return;
+
   let buffer = await fs.promises.readFile(path,'utf-8');
+  if(buffer instanceof Buffer){
+    buffer = buffer.toString()
+  }
   let analysisJson=JSON.parse(buffer);
   setAnalysisJson(analysisJson)
   mainWindow.webContents.send('createCommunity',{
@@ -31,14 +38,16 @@ ipcMain.on("setFilePath",async (event,path)=>{
 })
 
 ipcMain.on("showVisualization", (event,visualization)=>{
+  if(mainWindow==null) return;
   mainWindow.webContents.send('setVisualization',makeVisualization(visualization))
 })
 ipcMain.on("selectObject", (event,data) => {
+  if(mainWindow==null) return;
   mainWindow.webContents.send('setDetails',getInfoFor(data))
 })
 
 
-let mainWindow
+
 
 function createWindow () {
   /**
@@ -51,8 +60,8 @@ function createWindow () {
     webPreferences: {
       // Change from /quasar.conf.js > electron > nodeIntegration;
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
-      nodeIntegration: process.env.QUASAR_NODE_INTEGRATION,
-      nodeIntegrationInWorker: process.env.QUASAR_NODE_INTEGRATION,
+      nodeIntegration: Boolean(process.env.QUASAR_NODE_INTEGRATION),
+      nodeIntegrationInWorker: Boolean(process.env.QUASAR_NODE_INTEGRATION),
 
       // More info: /quasar-cli/developing-electron-apps/electron-preload-script
       // preload: path.resolve(__dirname, 'electron-preload.js')
@@ -65,10 +74,11 @@ function createWindow () {
   })
   
   mainWindow.webContents.on('did-finish-load', () => {
+    if(mainWindow==null) return;
     mainWindow.webContents.send('test','This is a test');
   })
 
-  mainWindow.loadURL(process.env.APP_URL)
+  if(process.env.APP_URL) mainWindow.loadURL(process.env.APP_URL)
   
   /**
    * Initial menu options
@@ -77,7 +87,7 @@ function createWindow () {
     new MenuItem({
       label:"File",
       submenu:[
-        new MenuItem({
+        {
           label:"Import analysis.json",
           click:async ()=>{
             let result = await dialog.showOpenDialog({ 
@@ -91,19 +101,20 @@ function createWindow () {
             }
           },
           accelerator:'CommandOrControl+I'
-        })
+        }
       ]
     }),
     new MenuItem({
       label:"Create",
       submenu:[
-        new MenuItem({
+        {
           label:"Visualization",
           click:async () => {
+            if(mainWindow==null) return;
             mainWindow.webContents.send('create','visualization')
           },
           accelerator:'CommandOrControl+D'
-        })
+        }
       ]
     })
 
