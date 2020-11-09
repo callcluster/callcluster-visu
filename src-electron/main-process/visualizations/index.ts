@@ -1,134 +1,178 @@
 import Index from "./Indexer"
 import { getTreemap } from 'treemap-squarify';
-
-type CommunityName=string;
+// ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
+type CommunityName = string;
 
 interface Call {
-    from:number,
-    to:number
-}
-
-interface FunctionFields {
-    location:string,
-    name:string,
-    written:boolean,
+    from: number,
+    to: number
 }
 
 type Function = {
-    [key:string]:number|null
-} & FunctionFields
+    [key: string]: unknown
+}
 
 type Community = {
-    [key:string]:number
-} & CommunityFields
+    [key: string]: unknown
+}
 
-interface CommunityFields {
-    "name":CommunityName,
-    "functions":number[],
-    "communities":Community[],
-    _treemap_id?:number
+function getSubCommunities(c: Community): Community[] {
+    if ("communities" in c) {
+        return c.communities as Community[];
+    } else {
+        throw Error("Cannot get subcommunities of a community")
+    }
+}
+function getMetric(subject: Function | Community, metric: Metric): number {
+    if (metric in subject) {
+        return subject[metric] as number
+    } else {
+        throw Error("This metric doesn't exist within this subject")
+    }
+}
+function addToMetric(community: Community, metric: Metric, value: number): number {
+    let gotMetric = 0
+    try {
+        gotMetric = getMetric(community, metric)
+    } catch (_) { }
+    const sum = gotMetric + value
+    community[metric] = sum
+    return sum
+}
+function getFunctions(community:Community):number[]{
+    if ("functions" in community) {
+        return community["functions"] as number[]
+    } else {
+        throw Error("This community has no functions")
+    }
+}
+function getTreemapId(community:Community){
+    if ("_treemap_id" in community) {
+        return community["_treemap_id"] as number
+    } else {
+        throw Error("This community has no treemap id")
+    }
 }
 
 interface OriginalAnalysisJson {
-    calls:Call[],
-    functions:Function[],
-    community:Community
+    calls: Call[],
+    functions: Function[],
+    community: Community
 }
 
-let analysisJson:OriginalAnalysisJson;
+let analysisJson: OriginalAnalysisJson;
 let communityIndex = new Index();
 
-type Metric=string;
+type Metric = string;
 
-function prepareCommunityForTreemap (community:Community, metrics:Metric[], index:Index) {
+// ----------------------------------------- SETTERS -------------------------------------- //
+function prepareCommunityForTreemap(community: Community, metrics: Metric[], index: Index) {
     community._treemap_id = index.nextId
     index.add(community)
-    community.communities.forEach(c=>prepareCommunityForTreemap(c,metrics,index))
-    metrics.forEach(m=>community[m]=0);
-    community.communities.forEach(c => metrics.forEach(m => community[m] += c[m] ) )
-    community.functions
-        .map(id=>analysisJson.functions[id])
-        .forEach(func => metrics.forEach(metric => community[metric] += func[metric] ?? 0 ) )
+    getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index))
+    getSubCommunities(community).forEach(c => metrics.forEach(m => addToMetric(community,m,getMetric(community,m))))
+    getFunctions(community)
+        .map(id => analysisJson.functions[id])
+        .forEach(func => metrics.forEach(metric => 
+            addToMetric(community,metric,getMetric(community,metric))
+        ))
 }
 
-function setAnalysisJson(localAnalysisJson:any){
-    analysisJson=localAnalysisJson;
+function setAnalysisJson(localAnalysisJson: any) {
+    analysisJson = localAnalysisJson;
     let metrics = getAvailableMetrics();
-    prepareCommunityForTreemap(analysisJson.community,metrics,communityIndex)
+    prepareCommunityForTreemap(analysisJson.community, metrics, communityIndex)
 }
-function getAvailableMetrics():Metric[]{
-    let metricsDict:Record<string,boolean>={}
+
+// ------------------------------------------- COMPLEX QUERIES --------------------------//
+function getAvailableMetrics(): Metric[] {
+    let metricsDict: Record<string, boolean> = {}
 
     analysisJson.functions.forEach(f => {
         Object.keys(f)
-        .filter( k => {
-            return !Number.isNaN(f[k])
-        })
-        .forEach(k => {
-            metricsDict[k]=true
-        });
+            .filter(k => {
+                return !Number.isNaN(f[k])
+            })
+            .forEach(k => {
+                metricsDict[k] = true
+            });
     });
-    return Object.keys(metricsDict).filter(v=>!['location','name', 'written'].includes(v))
+    return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
 }
 
-function getCommunity(path:CommunityName[], community:Community):Community{
-    if(path.length==0){
+function getCommunity(path: CommunityName[], community: Community): Community {
+    if (path.length == 0) {
         return community;
-    }else{
+    } else {
         let communityName = path[0]
-        let possibleNextCommunities = community.communities.filter(c => c.name == communityName)
-        if(possibleNextCommunities.length==0){
+        let possibleNextCommunities = getSubCommunities(community).filter(c => c.name == communityName)
+        if (possibleNextCommunities.length == 0) {
             return community;
-        }else{
-            return getCommunity(path.slice(1),possibleNextCommunities[0])
+        } else {
+            return getCommunity(path.slice(1), possibleNextCommunities[0])
         }
     }
 }
 
-interface SubjectFields {
-    id:string
-    type:string,
-}
+//------------------------------------------- GETSUBJECTSFOR (TREEMAP) ------------------------- //
 
-type Subject= {
-    [key:string]:number | null
-} & SubjectFields
-/*
-SubjectFields &
-Partial<CommunityFields> &
-Partial<FunctionFields> & 
-*/
-function getSubjectForFunction(id:number):Subject{
+function getSubjectForFunction(id: number, evaluator:SubjectEvaluator): PartialSubject {
     return {
         ...analysisJson.functions[id],
-        id:`f${id}`,
+        id: `f${id}`,
         type: 'function',
+        value:evaluator(analysisJson.functions[id])
     }
 }
 
-function getSubjectForCommunity(community:Community):Subject{
+function getSubjectForCommunity(community: Community, evaluator:SubjectEvaluator): PartialSubject {
     return {
         ...community,
-        id:"c"+community._treemap_id,
-        communities:undefined,
-        functions:undefined,
-        type:"community"
+        id: "c" + community._treemap_id,
+        communities: undefined,
+        functions: undefined,
+        type: "community",
+        value:evaluator(community)
     }
 }
 
 
-function getSubjectsFor(visualization:Visualization){
-    const metric = visualization.parameters.metric;
-    let community = getCommunity(visualization.path || [], analysisJson.community);
+interface SubjectFields {
+    id: string
+    type: string,
+    value:number
+}
+
+type PartialSubject=Record<string,unknown> & SubjectFields
+
+type SubjectEvaluator=(s:Function|Community)=>number
+
+type Scaling=string;
+
+function makeEvaluator(scaling:Scaling,metric:Metric){
+    return (s:Function|Community)=>{
+        return scale(
+            scaling,
+            getMetric(s,metric)
+        )
+    }
+}
+
+function getSubjectsFor(visualization: Visualization) {
+    const community = getCommunity(visualization.path || [], analysisJson.community);
+    const evaluator=makeEvaluator(
+        visualization.parameters.scaling,
+        visualization.parameters.metric
+    )
+
     const subjects = [
-        ...( community.functions || [] )
-        .map(getSubjectForFunction),
-        ...( community.communities || [] )
-        .map(getSubjectForCommunity), 
+        ...getFunctions(community)
+            .map((fid)=>getSubjectForFunction(fid,evaluator)),
+        ...getSubCommunities(community)
+            .map((c)=>getSubjectForCommunity(c,evaluator)),
     ]
-    .map(f=>({...f, value: scale(visualization.parameters.scaling, f[metric]) }))
-    .filter(f=>f.value!=0)
-    .sort( (a,b) => a.value - b.value )
+        .filter(f => f.value != 0)
+        .sort((a, b) => a.value - b.value)
 
     return getTreemap({
         data: subjects,
@@ -137,17 +181,19 @@ function getSubjectsFor(visualization:Visualization){
     });
 }
 
+// ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
+
 interface Visualization {
-    visualizationType:string,
-    id:number,
-    parameters:Record<string,unknown>,
-    path:CommunityName[],
-    openedCommunities:string[]
+    visualizationType: string,
+    id: number,
+    parameters: Record<string, unknown>,
+    path: CommunityName[],
+    openedCommunities: string[]
 }
 
-function makeVisualization(visualization:Visualization){
+function makeVisualization(visualization: Visualization) {
     console.log(visualization)
-    if(visualization.visualizationType=='treemap'){
+    if (visualization.visualizationType == 'treemap') {
         return {
             subjects: getSubjectsFor(visualization),
             visualizationType: visualization.visualizationType,
@@ -155,16 +201,16 @@ function makeVisualization(visualization:Visualization){
             parameters: visualization.parameters,
             path: visualization.path
         };
-    } else if(visualization.visualizationType=='histogram') {
+    } else if (visualization.visualizationType == 'histogram') {
         return {
             bars: getBarsFor(visualization.parameters),
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
         }
-    } else if(visualization.visualizationType=='hierarchical') {
+    } else if (visualization.visualizationType == 'hierarchical') {
         return {
-            ...(getNodesAndEdgesFor(visualization.parameters,visualization.path,visualization.openedCommunities)),
+            ...(getNodesAndEdgesFor(visualization.parameters, visualization.path, visualization.openedCommunities)),
             path: visualization.path,
             visualizationType: visualization.visualizationType,
             id: visualization.id,
@@ -174,157 +220,163 @@ function makeVisualization(visualization:Visualization){
     }
 }
 
-function getAllFunctions (community) {
+// ---------------------------------- HIERARCHICAL GRAPH ------------------------------ //
+
+function getAllFunctions(community:Community):number[] {
     return [
-        ...community.functions,
+        ...getFunctions(community),
         ...(
-            community.communities
-            .map(getAllFunctions)
-            .reduce((a,b)=>[...a, ...b],[])
+            getSubCommunities(community)
+                .map(getAllFunctions)
+                .reduce((a, b) => [...a, ...b], [])
         )
     ]
 }
-function getColor(seed){
-    return "#"+Math.floor((Math.abs(Math.sin(seed+1000) * 16777215)) % 16777215).toString(16);
+function getColor(seed:number):string {
+    return "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
 }
 
-function isWritten(func){
-    return func.written==undefined || func.written==true;
+function isWritten(func:Function):boolean {
+    return func.written == undefined || func.written == true;
 }
 
-function isAbstract(community){
-    return community.communities.length==0 && community.functions.every(f=>!isWritten(analysisJson["functions"][f]))
+function isAbstract(community:Community):boolean {
+    return getSubCommunities(community).length == 0 && getFunctions(community).every(f => !isWritten(analysisJson["functions"][f]))
 }
 
-function getNodesForCommunity(community, excludedIds){
+function getNodesForCommunity(community:Community, excludedIds:CommunityIdentifier[],evaluator:SubjectEvaluator) {
     return [
-        ...(community.functions || [])
-        .filter(f=>isWritten(f))
-        .map( id => ({ 
-            ...getSubjectForFunction(id), 
-            functions: new Set([id])}) ,
-        ),
-        ...(community.communities || [])
-        .filter((c)=>!(excludedIds || []).includes("c"+c._treemap_id))
-        .filter(c=>!isAbstract(c))
-        .map( c =>{
-            let ret  = { ...c }
-            let totalFunctions =  getAllFunctions(c)
-            delete ret.communities
-            delete ret.functions
-            delete ret.id
-            return {
-                ...ret,
-                
-                id: `c${c._treemap_id}`,
-                functions: new Set(totalFunctions)
-            }
-        }),
-    ].map(n =>({
+        ...getFunctions(community)
+            .filter(fid => isWritten(analysisJson.functions[fid]))
+            .map(id => ({
+                ...getSubjectForFunction(id,evaluator),
+                functions: new Set([id])
+            }) ,
+            ),
+        ...getSubCommunities(community)
+            .filter((c) => !excludedIds.includes("c" + getTreemapId(c)))
+            .filter(c => !isAbstract(c))
+            .map(c => {
+                let ret = { ...c }
+                let totalFunctions = getAllFunctions(c)
+                delete ret.communities
+                delete ret.functions
+                delete ret.id
+                return {
+                    ...ret,
+                    value: evaluator(c),
+                    id: `c${getTreemapId(c)}`,
+                    functions: new Set(totalFunctions)
+                }
+            }),
+    ].map(n => ({
         ...n,
-        parent: `c${community._treemap_id}`,
-        color:getColor(community._treemap_id)
+        parent: `c${getTreemapId(community)}`,
+        color: getColor(getTreemapId(community))
     }))
 
 }
-
-function getNodesAndEdgesFor(parameters, path, openedCommunities){
+type CommunityIdentifier=string
+function getNodesAndEdgesFor(parameters:Record<string,unknown>, path:CommunityName[], openedCommunities:CommunityIdentifier[]) {
     const community = getCommunity(path || [], analysisJson.community);
-    const {scaling, metric} = parameters
+    const evaluator = makeEvaluator(parameters.scaling,parameters.metric)
 
     const nodes = [
-        ...getNodesForCommunity(community, openedCommunities),
+        ...getNodesForCommunity(community, openedCommunities,evaluator),
         ...(openedCommunities || [])
-        .map((id)=>communityIndex.get(id.replace("c","")))
-        .map((community)=>getNodesForCommunity(community,openedCommunities))
-        .reduce((a,b)=>[...a,...b],[])
+            .map((id) => communityIndex.get(id.replace("c", "")))
+            .map((community) => getNodesForCommunity(community, openedCommunities,evaluator))
+            .reduce((a, b) => [...a, ...b], [])
     ]
 
-    const nodeIdDict={}
+    const nodeIdDict:Record<number,string> = {}
     const allFunctions = new Set()
     nodes.forEach(node => {
-        node.functions.forEach((fid)=>{
-            nodeIdDict[fid]=node.id
-            allFunctions.add(Number.parseInt(fid))
+        node.functions.forEach((fid) => {
+            nodeIdDict[fid] = node.id
+            allFunctions.add(fid)
         })
     });
 
     return {
-        nodes: nodes.map(v => {
-            let ret = {...v}
-            delete ret.functions
-            ret.label = ret.name
-            ret.value = scale(scaling, ret[metric])
-            return ret
-        }),
-        edges: [ ...new Set([ 
+        nodes: nodes.map(v => ({
+            ...v,
+            functions:undefined,
+            label:v.name
+        })),
+        edges: [...new Set([
             ...analysisJson.calls
-            .filter( ({from,to}) => from !== to )
-            .filter( ({from,_}) => allFunctions.has(from))
-            .filter( ({_,to}) => allFunctions.has(to))
-            .map(({from,to})=>({
-                from:nodeIdDict[""+from],
-                to:nodeIdDict[""+to],
-                arrows:"to"
-            }))
-            .filter(({from,to})=>from !== to)
-            .map(JSON.stringify)
+                .filter(({ from, to }) => from !== to)
+                .filter(({ from, _ }) => allFunctions.has(from))
+                .filter(({ _, to }) => allFunctions.has(to))
+                .map(({ from, to }) => ({
+                    from: nodeIdDict["" + from],
+                    to: nodeIdDict["" + to],
+                    arrows: "to"
+                }))
+                .filter(({ from, to }) => from !== to)
+                .map(JSON.stringify)
         ])].map(JSON.parse)
     }
 }
 
-function scale(scaling,num) {
-    if ( scaling === 'log10' ) {
+function scale(scaling:Scaling, num:number) {
+    if (scaling === 'log10') {
         return Math.log10(num)
-    } else if ( scaling === 'log2' ) {
+    } else if (scaling === 'log2') {
         return Math.log2(num)
     }
     return num
 }
 
-function getBarsFor({community, metric, bins=100, scaling='linear'}){
+// ---------------------------------- HISTOGRAM ------------------------------ //
+
+function getBarsFor({ community, metric, bins = 100, scaling = 'linear' }) {
     let min = Infinity
     let max = -Infinity
-    for(const func of analysisJson["functions"].filter(isWritten)){
-        const val = scale(scaling,func[metric])
-        if(!isNaN(val) && val < 100000){
+    for (const func of analysisJson["functions"].filter(isWritten)) {
+        const val = scale(scaling, func[metric])
+        if (!isNaN(val) && val < 100000) {
             min = Math.min(val, min)
             max = Math.max(val, max)
         }
     }
     let binSize = (max - min) / bins
-    if(binSize<1){
+    if (binSize < 1) {
         binSize = 1
         bins = Math.ceil(max - min)
     }
-    const histogram = new Array(bins).fill(0).map((v,i)=>({
-        y:0,
-        min:(min + binSize * i),
-        max:(min + binSize * (i + 1))
+    const histogram = new Array(bins).fill(0).map((v, i) => ({
+        y: 0,
+        min: (min + binSize * i),
+        max: (min + binSize * (i + 1))
     }))
-    for(const func of analysisJson["functions"].filter(isWritten)){
-        const x = scale(scaling,func[metric])
-        const bin = Math.floor((x-min)/binSize)
+    for (const func of analysisJson["functions"].filter(isWritten)) {
+        const x = scale(scaling, func[metric])
+        const bin = Math.floor((x - min) / binSize)
         const realBin = Math.min(bin, histogram.length - 1)
-        if(histogram[realBin]){
+        if (histogram[realBin]) {
             histogram[realBin].y += 1
-        }else{
-            console.log("Bin "+realBin+" doesn't exist!")
-            console.log(min,max,binSize,bins)
+        } else {
+            console.log("Bin " + realBin + " doesn't exist!")
+            console.log(min, max, binSize, bins)
         }
-        
+
     }
     return histogram
 }
 
-function getInfoFor(data){
-    if(data.type==='function'){
-        return { ...analysisJson["functions"][(data.id+"").replace("f","")], type: 'function' }
-    }else{
+
+// ---------------------------------- NO IDEA WHAT THIS IS ------------------------------ //
+
+function getInfoFor(data) {
+    if (data.type === 'function') {
+        return { ...analysisJson["functions"][(data.id + "").replace("f", "")], type: 'function' }
+    } else {
         let info = { ...communityIndex.get(data._treemap_id) }
         delete info.functions
         delete info.communities
-        return { 
+        return {
             ...info,
             type: info['type'] || 'community'
         }
