@@ -1,12 +1,12 @@
-export default class Indexer {
-    index=[]
-    get nextId(){
+export default class Indexer<T> {
+    index:T[]=[]
+    get nextId():number{
         return this.index.length;
     }
-    add(elem){
+    add(elem:T){
         this.index.push(elem);
     }
-    get(id){
+    get(id:number):T{
         return this.index[id]; 
     }
 }
