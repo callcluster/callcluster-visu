@@ -1,4 +1,4 @@
-import Index from "./Indexer"
+import Index from "./Indexer.ts"
 import { getTreemap } from 'treemap-squarify';
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 type CommunityName = string;
@@ -27,7 +27,7 @@ function getMetric(subject: Function | Community, metric: Metric): number {
     if (metric in subject) {
         return subject[metric] as number
     } else {
-        throw Error("This metric doesn't exist within this subject")
+        throw Error("This metric doesn't exist within this subject. Metric:" + metric+" subject: "+JSON.stringify(subject))
     }
 }
 function addToMetric(community: Community, metric: Metric, value: number): number {
@@ -70,11 +70,11 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
     community._treemap_id = index.nextId
     index.add(community)
     getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index))
-    getSubCommunities(community).forEach(c => metrics.forEach(m => addToMetric(community, m, getMetric(community, m))))
+    getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, getMetric(childCommunity, m))))
     getFunctions(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>
-            addToMetric(community, metric, getMetric(community, metric))
+            addToMetric(community, metric, getMetric(func, metric))
         ))
 }
 
@@ -220,7 +220,7 @@ function isHistogram(visu: Visualization): visu is HistogramVisualization {
 interface HierarchicalVisualization extends Visualization {
     visualizationType: 'hierarchical',
     path: CommunityName[],
-    openedCommunities: string[],
+    openedCommunities?: string[],
 }
 
 function isHierarchical(visu: Visualization): visu is HierarchicalVisualization {
@@ -324,10 +324,10 @@ function getNodesAndEdgesFor(visualization:HierarchicalVisualization){
     const evaluator = makeEvaluator(parameters.scaling, parameters.metric)
 
     const nodes = [
-        ...getNodesForCommunity(community, openedCommunities, evaluator),
+        ...getNodesForCommunity(community, openedCommunities ?? [], evaluator),
         ...(openedCommunities || [])
             .map((id) => communityIndex.get(parseInt(id.replace("c", ""))))
-            .map((community) => getNodesForCommunity(community, openedCommunities, evaluator))
+            .map((community) => getNodesForCommunity(community, openedCommunities ?? [], evaluator))
             .reduce((a, b) => [...a, ...b], [])
     ]
 
@@ -412,7 +412,7 @@ function getBarsFor({parameters}:HistogramVisualization) {
 
 // ---------------------------------- NO IDEA WHAT THIS IS ------------------------------ //
 interface InfoQuery {
-    type:'function'|'community'
+    type:string
 }
 
 interface InfoQueryFunction extends InfoQuery {
@@ -424,11 +424,10 @@ function isFunctionQuery(query: InfoQuery): query is InfoQueryFunction {
 }
 
 interface InfoQueryCommunity extends InfoQuery {
-    type:'community',
     _treemap_id:number,
 }
 function isCommunityQuery(query: InfoQuery): query is InfoQueryCommunity {
-    return query.type === "community"
+    return query.type !== "function"
 }
 
 
@@ -445,7 +444,7 @@ function getInfoFor(data:InfoQuery):Record<string,string|number> {
             type: (info['type'] as string) || 'community'
         }
     } else {
-        throw new Error("The query has no type")
+        throw new Error("The query has no type "+JSON.stringify(data))
     }
 }
 
