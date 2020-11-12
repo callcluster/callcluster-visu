@@ -1,19 +1,19 @@
 <template>
-<div class="column">
-  <q-toolbar>
-    <path-navigator v-model="path"/>
-  </q-toolbar>
-  <transition
-        mode="out-in"
-        enter-active-class="animated zoomIn"
-        leave-active-class="animated fadeOut"
-        duration="200"
-      >
-    <div :key="JSON.stringify(path)" class="col">
-      <vis-graph :visData="visData" @select="select" @explode="explode" @request="request" :options="options"/>
-    </div>
-  </transition>
-</div>
+  <div class="column">
+    <q-toolbar>
+      <path-navigator v-model="path"/>
+    </q-toolbar>
+    <transition
+          mode="out-in"
+          enter-active-class="animated zoomIn"
+          leave-active-class="animated fadeOut"
+          duration="200"
+        >
+      <div :key="JSON.stringify(path)" class="col">
+        <vis-graph :visData="visData" @select="select" @explode="explode" @request="request" :options="options"/>
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script lang="ts">
@@ -21,13 +21,17 @@ import { Options } from "vis-network";
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import VisGraph from 'components/VisGraph.vue'
 import PathNavigator from 'components/PathNavigator.vue'
+type Node={
+  id:string,
+  name:string
+}
 type HierarchicalGraphVisualization = {
-  nodes:Array<object>,
+  nodes:Array<Node>,
   edges:Array<object>,
   id:number,
   visualizationType:'hierarchical',
   path?:Array<string>,
-  openedCommunities?:Array<Array<string>>,
+  openedCommunities?:Array<string>,
   parameters:Record<string, string>
 }
 @Component({
@@ -93,14 +97,16 @@ export default class HierarchicalGraphView extends Vue {
     this.$emit('request', req)
   }
 
-  emitClickEvent (obj:any,evName:string,payloadFunction:any){
+  emitClickEvent (obj:any,evName:string,payloadFunction:(n:Node)=>object){
     if(obj?.nodes.length==0){
       return
     }
     const node = this.visualization.nodes.find(n=> n?.id === obj?.nodes?.[0])
     console.log("Clicked:")
     console.log(obj?.nodes?.[0])
-    this.$emit(evName, payloadFunction(node) )
+    if ( node ) {
+      this.$emit(evName, payloadFunction(node) )
+    }
   }
 
   select(obj:any) {
@@ -111,7 +117,7 @@ export default class HierarchicalGraphView extends Vue {
     console.log("BOOOOM")
     this.emitClickEvent(obj,'request',(node)=>({
       ...this.visualization,
-      openedCommunities:[...this.visualization.openedCommunities, node.id]
+      openedCommunities:[...this.openedCommunities, node.id]
     }))
   }
 

@@ -52,7 +52,7 @@ export default class ClassComponent extends Vue {
   }
 
   get availableMetrics ():Array<OptionType> {
-    return this.$store.state.other.availableMetrics.map( v => ({
+    return (this.$store.state.other.availableMetrics as string[]).map( v => ({
       label: normalCasing(v),
       value: v
     }));

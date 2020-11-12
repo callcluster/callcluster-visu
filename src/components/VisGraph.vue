@@ -4,11 +4,23 @@
 
 <script lang="ts">
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
-import { Network, Options } from "vis-network";
+import { Network, Options, Data } from "vis-network";
 import { VisData } from 'vis-network/declarations/network/gephiParser';
-export type VisNode = { id:number, label:string };
-export type VisEdge = { from:number, to:number, arrows?:string };
-export type VisGraphData = { nodes:Array<VisNode>, edges:Array<VisEdge> }
+type VisGraphNode = { id:number, label:string, parent:number };
+type VisGraphEdge = { from:number, to:number, arrows?:string };
+type VisGraphData = { nodes:Array<VisGraphNode>, edges:Array<VisGraphEdge> }
+
+import { Edge, Node } from 'vis-network';
+import { DataInterface } from 'vis-data'
+
+interface MutableNetwork {
+  body:{
+    data:{
+      nodes:DataInterface<Node>,
+      edges:DataInterface<Edge>,
+    }
+  }
+}
 
 let networks:Map<symbol,Network|null>=new Map<symbol,Network|null>();
 
@@ -47,26 +59,28 @@ export default class VisGraph extends Vue {
       throw new Error("No visualization div inside VisGraph.")
     }
   }
+  get network(){
+    return networks.get(this.networkKey) as any
+  }
   @Watch("visData")
-  nodesChanged(newVal:VisData & OpenedCommunitiesData, oldVal:VisData & OpenedCommunitiesData){
+  nodesChanged(newVal:VisGraphData & OpenedCommunitiesData, oldVal:VisGraphData & OpenedCommunitiesData){
     console.log("99999999")
     console.log(newVal.openedCommunities)
     if (newVal.openedCommunities) {
       let addedParent = newVal.openedCommunities.find((oc)=>{
         return !(oldVal.openedCommunities||[]).includes(oc)
       })
+      if(!addedParent) return;
       const newNodes = newVal.nodes.filter(n=>n.parent == addedParent)
-      const explodedVisNode = networks.get(this.networkKey)?.body.nodes[addedParent]
-      networks.get(this.networkKey)?.body.data.nodes.remove([addedParent])
-      networks.get(this.networkKey)?.body.data.nodes.add(newNodes.map(n =>({
+      const explodedVisNode = this.network?.body.nodes[addedParent]
+      this.network?.body.data.nodes.remove([addedParent])
+      this.network?.body.data.nodes.add(newNodes.map(n =>({
         ...n,
         x:explodedVisNode.x,
         y:explodedVisNode.y
       })))
-      
-      const newNodeIds = 
 
-      networks.get(this.networkKey)?.body.data.edges.add(
+      this.network?.body.data.edges.add(
         newVal.edges
         .filter(({from,to})=>{
           return newNodes.map(n=>n.id).includes(from) || newNodes.map(n=>n.id).includes(to)

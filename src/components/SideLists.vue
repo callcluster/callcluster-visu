@@ -89,7 +89,9 @@ export default class ClassComponent extends Vue {
   selectedThing=null;
 
   get visualizations () {
-    let visuDict = this.$store.state.data.visualizations;
+    let visuDict:Record<number,{
+      name:string
+    }> = this.$store.state.data.visualizations;
     return Object.entries(visuDict)
       .map(([i,v]) => ({...v, id:i}))
   }
@@ -104,12 +106,12 @@ export default class ClassComponent extends Vue {
     this.selectedThing=community
   }
 
-  get communities () {
+  get communities ():{name:string}[] {
     let commuDict = this.$store.state.data.communities;
     return Object.values(commuDict);
   }
 
-  editVisu (id:string) {
+  editVisu (id:number) {
     this.$emit('edit-visualization', id)
   }
 

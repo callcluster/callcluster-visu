@@ -172,8 +172,8 @@ module.exports = configure(function (ctx) {
     },
 
     sourceFiles: {
-      //electronMainDev:'src-electron/main-process/electron-main.dev',
-      //electronMainProd:'src-electron/main-process/electron-main',
+      electronMainDev:'src-electron/main-process/electron-main.dev.ts',
+      electronMainProd:'src-electron/main-process/electron-main.ts',
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-electron-apps/configuring-electron

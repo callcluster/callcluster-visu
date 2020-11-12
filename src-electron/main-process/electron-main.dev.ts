@@ -23,4 +23,4 @@ app.whenReady().then(() => {
     })
 })
 
-import './electron-main'
+import './electron-main.ts'

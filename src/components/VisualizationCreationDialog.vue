@@ -78,6 +78,7 @@ import SelectableImageComponent from "components/SelectableImageComponent.vue"
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import { Todo, Meta } from './models'
 import { ipcRenderer } from "electron";
+import { QInput, QDialog } from 'quasar'
 import VisuTypeChooser from "./VisuTypeChooser.vue";
 import VisuCustomization from "./VisuCustomization.vue"
 
@@ -120,8 +121,16 @@ export default class VisualizationCreationDialog extends Vue {
     return Object.keys(params).filter(k => params[k]!=null).map((k)=>k+": "+params[k]).join(", ")
   }
 
+  get nameInput(){
+    return this.$refs['nameInput'] as QInput
+  }
+
+  get dialog(){
+    return this.$refs["dialog"] as QDialog
+  }
+
   createVisualization () {
-    this.$refs['nameInput'].validate()
+    this.nameInput.validate()
     if(this.name){
       this.showDialog = false;
       this.$emit("finish",{
@@ -132,7 +141,7 @@ export default class VisualizationCreationDialog extends Vue {
       })
       this.resetContent()
     }else{
-      this.$refs["dialog"].shake()
+      this.dialog.shake()
     }
   }
 

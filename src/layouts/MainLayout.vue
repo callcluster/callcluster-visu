@@ -32,7 +32,6 @@
 <script lang="ts">
 import EssentialLink from 'components/EssentialLink.vue'
 import FileStructure from 'components/FileStructure.vue'
-import SimpleGraph from 'components/SimpleGraph.vue'
 import VisualizationCreationDialog from 'components/VisualizationCreationDialog.vue'
 import VisualizationView from 'components/VisualizationView.vue'
 import { Vue, Component } from 'vue-property-decorator'
@@ -44,7 +43,6 @@ import VisualizationDeletionDialog from 'components/VisualizationDeletionDialog.
   components: {
     EssentialLink,
     FileStructure,
-    SimpleGraph,
     VisualizationCreationDialog,
     VisualizationView,
     SideLists,
@@ -67,7 +65,7 @@ export default class MainLayout extends Vue {
     await this.$store.dispatch('data/showVisualization', visualization)
   }
 
-  editVisualization (id:string) {
+  editVisualization (id:number) {
     const dialog = this.$refs['creation-dialog'] as VisualizationCreationDialog
     const visu = {...this.$store.state.data.visualizations[id]}
     dialog.editVisualization(visu.name,visu.visualizationType,{ ...visu.parameters},id)
