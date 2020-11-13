@@ -1,4 +1,4 @@
-import Index from "./Indexer.ts"
+import Index from "./Indexer"
 import { getTreemap } from 'treemap-squarify';
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 type CommunityName = string;

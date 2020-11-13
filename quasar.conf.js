@@ -212,8 +212,8 @@ module.exports = configure(function (ctx) {
           exclude: /node_modules/,
         })
         
-        //cfg.resolve.extensions.push('.ts')
-        //cfg.resolve.extensions.push('.tsx')
+        cfg.resolve.extensions.push('.ts')
+        cfg.resolve.extensions.push('.tsx')
       }
     }
   }
