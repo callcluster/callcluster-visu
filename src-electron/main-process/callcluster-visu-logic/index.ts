@@ -1,1 +1,2 @@
-export { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor } from './logic'
+export { setAnalysisJson, getAvailableMetrics, makeVisualization} from './logic'
+export { getInfoFor } from './getInfoFor'

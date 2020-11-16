@@ -1,20 +1,9 @@
 import Index from "./Indexer"
 import { getTreemap } from 'treemap-squarify';
+import { Function, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 type CommunityName = string;
 
-interface Call {
-    from: number,
-    to: number
-}
-
-type Function = {
-    [key: string]: unknown
-}
-
-type Community = {
-    [key: string]: unknown
-}
 
 function getSubCommunities(c: Community): Community[] {
     if ("communities" in c) {
@@ -54,15 +43,6 @@ function getTreemapId(community: Community) {
     }
 }
 
-interface OriginalAnalysisJson {
-    calls: Call[],
-    functions: Function[],
-    community: Community
-}
-
-let analysisJson: OriginalAnalysisJson;
-let communityIndex = new Index<Community>();
-
 type Metric = string;
 
 // ----------------------------------------- SETTERS -------------------------------------- //
@@ -79,7 +59,7 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
 }
 
 function setAnalysisJson(localAnalysisJson: any) {
-    analysisJson = localAnalysisJson;
+    setAnalysisJsonGlobalVariable(localAnalysisJson);
     let metrics = getAvailableMetrics();
     prepareCommunityForTreemap(analysisJson.community, metrics, communityIndex)
 }
@@ -410,42 +390,5 @@ function getBarsFor({parameters}:HistogramVisualization) {
 }
 
 
-// ---------------------------------- NO IDEA WHAT THIS IS ------------------------------ //
-interface InfoQuery {
-    type:string
-}
 
-interface InfoQueryFunction extends InfoQuery {
-    type:'function',
-    id:string|number,
-}
-function isFunctionQuery(query: InfoQuery): query is InfoQueryFunction {
-    return query.type === "function"
-}
-
-interface InfoQueryCommunity extends InfoQuery {
-    _treemap_id:number,
-}
-function isCommunityQuery(query: InfoQuery): query is InfoQueryCommunity {
-    return query.type !== "function"
-}
-
-
-function getInfoFor(data:InfoQuery):Record<string,string|number> {
-    if (isFunctionQuery(data)) {
-        const fid = parseInt((data.id + "").replace("f", ""));
-        return { ...analysisJson["functions"][fid], type: 'function' }
-    } else if(isCommunityQuery(data)) {
-        let info = { ...communityIndex.get(data._treemap_id) }
-        delete info.functions
-        delete info.communities
-        return {
-            ...info,
-            type: (info['type'] as string) || 'community'
-        }
-    } else {
-        throw new Error("The query has no type "+JSON.stringify(data))
-    }
-}
-
-export { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor };
+export { setAnalysisJson, getAvailableMetrics, makeVisualization };
