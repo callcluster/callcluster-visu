@@ -159,8 +159,8 @@ function getSubjectsFor(visualization: HierarchicalVisualization|TreemapVisualiz
 
 // ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
 import Visualization from "./Visualization";
-import isHistogram from "./isHistogram";
-import makeHistogram from "./makeHistogram";
+import {makeHistogram, isHistogram} from "./histogram";
+
 interface TreemapVisualization extends Visualization {
     visualizationType: 'treemap',
     path: CommunityName[],
