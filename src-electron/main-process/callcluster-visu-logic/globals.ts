@@ -22,7 +22,7 @@ export interface OriginalAnalysisJson {
 export function setAnalysisJsonGlobalVariable(localAnalysisJson: any) {
     analysisJson = localAnalysisJson;
 }
-
+export type Metric = string;
 
 export let analysisJson: OriginalAnalysisJson;
 export let communityIndex = new Index<Community>();

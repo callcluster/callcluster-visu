@@ -1,6 +1,7 @@
 import Index from "./Indexer"
 import { getTreemap } from 'treemap-squarify';
-import { Function, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
+import { Metric, Function, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
+import getMetric from "./getMetric";
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 type CommunityName = string;
 
@@ -12,13 +13,7 @@ function getSubCommunities(c: Community): Community[] {
         throw Error("Cannot get subcommunities of a community")
     }
 }
-function getMetric(subject: Function | Community, metric: Metric): number {
-    if (metric in subject) {
-        return subject[metric] as number
-    } else {
-        throw Error("This metric doesn't exist within this subject. Metric:" + metric+" subject: "+JSON.stringify(subject))
-    }
-}
+
 function addToMetric(community: Community, metric: Metric, value: number): number {
     let gotMetric = 0
     try {
@@ -42,8 +37,6 @@ function getTreemapId(community: Community) {
         throw Error("This community has no treemap id")
     }
 }
-
-type Metric = string;
 
 // ----------------------------------------- SETTERS -------------------------------------- //
 function prepareCommunityForTreemap(community: Community, metrics: Metric[], index: Index<Community>) {
@@ -130,7 +123,7 @@ type PartialSubject = Record<string, unknown> & SubjectFields
 
 type SubjectEvaluator = (s: Function | Community) => number
 
-type Scaling = string;
+import scale,{Scaling} from "./scale"
 
 function makeEvaluator(scaling: Scaling, metric: Metric) {
     return (s: Function | Community) => {
@@ -165,16 +158,9 @@ function getSubjectsFor(visualization: HierarchicalVisualization|TreemapVisualiz
 }
 
 // ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
-
-interface Visualization {
-    visualizationType: string,
-    id: number,
-    parameters: {
-        scaling: string,
-        metric: string
-    }
-}
-
+import Visualization from "./Visualization";
+import isHistogram from "./isHistogram";
+import makeHistogram from "./makeHistogram";
 interface TreemapVisualization extends Visualization {
     visualizationType: 'treemap',
     path: CommunityName[],
@@ -184,18 +170,6 @@ function isTrreemap(visu: Visualization): visu is TreemapVisualization {
     return visu.visualizationType === "treemap"
 }
 
-interface HistogramVisualization extends Visualization {
-    visualizationType: 'histogram',
-    parameters: {
-        scaling: string,
-        metric: string,
-        bins:number
-    }
-}
-
-function isHistogram(visu: Visualization): visu is HistogramVisualization {
-    return visu.visualizationType === "histogram"
-}
 
 interface HierarchicalVisualization extends Visualization {
     visualizationType: 'hierarchical',
@@ -219,7 +193,7 @@ function makeVisualization(visualization: Visualization) {
         };
     } else if (isHistogram(visualization)) {
         return {
-            bars: getBarsFor(visualization),
+            bars: makeHistogram(visualization),
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
@@ -251,11 +225,7 @@ function getAllFunctions(community: Community): number[] {
 function getColor(seed: number): string {
     return "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
 }
-
-function isWritten(func: Function): boolean {
-    return func.written == undefined || func.written == true;
-}
-
+import isWritten from "./isWritten"
 function isAbstract(community: Community): boolean {
     return getSubCommunities(community).length == 0 && getFunctions(community).every(f => !isWritten(analysisJson["functions"][f]))
 }
@@ -342,52 +312,6 @@ function getNodesAndEdgesFor(visualization:HierarchicalVisualization){
     }
 }
 
-function scale(scaling: Scaling, num: number) {
-    if (scaling === 'log10') {
-        return Math.log10(num)
-    } else if (scaling === 'log2') {
-        return Math.log2(num)
-    }
-    return num
-}
-
-// ---------------------------------- HISTOGRAM ------------------------------ //
-function getBarsFor({parameters}:HistogramVisualization) {
-    let { metric, bins = 100, scaling = 'linear' } = parameters;
-
-    let min = Infinity
-    let max = -Infinity
-    for (const func of analysisJson["functions"].filter(isWritten)) {
-        const val = scale(scaling, getMetric(func,metric))
-        if (!isNaN(val) && val < 100000) {
-            min = Math.min(val, min)
-            max = Math.max(val, max)
-        }
-    }
-    let binSize = (max - min) / bins
-    if (binSize < 1) {
-        binSize = 1
-        bins = Math.ceil(max - min)
-    }
-    const histogram = new Array(bins).fill(0).map((v, i) => ({
-        y: 0,
-        min: (min + binSize * i),
-        max: (min + binSize * (i + 1))
-    }))
-    for (const func of analysisJson["functions"].filter(isWritten)) {
-        const x = scale(scaling, getMetric(func,metric))
-        const bin = Math.floor((x - min) / binSize)
-        const realBin = Math.min(bin, histogram.length - 1)
-        if (histogram[realBin]) {
-            histogram[realBin].y += 1
-        } else {
-            console.log("Bin " + realBin + " doesn't exist!")
-            console.log(min, max, binSize, bins)
-        }
-
-    }
-    return histogram
-}
 
 
 
