@@ -1,6 +1,6 @@
 import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
-import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor } from './logic'
+import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor } from './callcluster-visu-logic'
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
