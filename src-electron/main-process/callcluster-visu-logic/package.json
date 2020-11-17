@@ -1,7 +1,0 @@
-{
-  "name": "callcluster-visu-logic",
-  "version": "0.0.1",
-  "description": "backend logic for the visualizer",
-  "main": "index.js",
-  "license": "MIT"
-}
