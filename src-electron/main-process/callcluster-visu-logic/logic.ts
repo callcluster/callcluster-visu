@@ -56,7 +56,7 @@ function getAvailableMetrics(): Metric[] {
 
 //------------------------------------------- GETSUBJECTSFOR (TREEMAP) ------------------------- //
 
-import getSubjectsFor from "./getSubjectsFor";
+import getSubjectsFor from "./treemap/getSubjectsFor";
 
 
 
@@ -64,8 +64,8 @@ import getSubjectsFor from "./getSubjectsFor";
 // ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
 import Visualization from "./Visualization";
 import {makeHistogram, isHistogram} from "./histogram";
-import TreemapVisualization from "./TreemapVisualization";
-import isTrreemap from "./isTrreemap";
+import TreemapVisualization from "./treemap/TreemapVisualization";
+import isTrreemap from "./treemap/isTrreemap";
 
 
 import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";
