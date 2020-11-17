@@ -3,7 +3,7 @@ import HierarchicalVisualization from "./HierarchicalVisualization";
 import getCommunity from "../getCommunity";
 import makeEvaluator from "../makeEvaluator";
 import getNodesForCommunity from "./getNodesForCommunity";
-export default function getNodesAndEdgesFor(visualization:HierarchicalVisualization){
+export default function makeHierarchicalGraph(visualization:HierarchicalVisualization){
     const {parameters, path, openedCommunities} = visualization
     const community = getCommunity(path || [], analysisJson.community);
     const evaluator = makeEvaluator(parameters.scaling, parameters.metric)

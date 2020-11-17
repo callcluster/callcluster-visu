@@ -73,8 +73,6 @@ import { PartialSubject } from "./PartialSubject";
 
 import { SubjectEvaluator } from "./SubjectEvaluator";
 
-import scale,{Scaling} from "./scale"
-
 import makeEvaluator from "./makeEvaluator";
 
 import getSubjectForFunction from "./getSubjectForFunction";
@@ -115,7 +113,7 @@ function isTrreemap(visu: Visualization): visu is TreemapVisualization {
     return visu.visualizationType === "treemap"
 }
 
-import {isHierarchical, getNodesAndEdgesFor, HierarchicalVisualization} from "./hierarchicalGraph";
+import {isHierarchical, makeHierarchicalGraph, HierarchicalVisualization} from "./hierarchicalGraph";
 
 function makeVisualization(visualization: Visualization) {
     console.log(visualization)
@@ -136,7 +134,7 @@ function makeVisualization(visualization: Visualization) {
         }
     } else if (isHierarchical(visualization)) {
         return {
-            ...(getNodesAndEdgesFor(visualization)),
+            ...(makeHierarchicalGraph(visualization)),
             path: visualization.path,
             visualizationType: visualization.visualizationType,
             id: visualization.id,
