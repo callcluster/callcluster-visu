@@ -1,10 +1,10 @@
 import Index from "./Indexer"
-import { getTreemap } from 'treemap-squarify';
+
 import { Metric, Function, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
 import getMetric from "./getMetric";
 import { CommunityName } from "./CommunityName";
 import getSubCommunities from "./getSubCommunities";
-import getCommunity from "./getCommunity";
+
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 
 function addToMetric(community: Community, metric: Metric, value: number): number {
@@ -56,64 +56,19 @@ function getAvailableMetrics(): Metric[] {
 
 //------------------------------------------- GETSUBJECTSFOR (TREEMAP) ------------------------- //
 
+import getSubjectsFor from "./getSubjectsFor";
 
-function getSubjectForCommunity(community: Community, evaluator: SubjectEvaluator): PartialSubject {
-    return {
-        ...community,
-        id: "c" + community._treemap_id,
-        communities: undefined,
-        functions: undefined,
-        type: "community",
-        value: evaluator(community),
-        name: community.name
-    }
-}
 
-import { PartialSubject } from "./PartialSubject";
 
-import { SubjectEvaluator } from "./SubjectEvaluator";
-
-import makeEvaluator from "./makeEvaluator";
-
-import getSubjectForFunction from "./getSubjectForFunction";
-
-function getSubjectsFor(visualization: HierarchicalVisualization|TreemapVisualization) {
-    const community = getCommunity(visualization.path || [], analysisJson.community);
-    const evaluator = makeEvaluator(
-        visualization.parameters.scaling,
-        visualization.parameters.metric
-    )
-
-    const subjects = [
-        ...getFunctions(community)
-            .map((fid) => getSubjectForFunction(fid, evaluator)),
-        ...getSubCommunities(community)
-            .map((c) => getSubjectForCommunity(c, evaluator)),
-    ]
-        .filter(f => f.value != 0)
-        .sort((a, b) => a.value - b.value)
-
-    return getTreemap({
-        data: subjects,
-        width: 100,
-        height: 100
-    });
-}
 
 // ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
 import Visualization from "./Visualization";
 import {makeHistogram, isHistogram} from "./histogram";
+import TreemapVisualization from "./TreemapVisualization";
+import isTrreemap from "./isTrreemap";
 
-interface TreemapVisualization extends Visualization {
-    visualizationType: 'treemap',
-    path: CommunityName[],
-}
 
-function isTrreemap(visu: Visualization): visu is TreemapVisualization {
-    return visu.visualizationType === "treemap"
-}
-
-import {isHierarchical, makeHierarchicalGraph, HierarchicalVisualization} from "./hierarchicalGraph";
+import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";
 
 function makeVisualization(visualization: Visualization) {
     console.log(visualization)
