@@ -1,14 +1,14 @@
-import { Community, analysisJson } from "./globals";
-import { CommunityIdentifier } from "./CommunityIdentifier";
-import { SubjectEvaluator } from "./SubjectEvaluator";
-import getFunctions from "./getFunctions";
-import getSubCommunities from "./getSubCommunities";
-import isWritten from "./isWritten"
-import getSubjectForFunction from "./getSubjectForFunction";
-import isAbstract from "./isAbstract";
-import getTreemapId from "./getTreemapId";
-import getAllFunctions from "./getAllFunctions";
-import getColor from "./getColor";
+import { Community, analysisJson } from "../globals";
+import { CommunityIdentifier } from "../CommunityIdentifier";
+import { SubjectEvaluator } from "../SubjectEvaluator";
+import getFunctions from "../getFunctions";
+import getSubCommunities from "../getSubCommunities";
+import isWritten from "../isWritten"
+import getSubjectForFunction from "../getSubjectForFunction";
+import isAbstract from "../isAbstract";
+import getTreemapId from "../getTreemapId";
+import getAllFunctions from "../getAllFunctions";
+import getColor from "../getColor";
 export default function getNodesForCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator) {
     return [
         ...getFunctions(community)

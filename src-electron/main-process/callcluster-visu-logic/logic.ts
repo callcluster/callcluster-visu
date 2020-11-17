@@ -3,10 +3,8 @@ import { getTreemap } from 'treemap-squarify';
 import { Metric, Function, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
 import getMetric from "./getMetric";
 import { CommunityName } from "./CommunityName";
-import HierarchicalVisualization from "./HierarchicalVisualization";
 import getSubCommunities from "./getSubCommunities";
 import getCommunity from "./getCommunity";
-import getNodesAndEdgesFor from "./getNodesAndEdgesFor";
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 
 function addToMetric(community: Community, metric: Metric, value: number): number {
@@ -117,7 +115,7 @@ function isTrreemap(visu: Visualization): visu is TreemapVisualization {
     return visu.visualizationType === "treemap"
 }
 
-import isHierarchical from "./isHierarchical";
+import {isHierarchical, getNodesAndEdgesFor, HierarchicalVisualization} from "./hierarchicalGraph";
 
 function makeVisualization(visualization: Visualization) {
     console.log(visualization)
