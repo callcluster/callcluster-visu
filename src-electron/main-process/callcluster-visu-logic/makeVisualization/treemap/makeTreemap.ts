@@ -7,9 +7,9 @@ import getSubjectForFunction from "../../getSubjectForFunction";
 import { analysisJson } from "../../globals"
 import TreemapVisualization from "./TreemapVisualization";
 import getSubCommunities from "../../getSubCommunities";
-import getSubjectForCommunity from "./getSubjectForCommunity";
+import getSubjectForCommunity from "../../getSubjectForCommunity";
 
-export default function getSubjectsFor(visualization: TreemapVisualization) {
+export default function makeTreemap(visualization: TreemapVisualization) {
     const community = getCommunity(visualization.path || [], analysisJson.community);
     const evaluator = makeEvaluator(
         visualization.parameters.scaling,

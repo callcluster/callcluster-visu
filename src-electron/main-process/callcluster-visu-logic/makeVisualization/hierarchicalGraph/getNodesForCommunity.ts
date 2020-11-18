@@ -5,40 +5,19 @@ import getFunctions from "../../getFunctions";
 import getSubCommunities from "../../getSubCommunities";
 import isWritten from "../../isWritten"
 import getSubjectForFunction from "../../getSubjectForFunction";
+import getSubjectForCommunity from "../../getSubjectForCommunity";
 import isAbstract from "../../isAbstract";
 import getTreemapId from "../../getTreemapId";
-import getAllFunctions from "../../getAllFunctions";
 import getColor from "../../getColor";
 export default function getNodesForCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator) {
     return [
         ...getFunctions(community)
             .filter(fid => isWritten(analysisJson.functions[fid]))
-            .map(id => {
-                const subject = getSubjectForFunction(id, evaluator);
-                return ({
-                    ...subject,
-                    functions: new Set([id]),
-                    name: subject.name
-                })
-
-            }),
+            .map(id => getSubjectForFunction(id, evaluator)),
         ...getSubCommunities(community)
             .filter((c) => !excludedIds.includes("c" + getTreemapId(c)))
             .filter(c => !isAbstract(c))
-            .map(c => {
-                let ret = { ...c }
-                let totalFunctions = getAllFunctions(c)
-                delete ret.communities
-                delete ret.functions
-                delete ret.id
-                return {
-                    ...ret,
-                    value: evaluator(c),
-                    id: `c${getTreemapId(c)}`,
-                    functions: new Set(totalFunctions),
-                    name: ret.name
-                }
-            }),
+            .map(c => getSubjectForCommunity(c,evaluator,true)),
     ].map(n => ({
         ...n,
         parent: `c${getTreemapId(community)}`,

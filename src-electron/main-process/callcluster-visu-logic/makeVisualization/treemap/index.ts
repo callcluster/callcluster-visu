@@ -1,4 +1,4 @@
-import isTrreemap from "./isTrreemap";
-import getSubjectsFor from "./getSubjectsFor";
+import isTreemap from "./isTreemap";
+import makeTreemap from "./makeTreemap";
 
-export {isTrreemap,getSubjectsFor}
+export { isTreemap, makeTreemap }

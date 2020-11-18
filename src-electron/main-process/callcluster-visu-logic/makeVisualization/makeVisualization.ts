@@ -1,13 +1,13 @@
 import Visualization from "../Visualization";
 import { makeHistogram, isHistogram } from "./histogram";
-import { isTrreemap, getSubjectsFor } from "./treemap";
+import { isTreemap, makeTreemap } from "./treemap";
 import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";
 
 export default function makeVisualization(visualization: Visualization) {
     console.log(visualization)
-    if (isTrreemap(visualization)) {
+    if (isTreemap(visualization)) {
         return {
-            subjects: getSubjectsFor(visualization),
+            subjects: makeTreemap(visualization),
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
