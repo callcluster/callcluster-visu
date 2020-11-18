@@ -2,12 +2,12 @@ import getCommunity from "../../getCommunity";
 import { getTreemap } from 'treemap-squarify';
 import makeEvaluator from "../../makeEvaluator";
 import getFunctions from "../../getFunctions";
-import getSubjectForFunction from "../../getSubjectForFunction";
+import getSubjectForFunction from "../measurables/getSubjectForFunction";
 
 import { analysisJson } from "../../globals"
 import TreemapVisualization from "./TreemapVisualization";
 import getSubCommunities from "../../getSubCommunities";
-import getSubjectForCommunity from "../../getSubjectForCommunity";
+import getSubjectForCommunity from "../measurables/getSubjectForCommunity";
 
 export default function makeTreemap(visualization: TreemapVisualization) {
     const community = getCommunity(visualization.path || [], analysisJson.community);

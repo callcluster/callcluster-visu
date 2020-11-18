@@ -4,8 +4,8 @@ import { SubjectEvaluator } from "../../SubjectEvaluator";
 import getFunctions from "../../getFunctions";
 import getSubCommunities from "../../getSubCommunities";
 import isWritten from "../../isWritten"
-import getSubjectForFunction from "../../getSubjectForFunction";
-import getSubjectForCommunity from "../../getSubjectForCommunity";
+import getSubjectForFunction from "../measurables/getSubjectForFunction";
+import getSubjectForCommunity from "../measurables/getSubjectForCommunity";
 import isAbstract from "../../isAbstract";
 import getTreemapId from "../../getTreemapId";
 import getColor from "../../getColor";

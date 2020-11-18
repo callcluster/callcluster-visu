@@ -1,8 +1,8 @@
 import { PartialSubject } from "./PartialSubject";
-import { SubjectEvaluator } from "./SubjectEvaluator";
-import { Community } from "./globals"
-import getTreemapId from "./getTreemapId";
-import getAllFunctions from "./getAllFunctions";
+import { SubjectEvaluator } from "../../SubjectEvaluator";
+import { Community } from "../../globals"
+import getTreemapId from "../../getTreemapId";
+import getAllFunctions from "../../getAllFunctions";
 export default function getSubjectForCommunity(community: Community, evaluator: SubjectEvaluator, includeFunctions:boolean = false): PartialSubject {
     return {
         ...community,
