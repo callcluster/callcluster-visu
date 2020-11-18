@@ -1,8 +1,6 @@
 import Index from "./Indexer"
-
-import { Metric, Function, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
+import { Metric, Community, analysisJson, communityIndex, setAnalysisJsonGlobalVariable } from "./globals"
 import getMetric from "./getMetric";
-import { CommunityName } from "./CommunityName";
 import getSubCommunities from "./getSubCommunities";
 
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//

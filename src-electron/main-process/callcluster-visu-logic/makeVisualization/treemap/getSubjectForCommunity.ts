@@ -1,6 +1,6 @@
-import { PartialSubject } from "../PartialSubject";
-import { SubjectEvaluator } from "../SubjectEvaluator";
-import { Community } from "../globals"
+import { PartialSubject } from "../../PartialSubject";
+import { SubjectEvaluator } from "../../SubjectEvaluator";
+import { Community } from "../../globals"
 
 export default function getSubjectForCommunity(community: Community, evaluator: SubjectEvaluator): PartialSubject {
     return {

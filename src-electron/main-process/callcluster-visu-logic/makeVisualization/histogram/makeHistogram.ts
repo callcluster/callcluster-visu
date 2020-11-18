@@ -1,8 +1,8 @@
-import scale from "../scale";
-import isWritten from "../isWritten";
-import getMetric from "../getMetric";
+import scale from "../../scale";
+import isWritten from "../../isWritten";
+import getMetric from "../../getMetric";
 import HistogramVisualization from "./HistogramVisualization";
-import { analysisJson } from "../globals";
+import { analysisJson } from "../../globals";
 export default function makeHistogram({parameters}:HistogramVisualization) {
     let { metric, bins = 100, scaling = 'linear' } = parameters;
 

@@ -1,6 +1,6 @@
-import Visualization from "./Visualization";
+import Visualization from "../Visualization";
 import { makeHistogram, isHistogram } from "./histogram";
-import { isTrreemap, getSubjectsFor } from "./treemap/";
+import { isTrreemap, getSubjectsFor } from "./treemap";
 import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";
 
 export default function makeVisualization(visualization: Visualization) {

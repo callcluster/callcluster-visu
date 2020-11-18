@@ -1,7 +1,7 @@
-import { analysisJson, communityIndex } from "../globals";
+import { analysisJson, communityIndex } from "../../globals";
 import HierarchicalVisualization from "./HierarchicalVisualization";
-import getCommunity from "../getCommunity";
-import makeEvaluator from "../makeEvaluator";
+import getCommunity from "../../getCommunity";
+import makeEvaluator from "../../makeEvaluator";
 import getNodesForCommunity from "./getNodesForCommunity";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization){
     const {parameters, path, openedCommunities} = visualization
