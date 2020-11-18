@@ -54,18 +54,10 @@ function getAvailableMetrics(): Metric[] {
     return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
 }
 
-//------------------------------------------- GETSUBJECTSFOR (TREEMAP) ------------------------- //
-
-import getSubjectsFor from "./treemap/getSubjectsFor";
-
-
-
-
 // ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
 import Visualization from "./Visualization";
-import {makeHistogram, isHistogram} from "./histogram";
-import TreemapVisualization from "./treemap/TreemapVisualization";
-import isTrreemap from "./treemap/isTrreemap";
+import { makeHistogram, isHistogram } from "./histogram";
+import { isTrreemap, getSubjectsFor } from "./treemap/";
 
 
 import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";
