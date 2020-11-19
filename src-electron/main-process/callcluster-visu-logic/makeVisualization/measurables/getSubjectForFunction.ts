@@ -1,8 +1,8 @@
-import { PartialSubject } from "./PartialSubject"
+import { Measurable } from "./PartialSubject"
 import { SubjectEvaluator } from "../../SubjectEvaluator"
 import { analysisJson } from "../../globals"
 
-export default function getSubjectForFunction(id: number, evaluator: SubjectEvaluator): PartialSubject {
+export default function getSubjectForFunction(id: number, evaluator: SubjectEvaluator): Measurable {
     const func = analysisJson.functions[id];
     return {
         ...func,

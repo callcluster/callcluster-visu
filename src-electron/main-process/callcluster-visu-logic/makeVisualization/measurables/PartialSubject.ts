@@ -1,9 +1,9 @@
 
-interface SubjectFields {
+interface MeasurableFields {
     id: string
     type: string
     value: number
     //functions:Set<number>
 }
 
-export type PartialSubject = Record<string, unknown> & SubjectFields
+export type Measurable = Record<string, unknown> & MeasurableFields

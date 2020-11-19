@@ -1,10 +1,10 @@
 import { CommunityIdentifier } from "../../CommunityIdentifier";
 import getAllFunctions from "../../getAllFunctions";
 import { analysisJson, communityIndex } from "../../globals";
-import { PartialSubject } from "./PartialSubject";
+import { Measurable } from "./PartialSubject";
 
-export default class Analyzer{
-    getAllFunctionsInside(subject:PartialSubject):Set<number>{
+export default class MeasurablesAnalyzer{
+    getAllFunctionsInside(subject:Measurable):Set<number>{
         const numberId=parseInt(subject.id.replace("c","").replace("f",""))
         if(subject.type==='function'){
             return new Set([numberId])
@@ -13,7 +13,7 @@ export default class Analyzer{
         }
     }
     
-    identifierIncluded(subject:PartialSubject,identifiers:CommunityIdentifier[]):boolean{
+    identifierIncluded(subject:Measurable,identifiers:CommunityIdentifier[]):boolean{
         return identifiers.includes(subject.id)
     }
 }

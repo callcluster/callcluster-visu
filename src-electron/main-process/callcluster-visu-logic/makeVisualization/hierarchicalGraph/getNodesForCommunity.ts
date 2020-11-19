@@ -3,10 +3,10 @@ import { CommunityIdentifier } from "../../CommunityIdentifier";
 import { SubjectEvaluator } from "../../SubjectEvaluator";
 import getColor from "../../getColor";
 import getTreemapId from "../../getTreemapId";
-import { Analyzer, PartialSubject, getSubjectsInside } from "./_measurables";
+import { MeasurablesAnalyzer, Measurable, getMeasurablesInside } from "./_measurables";
 import Node from "./Node";
 
-function subjectToNode(subject: PartialSubject, parent: Community, analyzer: Analyzer): Node {
+function subjectToNode(subject: Measurable, parent: Community, analyzer: MeasurablesAnalyzer): Node {
     return {
         ...subject,
         functions: analyzer.getAllFunctionsInside(subject),
@@ -16,7 +16,7 @@ function subjectToNode(subject: PartialSubject, parent: Community, analyzer: Ana
 }
 export default function getNodesForCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator): Node[] {
 
-    const [analyzer, subjects] = getSubjectsInside(community, evaluator)
+    const [analyzer, subjects] = getMeasurablesInside(community, evaluator)
 
     return subjects
         .filter(subject => !analyzer.identifierIncluded(subject, excludedIds))

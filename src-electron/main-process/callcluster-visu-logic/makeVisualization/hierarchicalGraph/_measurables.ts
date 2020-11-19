@@ -1,1 +1,1 @@
-export { PartialSubject, getSubjectsInside, Analyzer } from "../measurables"
+export { Measurable, getMeasurablesInside, MeasurablesAnalyzer } from "../measurables"

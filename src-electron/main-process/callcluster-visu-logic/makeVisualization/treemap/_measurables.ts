@@ -1,1 +1,1 @@
-export { getSubjectsInside } from "../measurables"
+export { getMeasurablesInside } from "../measurables"
