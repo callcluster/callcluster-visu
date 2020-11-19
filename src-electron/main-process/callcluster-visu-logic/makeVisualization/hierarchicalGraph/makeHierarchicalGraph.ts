@@ -2,7 +2,7 @@ import { analysisJson, communityIndex } from "../../globals";
 import HierarchicalVisualization from "./HierarchicalVisualization";
 import getCommunity from "../../getCommunity";
 import makeEvaluator from "../../makeEvaluator";
-import getNodesForCommunity from "./getNodesForCommunity";
+import getNodesInsideCommunity from "./getNodesInsideCommunity";
 import Node from "./Node";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization){
     const {parameters, path, openedCommunities} = visualization
@@ -10,10 +10,10 @@ export default function makeHierarchicalGraph(visualization:HierarchicalVisualiz
     const evaluator = makeEvaluator(parameters.scaling, parameters.metric)
 
     const nodes:Node[] = [
-        ...getNodesForCommunity(community, openedCommunities ?? [], evaluator),
+        ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator),
         ...(openedCommunities || [])
             .map((id) => communityIndex.get(parseInt(id.replace("c", ""))))
-            .map((community) => getNodesForCommunity(community, openedCommunities ?? [], evaluator))
+            .map((community) => getNodesInsideCommunity(community, openedCommunities ?? [], evaluator))
             .reduce((a, b) => [...a, ...b], [])
     ]
 

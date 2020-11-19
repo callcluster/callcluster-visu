@@ -14,7 +14,7 @@ function subjectToNode(subject: Measurable, parent: Community, analyzer: Measura
         color: getColor(getTreemapId(parent))
     }
 }
-export default function getNodesForCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator): Node[] {
+export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator): Node[] {
 
     const [analyzer, subjects] = getMeasurablesInside(community, evaluator)
 
