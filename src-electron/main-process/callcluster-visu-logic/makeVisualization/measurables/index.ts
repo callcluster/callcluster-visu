@@ -1,5 +1,5 @@
-import { Measurable } from "./PartialSubject";
-import getMeasurablesInside from "./getSubjectsInside";
-import MeasurablesAnalyzer from "./Analyzer";
+import { Measurable } from "./Measurable";
+import getMeasurablesInside from "./getMeasurablesInside";
+import MeasurablesAnalyzer from "./MeasurablesAnalyzer";
 
 export { Measurable, getMeasurablesInside, MeasurablesAnalyzer }

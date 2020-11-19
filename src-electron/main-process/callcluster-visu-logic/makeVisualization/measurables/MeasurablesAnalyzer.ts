@@ -1,7 +1,7 @@
 import { CommunityIdentifier } from "../../CommunityIdentifier";
 import getAllFunctions from "../../getAllFunctions";
 import { analysisJson, communityIndex } from "../../globals";
-import { Measurable } from "./PartialSubject";
+import { Measurable } from "./Measurable";
 
 export default class MeasurablesAnalyzer{
     getAllFunctionsInside(subject:Measurable):Set<number>{

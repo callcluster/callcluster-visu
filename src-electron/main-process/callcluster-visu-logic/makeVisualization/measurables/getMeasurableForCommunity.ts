@@ -1,8 +1,8 @@
-import { Measurable } from "./PartialSubject";
+import { Measurable } from "./Measurable";
 import { SubjectEvaluator } from "../../SubjectEvaluator";
 import { Community } from "../../globals"
 import getTreemapId from "../../getTreemapId";
-export default function getSubjectForCommunity(community: Community, evaluator: SubjectEvaluator): Measurable {
+export default function getMeasurableForCommunity(community: Community, evaluator: SubjectEvaluator): Measurable {
     return {
         ...community,
         id: `c${getTreemapId(community)}`,
