@@ -3,12 +3,13 @@ import HierarchicalVisualization from "./HierarchicalVisualization";
 import getCommunity from "../../getCommunity";
 import makeEvaluator from "../../makeEvaluator";
 import getNodesForCommunity from "./getNodesForCommunity";
+import Node from "./Node";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization){
     const {parameters, path, openedCommunities} = visualization
     const community = getCommunity(path || [], analysisJson.community);
     const evaluator = makeEvaluator(parameters.scaling, parameters.metric)
 
-    const nodes = [
+    const nodes:Node[] = [
         ...getNodesForCommunity(community, openedCommunities ?? [], evaluator),
         ...(openedCommunities || [])
             .map((id) => communityIndex.get(parseInt(id.replace("c", ""))))

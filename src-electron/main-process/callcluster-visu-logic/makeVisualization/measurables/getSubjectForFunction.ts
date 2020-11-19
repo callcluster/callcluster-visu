@@ -10,6 +10,6 @@ export default function getSubjectForFunction(id: number, evaluator: SubjectEval
         type: 'function',
         value: evaluator(func),
         name: func.name,
-        functions: new Set([id]),
+        //functions: new Set([id]),
     }
 }
