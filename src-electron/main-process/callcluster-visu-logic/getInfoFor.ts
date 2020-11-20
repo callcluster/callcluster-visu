@@ -1,4 +1,5 @@
-import { analysisJson, communityIndex } from "./globals"
+import Analysis from "./Analysis";
+import Analyzable from "./Analyzable";
 interface InfoQuery {
     type:string
 }
@@ -18,13 +19,12 @@ function isCommunityQuery(query: InfoQuery): query is InfoQueryCommunity {
     return query.type !== "function"
 }
 
-
-function getInfoFor(data:InfoQuery):Record<string,string|number> {
+function getInfoFor(data:InfoQuery, analyzable:Analyzable):Record<string,string|number> {
     if (isFunctionQuery(data)) {
         const fid = parseInt((data.id + "").replace("f", ""));
-        return { ...analysisJson["functions"][fid], type: 'function' }
+        return { ...analyzable.getFunction(fid), type: 'function' }
     } else if(isCommunityQuery(data)) {
-        let info = { ...communityIndex.get(data._treemap_id) }
+        let info = { ...analyzable.getCommunity(data._treemap_id) }
         delete info.functions
         delete info.communities
         return {
@@ -36,4 +36,8 @@ function getInfoFor(data:InfoQuery):Record<string,string|number> {
     }
 }
 
-export { getInfoFor }
+function concreteGetInfoFor(data:InfoQuery){
+    return getInfoFor(data, new Analysis())
+}
+
+export { concreteGetInfoFor as getInfoFor }

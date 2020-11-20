@@ -1,4 +1,4 @@
-import { Call, Community, Function } from "./globals";
+import { Call, Community, communityIndex, Function } from "./globals";
 import Analyzable from "./Analyzable";
 import { CommunityName } from "./CommunityName";
 import getCommunity from "./getCommunity";
@@ -6,7 +6,10 @@ import { analysisJson } from "./globals";
 import isWritten from "./isWritten";
 
 export default class Analysis implements Analyzable {
-    getCommunity(path: CommunityName[]): Community {
+    getCommunity(id: number): Community {
+        return communityIndex.get(id)
+    }
+    getCommunityAt(path: CommunityName[]): Community {
         return getCommunity(path,analysisJson.community)
     }
     getWrittenFunctions():Function[] {

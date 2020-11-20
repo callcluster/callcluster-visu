@@ -1,6 +1,6 @@
 import { CommunityIdentifier } from "../../CommunityIdentifier";
 import getAllFunctions from "../../getAllFunctions";
-import { analysisJson, communityIndex } from "../../globals";
+import { communityIndex } from "../../globals";
 import { Measurable } from "./Measurable";
 
 export default class MeasurablesAnalyzer{

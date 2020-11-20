@@ -7,7 +7,7 @@ import Node from "./Node";
 import Analyzable from "../../Analyzable";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
     const {parameters, path, openedCommunities} = visualization
-    const community = analyzable.getCommunity(path ?? [])
+    const community = analyzable.getCommunityAt(path ?? [])
     const evaluator = makeEvaluator(parameters.scaling, parameters.metric)
 
     const nodes:Node[] = [
