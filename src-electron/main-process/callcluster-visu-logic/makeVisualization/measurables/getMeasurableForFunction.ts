@@ -1,9 +1,9 @@
 import { Measurable } from "./Measurable"
 import { SubjectEvaluator } from "../../SubjectEvaluator"
-import { analysisJson } from "../../globals"
+import Analyzable from "../../Analyzable";
 
-export default function getMeasurableForFunction(id: number, evaluator: SubjectEvaluator): Measurable {
-    const func = analysisJson.functions[id];
+export default function getMeasurableForFunction(id: number, evaluator: SubjectEvaluator, analyzable:Analyzable): Measurable {
+    const func = analyzable.getFunction(id)
     return {
         ...func,
         id: `f${id}`,

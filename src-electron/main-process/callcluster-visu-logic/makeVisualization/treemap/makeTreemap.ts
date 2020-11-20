@@ -1,18 +1,17 @@
-import getCommunity from "../../getCommunity";
 import { getTreemap } from 'treemap-squarify';
 import makeEvaluator from "../../makeEvaluator";
-import { analysisJson } from "../../globals"
 import TreemapVisualization from "./TreemapVisualization";
 import { getMeasurablesInside } from "./_measurables";
+import Analyzable from "../../Analyzable";
 
-export default function makeTreemap(visualization: TreemapVisualization) {
-    const community = getCommunity(visualization.path || [], analysisJson.community);
+export default function makeTreemap(visualization: TreemapVisualization, analyzable:Analyzable) {
+    const community = analyzable.getCommunity(visualization.path || [])
     const evaluator = makeEvaluator(
         visualization.parameters.scaling,
         visualization.parameters.metric
     )
 
-    const subjects = getMeasurablesInside(community, evaluator)[1]
+    const subjects = getMeasurablesInside(community, evaluator, analyzable)[1]
         .filter(f => f.value != 0)
         .sort((a, b) => a.value - b.value)
 

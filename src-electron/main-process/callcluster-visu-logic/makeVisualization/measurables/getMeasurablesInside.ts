@@ -1,4 +1,4 @@
-import { analysisJson, Community } from "../../globals";
+import { Community } from "../../globals";
 import { SubjectEvaluator } from "../../SubjectEvaluator";
 import getFunctions from "../../getFunctions";
 import getSubCommunities from "../../getSubCommunities";
@@ -8,11 +8,12 @@ import { Measurable } from "./Measurable";
 import isWritten from "../../isWritten";
 import isAbstract from "../../isAbstract";
 import MeasurablesAnalyzer from "./MeasurablesAnalyzer";
-export default function getMeasurablesInside(community: Community, evaluator: SubjectEvaluator): [MeasurablesAnalyzer, Measurable[]] {
+import Analyzable from "../../Analyzable";
+export default function getMeasurablesInside(community: Community, evaluator: SubjectEvaluator, analyzable:Analyzable): [MeasurablesAnalyzer, Measurable[]] {
     return [new MeasurablesAnalyzer(), [
         ...getFunctions(community)
-            .filter(fid => isWritten(analysisJson.functions[fid]))
-            .map(id => getMeasurableForFunction(id, evaluator)),
+            .filter(fid => isWritten(analyzable.getFunction(fid)))
+            .map(id => getMeasurableForFunction(id, evaluator,analyzable)),
         ...getSubCommunities(community)
             .filter(c => !isAbstract(c))
             .map(c => getMeasurableForCommunity(c, evaluator)),

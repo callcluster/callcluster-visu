@@ -5,6 +5,7 @@ import getColor from "../../getColor";
 import getTreemapId from "../../getTreemapId";
 import { MeasurablesAnalyzer, Measurable, getMeasurablesInside } from "./_measurables";
 import Node from "./Node";
+import Analyzable from "../../Analyzable";
 
 function subjectToNode(subject: Measurable, parent: Community, analyzer: MeasurablesAnalyzer): Node {
     return {
@@ -14,11 +15,11 @@ function subjectToNode(subject: Measurable, parent: Community, analyzer: Measura
         color: getColor(getTreemapId(parent))
     }
 }
-export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator): Node[] {
+export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator, analyzable: Analyzable): Node[] {
 
-    const [analyzer, subjects] = getMeasurablesInside(community, evaluator)
+    const [nodesAnalyzer, subjects] = getMeasurablesInside(community, evaluator, analyzable)
 
     return subjects
-        .filter(subject => !analyzer.identifierIncluded(subject, excludedIds))
-        .map(subject => subjectToNode(subject, community, analyzer))
+        .filter(subject => !nodesAnalyzer.identifierIncluded(subject, excludedIds))
+        .map(subject => subjectToNode(subject, community, nodesAnalyzer))
 }
