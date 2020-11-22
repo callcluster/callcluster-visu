@@ -1,6 +1,6 @@
 import { Measurable } from "./Measurable"
 import { SubjectEvaluator } from "../../SubjectEvaluator"
-import Analyzable from "../../Analyzable";
+import Analyzable from "./_Analyzable";
 
 export default function getMeasurableForFunction(id: number, evaluator: SubjectEvaluator, analyzable:Analyzable): Measurable {
     const func = analyzable.getFunction(id)

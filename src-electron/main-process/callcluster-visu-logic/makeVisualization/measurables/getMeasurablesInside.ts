@@ -8,7 +8,7 @@ import { Measurable } from "./Measurable";
 import isWritten from "../../isWritten";
 import isAbstract from "../../isAbstract";
 import MeasurablesAnalyzer from "./MeasurablesAnalyzer";
-import Analyzable from "../../Analyzable";
+import Analyzable from "./_Analyzable";
 export default function getMeasurablesInside(community: Community, evaluator: SubjectEvaluator, analyzable:Analyzable): [MeasurablesAnalyzer, Measurable[]] {
     return [new MeasurablesAnalyzer(), [
         ...getFunctions(community)

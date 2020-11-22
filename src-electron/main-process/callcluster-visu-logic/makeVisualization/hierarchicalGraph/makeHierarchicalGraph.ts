@@ -1,10 +1,8 @@
-import { analysisJson, communityIndex } from "../../globals";
 import HierarchicalVisualization from "./HierarchicalVisualization";
-import getCommunity from "../../getCommunity";
 import makeEvaluator from "../../makeEvaluator";
 import getNodesInsideCommunity from "./getNodesInsideCommunity";
 import Node from "./Node";
-import Analyzable from "../../Analyzable";
+import Analyzable from "./_Analyzable";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
     const {parameters, path, openedCommunities} = visualization
     const community = analyzable.getCommunityAt(path ?? [])
@@ -13,7 +11,7 @@ export default function makeHierarchicalGraph(visualization:HierarchicalVisualiz
     const nodes:Node[] = [
         ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable),
         ...(openedCommunities || [])
-            .map((id) => communityIndex.get(parseInt(id.replace("c", ""))))
+            .map((id) => analyzable.getCommunity(parseInt(id.replace("c", ""))))
             .map((community) => getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable))
             .reduce((a, b) => [...a, ...b], [])
     ]

@@ -1,11 +1,11 @@
-import { Community, analysisJson } from "../../globals";
+import { Community } from "../../globals";
 import { CommunityIdentifier } from "../../CommunityIdentifier";
 import { SubjectEvaluator } from "../../SubjectEvaluator";
 import getColor from "../../getColor";
 import getTreemapId from "../../getTreemapId";
 import { MeasurablesAnalyzer, Measurable, getMeasurablesInside } from "./_measurables";
 import Node from "./Node";
-import Analyzable from "../../Analyzable";
+import Analyzable from "./_Analyzable";
 
 function subjectToNode(subject: Measurable, parent: Community, analyzer: MeasurablesAnalyzer): Node {
     return {

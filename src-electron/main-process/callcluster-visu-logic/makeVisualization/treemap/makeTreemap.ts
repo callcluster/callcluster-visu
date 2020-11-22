@@ -2,7 +2,7 @@ import { getTreemap } from 'treemap-squarify';
 import makeEvaluator from "../../makeEvaluator";
 import TreemapVisualization from "./TreemapVisualization";
 import { getMeasurablesInside } from "./_measurables";
-import Analyzable from "../../Analyzable";
+import Analyzable from "./_Analyzable";
 
 export default function makeTreemap(visualization: TreemapVisualization, analyzable:Analyzable) {
     const community = analyzable.getCommunityAt(visualization.path || [])

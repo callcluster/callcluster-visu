@@ -1,7 +1,7 @@
 import scale from "../../scale";
 import getMetric from "../../getMetric";
 import HistogramVisualization from "./HistogramVisualization";
-import Analyzable from "../../Analyzable";
+import Analyzable from "./_Analyzable";
 export default function makeHistogram({parameters}:HistogramVisualization, analyzable:Analyzable) {
     let { metric, bins = 100, scaling = 'linear' } = parameters;
 
