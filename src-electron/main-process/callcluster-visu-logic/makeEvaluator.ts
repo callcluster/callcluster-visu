@@ -1,4 +1,4 @@
-import { Metric, Function, Community } from "./globals"
+import { Metric, Function, Community } from "./types"
 import scale,{Scaling} from "./scale"
 import getMetric from "./getMetric";
 export default function makeEvaluator(scaling: Scaling, metric: Metric) {

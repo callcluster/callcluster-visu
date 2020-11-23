@@ -1,4 +1,4 @@
-import { Community } from "../../globals";
+import { Community } from "../../types";
 import { CommunityIdentifier } from "../../CommunityIdentifier";
 import { SubjectEvaluator } from "../../SubjectEvaluator";
 import getColor from "../../getColor";

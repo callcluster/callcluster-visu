@@ -1,4 +1,4 @@
-import { Community } from "./globals"
+import { Community } from "./types"
 import { CommunityName } from "./CommunityName"
 import getSubCommunities from "./getSubCommunities";
 

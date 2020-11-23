@@ -1,4 +1,4 @@
-import { Call, Community, Function } from "./globals";
+import { Call, Community, Function } from "./types";
 import { CommunityName } from "./CommunityName"
 export default interface Analyzable {
     getCommunity(id: number):Community;

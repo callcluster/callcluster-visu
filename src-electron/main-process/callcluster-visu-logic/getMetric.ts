@@ -1,4 +1,4 @@
-import {Metric, Community, Function} from "./globals"
+import {Metric, Community, Function} from "./types"
 export default function getMetric(subject: Function | Community, metric: Metric): number {
     if (metric in subject) {
         return subject[metric] as number
