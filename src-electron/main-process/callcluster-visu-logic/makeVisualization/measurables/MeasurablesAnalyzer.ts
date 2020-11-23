@@ -1,5 +1,5 @@
 import { CommunityIdentifier } from "../../CommunityIdentifier";
-import getAllFunctions from "../../getAllFunctions";
+import getAllFunctions from "./getAllFunctions";
 import { communityIndex } from "../../globals";
 import { Measurable } from "./Measurable";
 

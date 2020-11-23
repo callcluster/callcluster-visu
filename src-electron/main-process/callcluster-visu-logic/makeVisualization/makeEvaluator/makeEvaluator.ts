@@ -1,4 +1,4 @@
-import { Metric, Function, Community } from "../../types"
+import { Function, Community } from "../../types"
 import scale from "./scale"
 import getMetric from "../../getMetric";
 import { SubjectEvaluator } from "./SubjectEvaluator";
