@@ -1,12 +1,12 @@
 import HierarchicalVisualization from "./HierarchicalVisualization";
-import makeEvaluator from "../../makeEvaluator";
+import makeEvaluator from "./_makeEvaluator";
 import getNodesInsideCommunity from "./getNodesInsideCommunity";
 import Node from "./Node";
 import Analyzable from "./_Analyzable";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
-    const {parameters, path, openedCommunities} = visualization
+    const {path, openedCommunities} = visualization
     const community = analyzable.getCommunityAt(path ?? [])
-    const evaluator = makeEvaluator(parameters.scaling, parameters.metric)
+    const evaluator = makeEvaluator(visualization)
 
     const nodes:Node[] = [
         ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable),

@@ -1,4 +1,4 @@
-import Visualization from "../Visualization";
+import Visualization from "./Visualization";
 import { makeHistogram, isHistogram } from "./histogram";
 import { isTreemap, makeTreemap } from "./treemap";
 import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";

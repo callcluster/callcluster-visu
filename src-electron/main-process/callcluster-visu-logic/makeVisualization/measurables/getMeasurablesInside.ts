@@ -1,5 +1,5 @@
 import { Community } from "../../types";
-import { SubjectEvaluator } from "../../SubjectEvaluator";
+import { SubjectEvaluator } from "./_makeEvaluator";
 import getFunctions from "../../getFunctions";
 import getSubCommunities from "../../getSubCommunities";
 import getMeasurableForFunction from "./getMeasurableForFunction";

@@ -1,14 +1,14 @@
-import scale from "../../scale";
-import getMetric from "../../getMetric";
 import HistogramVisualization from "./HistogramVisualization";
 import Analyzable from "./_Analyzable";
-export default function makeHistogram({parameters}:HistogramVisualization, analyzable:Analyzable) {
-    let { metric, bins = 100, scaling = 'linear' } = parameters;
+import makeEvaluator from "./_makeEvaluator";
+export default function makeHistogram(visualization:HistogramVisualization, analyzable:Analyzable) {
+    let { bins = 100 } = visualization.parameters;
+    const evaluate = makeEvaluator(visualization)
 
     let min = Infinity
     let max = -Infinity
     for (const func of analyzable.getWrittenFunctions()) {
-        const val = scale(scaling, getMetric(func,metric))
+        const val = evaluate(func)
         if (!isNaN(val) && val < 100000) {
             min = Math.min(val, min)
             max = Math.max(val, max)
@@ -25,7 +25,7 @@ export default function makeHistogram({parameters}:HistogramVisualization, analy
         max: (min + binSize * (i + 1))
     }))
     for (const func of analyzable.getWrittenFunctions()) {
-        const x = scale(scaling, getMetric(func,metric))
+        const x = evaluate(func)
         const bin = Math.floor((x - min) / binSize)
         const realBin = Math.min(bin, histogram.length - 1)
         if (histogram[realBin]) {
