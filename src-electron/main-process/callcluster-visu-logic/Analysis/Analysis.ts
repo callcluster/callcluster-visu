@@ -48,4 +48,13 @@ export default class Analysis implements Analyzable {
             throw Error("This community has no treemap id")
         }
     }
+    isAbstract(community: Community): boolean {
+        return (
+            this.getSubCommunities(community).length == 0
+            &&
+            this.getFunctionsInside(community).every(
+                f => !isWritten(analysisJson["functions"][f])
+            )
+        )
+    }
 }

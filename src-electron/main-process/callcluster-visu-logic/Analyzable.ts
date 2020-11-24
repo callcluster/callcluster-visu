@@ -9,4 +9,5 @@ export default interface Analyzable {
     getSubCommunities(c: Community): Community[]
     getFunctionsInside(community: Community): number[]
     getTreemapId(community: Community):number
+    isAbstract(community: Community):boolean
 }
