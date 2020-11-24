@@ -2,7 +2,6 @@ import { Metric, CommunityName, Call, Community, Function } from "./_types";
 import Analyzable from "../Analyzable";
 import getCommunity from "./getCommunity";
 import { analysisJson, communityIndex } from "../globals";
-import isWritten from "../isWritten";
 
 export default class Analysis implements Analyzable {
     getCommunity(id: number): Community {
@@ -12,7 +11,7 @@ export default class Analysis implements Analyzable {
         return getCommunity(path,analysisJson.community, this)
     }
     getWrittenFunctions():Function[] {
-        return analysisJson["functions"].filter(isWritten)
+        return analysisJson["functions"].filter(this.isWritten)
     }
     getFunction(id:number):Function{
         return analysisJson.functions[id];
@@ -53,8 +52,11 @@ export default class Analysis implements Analyzable {
             this.getSubCommunities(community).length == 0
             &&
             this.getFunctionsInside(community).every(
-                f => !isWritten(analysisJson["functions"][f])
+                f => !this.isWritten(analysisJson["functions"][f])
             )
         )
+    }
+    isWritten(func: Function): boolean {
+        return func.written == undefined || func.written == true;
     }
 }
