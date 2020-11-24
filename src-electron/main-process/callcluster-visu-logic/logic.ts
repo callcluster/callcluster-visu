@@ -33,7 +33,7 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
 function setAnalysisJson(localAnalysisJson: any) {
     setAnalysisJsonGlobalVariable(localAnalysisJson);
     let metrics = getAvailableMetrics();
-    let analysis = new Analysis()
+    let analysis = new Analysis(analysisJson,communityIndex)
     prepareCommunityForTreemap(analysisJson.community, metrics, communityIndex, analysis)
 }
 

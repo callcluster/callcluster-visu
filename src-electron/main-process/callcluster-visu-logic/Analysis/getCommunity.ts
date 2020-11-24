@@ -1,4 +1,4 @@
-import Analyzable from "../Analyzable";
+import Analyzable from "./_Analyzable";
 import { CommunityName, Community } from "./_types"
 
 export default function getCommunity(path: CommunityName[], community: Community, analysis:Analyzable): Community {

@@ -1,23 +1,24 @@
-import { Metric, CommunityName, Call, Community, Function } from "./_types";
+import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson } from "./_types";
 import Analyzable from "../Analyzable";
 import getCommunity from "./getCommunity";
-import { analysisJson, communityIndex } from "../globals";
+import Indexer from "../Indexer";
 
 export default class Analysis implements Analyzable {
+    constructor( private analysisJson:OriginalAnalysisJson, private communityIndex:Indexer<Community> ) {}
     getCommunity(id: number): Community {
-        return communityIndex.get(id)
+        return this.communityIndex.get(id)
     }
     getCommunityAt(path: CommunityName[]): Community {
-        return getCommunity(path,analysisJson.community, this)
+        return getCommunity(path,this.analysisJson.community, this)
     }
     getWrittenFunctions():Function[] {
-        return analysisJson["functions"].filter(this.isWritten)
+        return this.analysisJson["functions"].filter(this.isWritten)
     }
     getFunction(id:number):Function{
-        return analysisJson.functions[id];
+        return this.analysisJson.functions[id];
     }
     getCalls():Call[]{
-        return analysisJson.calls
+        return this.analysisJson.calls
     }
     getMetric(subject: Function | Community, metric: Metric): number {
         if (metric in subject) {
@@ -52,7 +53,7 @@ export default class Analysis implements Analyzable {
             this.getSubCommunities(community).length == 0
             &&
             this.getFunctionsInside(community).every(
-                f => !this.isWritten(analysisJson["functions"][f])
+                f => !this.isWritten(this.analysisJson["functions"][f])
             )
         )
     }
