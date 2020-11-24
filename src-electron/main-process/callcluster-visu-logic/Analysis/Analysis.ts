@@ -41,4 +41,11 @@ export default class Analysis implements Analyzable {
             throw Error("This community has no functions")
         }
     }
+    getTreemapId(community: Community):number {
+        if ("_treemap_id" in community) {
+            return community["_treemap_id"] as number
+        } else {
+            throw Error("This community has no treemap id")
+        }
+    }
 }

@@ -14,6 +14,6 @@ export default function getMeasurablesInside(community: Community, evaluator: Su
             .map(id => getMeasurableForFunction(id, evaluator,analyzable)),
         ...analyzable.getSubCommunities(community)
             .filter(c => !isAbstract(c,analyzable))
-            .map(c => getMeasurableForCommunity(c, evaluator)),
+            .map(c => getMeasurableForCommunity(c, evaluator, analyzable)),
     ]]
 }

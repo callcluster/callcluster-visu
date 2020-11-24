@@ -8,4 +8,5 @@ export default interface Analyzable {
     getMetric(subject: Function | Community, metric: Metric): number
     getSubCommunities(c: Community): Community[]
     getFunctionsInside(community: Community): number[]
+    getTreemapId(community: Community):number
 }
