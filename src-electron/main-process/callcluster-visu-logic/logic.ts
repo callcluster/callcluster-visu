@@ -1,40 +1,42 @@
 import Index from "./Indexer"
 import { Metric, Community } from "./types"
-import getMetric from "./getMetric";
 import getSubCommunities from "./getSubCommunities";
 import {analysisJson, communityIndex, setAnalysisJsonGlobalVariable} from "./globals"
 
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
 
-function addToMetric(community: Community, metric: Metric, value: number): number {
+function addToMetric(community: Community, metric: Metric, value: number, analysis:Analyzable): number {
     let gotMetric = 0
     try {
-        gotMetric = getMetric(community, metric)
+        gotMetric = analysis.getMetric(community, metric)
     } catch (_) { }
     const sum = gotMetric + value
     community[metric] = sum
     return sum
 }
 import getFunctionsInside from "./getFunctionsInside";
+import Analysis from "./Analysis";
+import Analyzable from "./makeVisualization/_Analyzable";
 
 
 // ----------------------------------------- SETTERS -------------------------------------- //
-function prepareCommunityForTreemap(community: Community, metrics: Metric[], index: Index<Community>) {
+function prepareCommunityForTreemap(community: Community, metrics: Metric[], index: Index<Community>, analysis:Analyzable) {
     community._treemap_id = index.nextId
     index.add(community)
-    getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index))
-    getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, getMetric(childCommunity, m))))
+    getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index, analysis))
+    getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)))
     getFunctionsInside(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>
-            addToMetric(community, metric, getMetric(func, metric))
+            addToMetric(community, metric, analysis.getMetric(func, metric), analysis)
         ))
 }
 
 function setAnalysisJson(localAnalysisJson: any) {
     setAnalysisJsonGlobalVariable(localAnalysisJson);
     let metrics = getAvailableMetrics();
-    prepareCommunityForTreemap(analysisJson.community, metrics, communityIndex)
+    let analysis = new Analysis()
+    prepareCommunityForTreemap(analysisJson.community, metrics, communityIndex, analysis)
 }
 
 // ------------------------------------------- COMPLEX QUERIES --------------------------//

@@ -1,13 +1,13 @@
 import { Function, Community } from "./_types"
 import scale from "./scale"
-import getMetric from "../../getMetric";
 import { SubjectEvaluator } from "./SubjectEvaluator";
 import Visualization from "../Visualization";
-export default function makeEvaluator(visualization:Visualization):SubjectEvaluator {
+import Analyzable from "../_Analyzable";
+export default function makeEvaluator(visualization:Visualization, analysis:Analyzable):SubjectEvaluator {
     return (s: Function | Community) => {
         return scale(
             visualization.parameters.scaling,
-            getMetric(s, visualization.parameters.metric)
+            analysis.getMetric(s, visualization.parameters.metric)
         )
     }
 }

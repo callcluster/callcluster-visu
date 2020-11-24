@@ -3,7 +3,7 @@ import Analyzable from "./_Analyzable";
 import makeEvaluator from "./_makeEvaluator";
 export default function makeHistogram(visualization:HistogramVisualization, analyzable:Analyzable) {
     let { bins = 100 } = visualization.parameters;
-    const evaluate = makeEvaluator(visualization)
+    const evaluate = makeEvaluator(visualization, analyzable)
 
     let min = Infinity
     let max = -Infinity

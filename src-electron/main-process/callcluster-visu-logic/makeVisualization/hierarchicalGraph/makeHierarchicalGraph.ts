@@ -6,7 +6,7 @@ import Analyzable from "./_Analyzable";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
     const {path, openedCommunities} = visualization
     const community = analyzable.getCommunityAt(path ?? [])
-    const evaluator = makeEvaluator(visualization)
+    const evaluator = makeEvaluator(visualization, analyzable)
 
     const nodes:Node[] = [
         ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable),

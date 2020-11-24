@@ -6,7 +6,7 @@ import Analyzable from "./_Analyzable";
 
 export default function makeTreemap(visualization: TreemapVisualization, analyzable:Analyzable) {
     const community = analyzable.getCommunityAt(visualization.path || [])
-    const evaluator = makeEvaluator(visualization)
+    const evaluator = makeEvaluator(visualization, analyzable)
 
     const subjects = getMeasurablesInside(community, evaluator, analyzable)[1]
         .filter(f => f.value != 0)
