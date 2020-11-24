@@ -1,5 +1,4 @@
-import { Community } from "../../types";
-import { CommunityIdentifier } from "../../CommunityIdentifier";
+import { CommunityIdentifier, Community } from "../../types";
 import { SubjectEvaluator } from "./_makeEvaluator";
 import getColor from "./getColor";
 import getTreemapId from "../../getTreemapId";

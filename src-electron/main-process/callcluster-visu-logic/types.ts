@@ -16,4 +16,9 @@ export interface OriginalAnalysisJson {
     functions: Function[],
     community: Community
 }
+
 export type Metric = string;
+
+export type CommunityIdentifier = string
+
+export type CommunityName = string;

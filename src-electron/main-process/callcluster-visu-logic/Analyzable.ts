@@ -1,5 +1,4 @@
-import { Call, Community, Function } from "./types";
-import { CommunityName } from "./CommunityName"
+import { CommunityName, Call, Community, Function } from "./types";
 export default interface Analyzable {
     getCommunity(id: number):Community;
     getCommunityAt(path:CommunityName[]):Community
