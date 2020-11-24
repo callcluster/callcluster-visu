@@ -13,7 +13,6 @@ function addToMetric(community: Community, metric: Metric, value: number, analys
     community[metric] = sum
     return sum
 }
-import getFunctionsInside from "./getFunctionsInside";
 import Analysis from "./Analysis";
 import Analyzable from "./makeVisualization/_Analyzable";
 
@@ -24,7 +23,7 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
     index.add(community)
     analysis.getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index, analysis))
     analysis.getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)))
-    getFunctionsInside(community)
+    analysis.getFunctionsInside(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>
             addToMetric(community, metric, analysis.getMetric(func, metric), analysis)

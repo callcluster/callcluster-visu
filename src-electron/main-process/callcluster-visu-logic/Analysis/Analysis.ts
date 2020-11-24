@@ -34,4 +34,11 @@ export default class Analysis implements Analyzable {
             throw Error("Cannot get subcommunities of a community")
         }
     }
+    getFunctionsInside(community: Community): number[] {
+        if ("functions" in community) {
+            return community["functions"] as number[]
+        } else {
+            throw Error("This community has no functions")
+        }
+    }
 }
