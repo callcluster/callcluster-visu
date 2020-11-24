@@ -1,5 +1,5 @@
 export { setAnalysisJson, getAvailableMetrics } from './logic'
-export { getInfoFor } from './getInfoFor'
+export { getInfoFor } from './concreteGetInfoFor'
 
 import makeVisualization from './concreteMakeVisualization'
 export { makeVisualization }
