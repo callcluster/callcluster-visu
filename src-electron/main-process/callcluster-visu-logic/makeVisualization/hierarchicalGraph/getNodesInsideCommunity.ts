@@ -1,7 +1,7 @@
 import { Community } from "../../types";
 import { CommunityIdentifier } from "../../CommunityIdentifier";
 import { SubjectEvaluator } from "./_makeEvaluator";
-import getColor from "../../getColor";
+import getColor from "./getColor";
 import getTreemapId from "../../getTreemapId";
 import { MeasurablesAnalyzer, Measurable, getMeasurablesInside } from "./_measurables";
 import Node from "./Node";

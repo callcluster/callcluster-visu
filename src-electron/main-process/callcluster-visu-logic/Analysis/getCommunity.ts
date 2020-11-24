@@ -1,6 +1,6 @@
-import { Community } from "./types"
-import { CommunityName } from "./CommunityName"
-import getSubCommunities from "./getSubCommunities";
+import { Community } from "../types"
+import { CommunityName } from "../CommunityName"
+import getSubCommunities from "../getSubCommunities";
 
 export default function getCommunity(path: CommunityName[], community: Community): Community {
     if (path.length == 0) {
