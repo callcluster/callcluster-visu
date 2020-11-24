@@ -15,7 +15,7 @@ function addToMetric(community: Community, metric: Metric, value: number): numbe
     community[metric] = sum
     return sum
 }
-import getFunctions from "./getFunctions";
+import getFunctionsInside from "./getFunctionsInside";
 
 
 // ----------------------------------------- SETTERS -------------------------------------- //
@@ -24,7 +24,7 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
     index.add(community)
     getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index))
     getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, getMetric(childCommunity, m))))
-    getFunctions(community)
+    getFunctionsInside(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>
             addToMetric(community, metric, getMetric(func, metric))

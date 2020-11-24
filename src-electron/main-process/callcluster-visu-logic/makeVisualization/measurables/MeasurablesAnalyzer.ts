@@ -1,5 +1,5 @@
 import { CommunityIdentifier } from "./_types";
-import getAllFunctions from "./getAllFunctions";
+import getAllFunctionsInside from "./getAllFunctionsInside";
 import { communityIndex } from "../../globals";
 import { Measurable } from "./Measurable";
 
@@ -9,7 +9,7 @@ export default class MeasurablesAnalyzer{
         if(subject.type==='function'){
             return new Set([numberId])
         }else{
-            return new Set(getAllFunctions(communityIndex.get(numberId)))
+            return new Set(getAllFunctionsInside(communityIndex.get(numberId)))
         }
     }
     

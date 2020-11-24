@@ -1,6 +1,6 @@
 import { Community } from "./_types";
 import { SubjectEvaluator } from "./_makeEvaluator";
-import getFunctions from "../../getFunctions";
+import getFunctionsInside from "../../getFunctionsInside";
 import getSubCommunities from "../../getSubCommunities";
 import getMeasurableForFunction from "./getMeasurableForFunction";
 import getMeasurableForCommunity from "./getMeasurableForCommunity";
@@ -11,7 +11,7 @@ import MeasurablesAnalyzer from "./MeasurablesAnalyzer";
 import Analyzable from "./_Analyzable";
 export default function getMeasurablesInside(community: Community, evaluator: SubjectEvaluator, analyzable:Analyzable): [MeasurablesAnalyzer, Measurable[]] {
     return [new MeasurablesAnalyzer(), [
-        ...getFunctions(community)
+        ...getFunctionsInside(community)
             .filter(fid => isWritten(analyzable.getFunction(fid)))
             .map(id => getMeasurableForFunction(id, evaluator,analyzable)),
         ...getSubCommunities(community)
