@@ -1,12 +1,12 @@
 import { Community } from "./_types"
 import getFunctionsInside from "../../getFunctionsInside";
-import getSubCommunities from "../../getSubCommunities";
-export default function getAllFunctionsInside(community: Community): number[] {
+import Analyzable from "./_Analyzable";
+export default function getAllFunctionsInside(community: Community, analysis:Analyzable): number[] {
     return [
         ...getFunctionsInside(community),
         ...(
-            getSubCommunities(community)
-                .map(getAllFunctionsInside)
+            analysis.getSubCommunities(community)
+                .map((community)=>getAllFunctionsInside(community,analysis))
                 .reduce((a, b) => [...a, ...b], [])
         )
     ]

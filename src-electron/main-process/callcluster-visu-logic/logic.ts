@@ -1,6 +1,5 @@
 import Index from "./Indexer"
 import { Metric, Community } from "./types"
-import getSubCommunities from "./getSubCommunities";
 import {analysisJson, communityIndex, setAnalysisJsonGlobalVariable} from "./globals"
 
 // ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
@@ -23,8 +22,8 @@ import Analyzable from "./makeVisualization/_Analyzable";
 function prepareCommunityForTreemap(community: Community, metrics: Metric[], index: Index<Community>, analysis:Analyzable) {
     community._treemap_id = index.nextId
     index.add(community)
-    getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index, analysis))
-    getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)))
+    analysis.getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index, analysis))
+    analysis.getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)))
     getFunctionsInside(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>

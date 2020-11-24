@@ -9,7 +9,7 @@ export default class Analysis implements Analyzable {
         return communityIndex.get(id)
     }
     getCommunityAt(path: CommunityName[]): Community {
-        return getCommunity(path,analysisJson.community)
+        return getCommunity(path,analysisJson.community, this)
     }
     getWrittenFunctions():Function[] {
         return analysisJson["functions"].filter(isWritten)
@@ -25,6 +25,13 @@ export default class Analysis implements Analyzable {
             return subject[metric] as number
         } else {
             throw Error("This metric doesn't exist within this subject. Metric:" + metric+" subject: "+JSON.stringify(subject))
+        }
+    }
+    getSubCommunities(c: Community): Community[] {
+        if ("communities" in c) {
+            return c.communities as Community[];
+        } else {
+            throw Error("Cannot get subcommunities of a community")
         }
     }
 }

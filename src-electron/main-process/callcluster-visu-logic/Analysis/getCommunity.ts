@@ -1,16 +1,16 @@
+import Analyzable from "../Analyzable";
 import { CommunityName, Community } from "./_types"
-import getSubCommunities from "../getSubCommunities";
 
-export default function getCommunity(path: CommunityName[], community: Community): Community {
+export default function getCommunity(path: CommunityName[], community: Community, analysis:Analyzable): Community {
     if (path.length == 0) {
         return community;
     } else {
         let communityName = path[0]
-        let possibleNextCommunities = getSubCommunities(community).filter(c => c.name == communityName)
+        let possibleNextCommunities = analysis.getSubCommunities(community).filter(c => c.name == communityName)
         if (possibleNextCommunities.length == 0) {
             return community;
         } else {
-            return getCommunity(path.slice(1), possibleNextCommunities[0])
+            return getCommunity(path.slice(1), possibleNextCommunities[0], analysis)
         }
     }
 }

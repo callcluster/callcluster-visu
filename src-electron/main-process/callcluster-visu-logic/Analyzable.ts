@@ -6,4 +6,5 @@ export default interface Analyzable {
     getFunction(id:number):Function
     getCalls():Call[]
     getMetric(subject: Function | Community, metric: Metric): number
+    getSubCommunities(c: Community): Community[]
 }
