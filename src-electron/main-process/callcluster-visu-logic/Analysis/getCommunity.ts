@@ -1,4 +1,4 @@
-import { CommunityName, Community } from "../types"
+import { CommunityName, Community } from "./_types"
 import getSubCommunities from "../getSubCommunities";
 
 export default function getCommunity(path: CommunityName[], community: Community): Community {

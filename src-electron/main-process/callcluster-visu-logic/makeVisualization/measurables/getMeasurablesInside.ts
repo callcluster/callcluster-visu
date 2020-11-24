@@ -1,4 +1,4 @@
-import { Community } from "../../types";
+import { Community } from "./_types";
 import { SubjectEvaluator } from "./_makeEvaluator";
 import getFunctions from "../../getFunctions";
 import getSubCommunities from "../../getSubCommunities";

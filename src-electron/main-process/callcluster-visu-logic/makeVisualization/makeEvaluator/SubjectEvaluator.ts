@@ -1,2 +1,2 @@
-import { Community, Function } from "../../types";
+import { Community, Function } from "./_types";
 export type SubjectEvaluator = (s: Function | Community) => number

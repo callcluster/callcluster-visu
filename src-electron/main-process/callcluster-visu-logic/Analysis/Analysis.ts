@@ -1,4 +1,4 @@
-import { CommunityName, Call, Community, Function } from "../types";
+import { CommunityName, Call, Community, Function } from "./_types";
 import Analyzable from "../Analyzable";
 import getCommunity from "./getCommunity";
 import { analysisJson, communityIndex } from "../globals";

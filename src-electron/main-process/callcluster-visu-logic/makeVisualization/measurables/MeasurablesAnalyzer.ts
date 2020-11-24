@@ -1,4 +1,4 @@
-import { CommunityIdentifier } from "../../types";
+import { CommunityIdentifier } from "./_types";
 import getAllFunctions from "./getAllFunctions";
 import { communityIndex } from "../../globals";
 import { Measurable } from "./Measurable";

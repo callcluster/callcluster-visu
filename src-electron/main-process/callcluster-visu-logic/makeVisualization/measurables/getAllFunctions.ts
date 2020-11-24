@@ -1,4 +1,4 @@
-import { Community } from "../../types"
+import { Community } from "./_types"
 import getFunctions from "../../getFunctions";
 import getSubCommunities from "../../getSubCommunities";
 export default function getAllFunctions(community: Community): number[] {
