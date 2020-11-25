@@ -1,18 +1,10 @@
 import Index from "./Indexer"
 import { Metric, Community } from "./types"
-import {analysisJson, communityIndex, setAnalysisJsonGlobalVariable} from "./globals"
-
-// ----------------------------- GETTERS AND TYPE DEFINITIONS ----------------------------//
-
-function addToMetric(community: Community, metric: Metric, value: number, analysis:Analyzable): number {
-    let gotMetric = 0
-    try {
-        gotMetric = analysis.getMetric(community, metric)
-    } catch (_) { }
-    const sum = gotMetric + value
-    community[metric] = sum
-    return sum
-}
+import {
+    analysisJson,
+    communityIndex,
+    setAnalysisJsonGlobalVariable
+} from "./globals"
 import Analysis from "./Analysis";
 import Analyzable from "./makeVisualization/_Analyzable";
 
@@ -30,14 +22,14 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
     analysis.getSubCommunities(community)
         .forEach(childCommunity => 
             metrics.forEach(m => 
-                addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)
+                analysis.addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)
             )
         )
 
     analysis.getFunctionsInside(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>
-            addToMetric(community, metric, analysis.getMetric(func, metric), analysis)
+            analysis.addToMetric(community, metric, analysis.getMetric(func, metric), analysis)
         ))
 }
 

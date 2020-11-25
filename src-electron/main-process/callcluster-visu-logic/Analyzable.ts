@@ -12,4 +12,6 @@ export default interface Analyzable {
     isAbstract(community: Community):boolean
     isWritten(func: Function): boolean
     getAvailableMetrics(): Metric[]
+    getAvailableMetrics(): Metric[]
+    addToMetric(community: Community, metric: Metric, value: number, analysis:Analyzable): number
 }

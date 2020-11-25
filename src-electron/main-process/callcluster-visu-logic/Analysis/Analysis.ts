@@ -73,4 +73,13 @@ export default class Analysis implements Analyzable {
         });
         return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
     }
+    addToMetric(community: Community, metric: Metric, value: number, analysis:Analyzable): number {
+        let gotMetric = 0
+        try {
+            gotMetric = this.getMetric(community, metric)
+        } catch (_) { }
+        const sum = gotMetric + value
+        community[metric] = sum
+        return sum
+    }
 }
