@@ -60,4 +60,17 @@ export default class Analysis implements Analyzable {
     isWritten(func: Function): boolean {
         return func.written == undefined || func.written == true;
     }
+    getAvailableMetrics(): Metric[] {
+        let metricsDict: Record<string, boolean> = {}
+        this.analysisJson.functions.forEach(f => {
+            Object.keys(f)
+                .filter(k => {
+                    return !Number.isNaN(f[k])
+                })
+                .forEach(k => {
+                    metricsDict[k] = true
+                });
+        });
+        return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
+    }
 }

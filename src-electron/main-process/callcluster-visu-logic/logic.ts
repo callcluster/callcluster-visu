@@ -21,8 +21,19 @@ import Analyzable from "./makeVisualization/_Analyzable";
 function prepareCommunityForTreemap(community: Community, metrics: Metric[], index: Index<Community>, analysis:Analyzable) {
     community._treemap_id = index.nextId
     index.add(community)
-    analysis.getSubCommunities(community).forEach(c => prepareCommunityForTreemap(c, metrics, index, analysis))
-    analysis.getSubCommunities(community).forEach(childCommunity => metrics.forEach(m => addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)))
+
+    analysis.getSubCommunities(community)
+        .forEach(childCommunity => 
+            prepareCommunityForTreemap(childCommunity, metrics, index, analysis)
+        )
+
+    analysis.getSubCommunities(community)
+        .forEach(childCommunity => 
+            metrics.forEach(m => 
+                addToMetric(community, m, analysis.getMetric(childCommunity, m), analysis)
+            )
+        )
+
     analysis.getFunctionsInside(community)
         .map(id => analysisJson.functions[id])
         .forEach(func => metrics.forEach(metric =>
@@ -32,29 +43,9 @@ function prepareCommunityForTreemap(community: Community, metrics: Metric[], ind
 
 function setAnalysisJson(localAnalysisJson: any) {
     setAnalysisJsonGlobalVariable(localAnalysisJson);
-    let metrics = getAvailableMetrics();
     let analysis = new Analysis(analysisJson,communityIndex)
+    let metrics = analysis.getAvailableMetrics()
     prepareCommunityForTreemap(analysisJson.community, metrics, communityIndex, analysis)
 }
 
-// ------------------------------------------- COMPLEX QUERIES --------------------------//
-function getAvailableMetrics(): Metric[] {
-    let metricsDict: Record<string, boolean> = {}
-
-    analysisJson.functions.forEach(f => {
-        Object.keys(f)
-            .filter(k => {
-                return !Number.isNaN(f[k])
-            })
-            .forEach(k => {
-                metricsDict[k] = true
-            });
-    });
-    return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
-}
-
-// ----------------------------------- MAKEVISUALIZATION: MAIN ENTRY POINT -------------------//
-
-
-
-export { setAnalysisJson, getAvailableMetrics };
+export { setAnalysisJson };

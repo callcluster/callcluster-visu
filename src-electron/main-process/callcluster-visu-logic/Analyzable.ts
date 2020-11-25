@@ -11,4 +11,5 @@ export default interface Analyzable {
     getTreemapId(community: Community):number
     isAbstract(community: Community):boolean
     isWritten(func: Function): boolean
+    getAvailableMetrics(): Metric[]
 }
