@@ -1,2 +1,2 @@
-import Analysis from "./Analysis";
-export default Analysis
+import createAnalysis from "./createAnalysis";
+export default createAnalysis

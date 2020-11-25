@@ -1,15 +1,14 @@
-import Analysis from "./Analysis";
+import createAnalysis from "./Analysis";
+import Analyzable from "./Analysis/_Analyzable";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
-import Indexer from "./Indexer";
 import makeVisualization, { Visualization } from "./makeVisualization";
-import { Community, OriginalAnalysisJson } from "./types";
+import { OriginalAnalysisJson } from "./types";
 
 export default class Controller{
-    private repository:Analysis|undefined
+    private repository:Analyzable|undefined
 
     public setAnalysisJson(localAnalysisJson: any){
-        let communityIndex = new Indexer<Community>();
-        this.repository = new Analysis(localAnalysisJson as OriginalAnalysisJson,communityIndex)
+        this.repository = createAnalysis(localAnalysisJson as OriginalAnalysisJson)
         this.repository.optimize()
     }
 

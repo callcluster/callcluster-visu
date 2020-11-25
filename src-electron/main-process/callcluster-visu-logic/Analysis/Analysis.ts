@@ -1,10 +1,11 @@
 import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson } from "./_types";
-import Analyzable from "../Analyzable";
+import Analyzable from "./_Analyzable";
 import getCommunity from "./getCommunity";
-import Indexer from "../Indexer";
+import Indexer from "./Indexer";
 
 export default class Analysis implements Analyzable {
-    constructor( private analysisJson:OriginalAnalysisJson, private communityIndex:Indexer<Community> ) {}
+    private communityIndex:Indexer<Community>=new Indexer<Community>()
+    constructor( private analysisJson:OriginalAnalysisJson  ) {}
     getCommunity(id: number): Community {
         return this.communityIndex.get(id)
     }
