@@ -1,12 +1,9 @@
-import Index from "./Indexer"
-import { Metric, Community } from "./types"
 import {
     analysisJson,
     communityIndex,
     setAnalysisJsonGlobalVariable
 } from "./globals"
 import Analysis from "./Analysis";
-import Analyzable from "./makeVisualization/_Analyzable";
 
 
 // ----------------------------------------- SETTERS -------------------------------------- //
