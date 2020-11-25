@@ -73,7 +73,7 @@ export default class Analysis implements Analyzable {
         });
         return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
     }
-    addToMetric(community: Community, metric: Metric, value: number, analysis:Analyzable): number {
+    addToMetric(community: Community, metric: Metric, value: number): number {
         let gotMetric = 0
         try {
             gotMetric = this.getMetric(community, metric)
@@ -81,5 +81,37 @@ export default class Analysis implements Analyzable {
         const sum = gotMetric + value
         community[metric] = sum
         return sum
+    }
+
+    optimize(community: Community|null = null, metrics: Metric[]|null = null) {
+        if(community==null){
+            this.optimize(this.analysisJson.community,metrics)
+            return
+        }
+        if(metrics==null){
+            this.optimize(community,this.getAvailableMetrics())
+            return
+        }
+
+        community._treemap_id = this.communityIndex.nextId
+        this.communityIndex.add(community)
+    
+        this.getSubCommunities(community)
+            .forEach(childCommunity => 
+                this.optimize(childCommunity, metrics)
+            )
+    
+        this.getSubCommunities(community)
+            .forEach(childCommunity => 
+                metrics.forEach(m => 
+                    this.addToMetric(community, m, this.getMetric(childCommunity, m))
+                )
+            )
+    
+        this.getFunctionsInside(community)
+            .map(id => this.analysisJson.functions[id])
+            .forEach(func => metrics.forEach(metric =>
+                this.addToMetric(community, metric, this.getMetric(func, metric))
+            ))
     }
 }

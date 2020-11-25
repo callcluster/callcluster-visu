@@ -14,4 +14,5 @@ export default interface Analyzable {
     getAvailableMetrics(): Metric[]
     getAvailableMetrics(): Metric[]
     addToMetric(community: Community, metric: Metric, value: number, analysis:Analyzable): number
+    optimize():void
 }
