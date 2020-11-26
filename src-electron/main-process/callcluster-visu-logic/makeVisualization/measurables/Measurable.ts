@@ -1,6 +1,7 @@
+import { CommunityIdentifier } from "../../types";
 
 interface MeasurableFields {
-    id: string
+    id: CommunityIdentifier
     type: string
     value: number
     //functions:Set<number>

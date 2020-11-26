@@ -1,16 +1,16 @@
-import { CommunityIdentifier } from "./_types";
+import { FunctionId } from "./_types";
 import getAllFunctionsInside from "./getAllFunctionsInside";
 import { Measurable } from "./Measurable";
 import Analyzable from "./_Analyzable";
+import { CommunityIdentifier } from "./_types";
 
 export default class MeasurablesAnalyzer{
     constructor(private analysis:Analyzable){}
-    getAllFunctionsInside(subject:Measurable):Set<number>{
-        const numberId=parseInt(subject.id.replace("c","").replace("f",""))
+    getAllFunctionsInside(subject:Measurable):Set<FunctionId>{
         if(subject.type==='function'){
-            return new Set([numberId])
+            return new Set([this.analysis.getFunctionId(subject.id)])
         }else{
-            return new Set(getAllFunctionsInside(this.analysis.getCommunity(numberId),this.analysis))
+            return new Set(getAllFunctionsInside(this.analysis.getCommunityFromString(subject.id),this.analysis))
         }
     }
     

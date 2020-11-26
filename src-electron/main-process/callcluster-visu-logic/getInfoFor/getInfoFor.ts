@@ -1,12 +1,13 @@
 import Analyzable from "./_Analyzable";
 import { InfoQuery, isCommunityQuery, isFunctionQuery } from "./types";
+import { CommunityId, FunctionId } from "../types";
 
 export default function getInfoFor(data:InfoQuery, analyzable:Analyzable):Record<string,string|number> {
     if (isFunctionQuery(data)) {
         const fid = parseInt((data.id + "").replace("f", ""));
-        return { ...analyzable.getFunction(fid), type: 'function' }
+        return { ...analyzable.getFunction(fid as unknown as FunctionId), type: 'function' }
     } else if(isCommunityQuery(data)) {
-        let info = { ...analyzable.getCommunity(data._treemap_id) }
+        let info = { ...analyzable.getCommunity(data._treemap_id as unknown as CommunityId) }
         delete info.functions
         delete info.communities
         return {

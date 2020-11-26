@@ -19,6 +19,18 @@ export interface OriginalAnalysisJson {
 
 export type Metric = string;
 
-export type CommunityIdentifier = string
+export interface FunctionId extends Number {
+    dummyFunctions:true
+}
+
+export interface CommunityId extends Number {
+    dummyCommunities:true
+}
+
+export class CommunityIdentifier extends String {
+    constructor(source:string){
+        super(source)
+    }
+}
 
 export type CommunityName = string;

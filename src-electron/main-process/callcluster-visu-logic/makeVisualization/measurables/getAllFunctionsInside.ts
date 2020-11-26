@@ -1,6 +1,6 @@
-import { Community } from "./_types"
+import { Community, FunctionId } from "./_types"
 import Analyzable from "./_Analyzable";
-export default function getAllFunctionsInside(community: Community, analysis:Analyzable): number[] {
+export default function getAllFunctionsInside(community: Community, analysis:Analyzable): FunctionId[] {
     return [
         ...analysis.getFunctionsInside(community),
         ...(

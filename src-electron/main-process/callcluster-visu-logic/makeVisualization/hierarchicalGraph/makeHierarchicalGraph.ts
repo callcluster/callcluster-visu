@@ -3,24 +3,26 @@ import makeEvaluator from "./_makeEvaluator";
 import getNodesInsideCommunity from "./getNodesInsideCommunity";
 import Node from "./Node";
 import Analyzable from "./_Analyzable";
+import { CommunityIdentifier } from "./_types";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
-    const {path, openedCommunities} = visualization
+    const {path} = visualization
     const community = analyzable.getCommunityAt(path ?? [])
     const evaluator = makeEvaluator(visualization, analyzable)
+    const openedCommunities=(visualization.openedCommunities??[]).map(id=>new CommunityIdentifier(id))
 
     const nodes:Node[] = [
         ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable),
         ...(openedCommunities || [])
-            .map((id) => analyzable.getCommunity(parseInt(id.replace("c", ""))))
+            .map((id) => analyzable.getCommunityFromString(id))
             .map((community) => getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable))
             .reduce((a, b) => [...a, ...b], [])
     ]
 
-    const nodeIdDict: Record<number, string> = {}
+    const nodeIdDict: Record<number, CommunityIdentifier> = {}
     const allFunctions = new Set()
     nodes.forEach(node => {
         node.functions.forEach((fid) => {
-            nodeIdDict[fid] = node.id
+            nodeIdDict[fid as unknown as number] = node.id
             allFunctions.add(fid)
         })
     });

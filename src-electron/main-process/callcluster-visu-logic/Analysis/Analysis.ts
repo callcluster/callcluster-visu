@@ -1,22 +1,28 @@
-import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson } from "./_types";
+import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson, FunctionId, CommunityId } from "./_types";
 import Analyzable from "./_Analyzable";
-import getCommunity from "./getCommunity";
+import getCommunityFromPath from "./getCommunity";
 import Indexer from "./Indexer";
 
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
     constructor( private analysisJson:OriginalAnalysisJson  ) {}
-    getCommunity(id: number): Community {
-        return this.communityIndex.get(id)
+    getFunctionId(id: string):FunctionId {
+        return parseInt(id.replace("f","")) as unknown as FunctionId
+    }
+    getCommunityFromString(id: string):Community {
+        return this.communityIndex.get(parseInt(id.replace("c","")))
+    }
+    getCommunity(id: CommunityId): Community {
+        return this.communityIndex.get(id as unknown as number)
     }
     getCommunityAt(path: CommunityName[]): Community {
-        return getCommunity(path,this.analysisJson.community, this)
+        return getCommunityFromPath(path,this.analysisJson.community, this)
     }
     getWrittenFunctions():Function[] {
         return this.analysisJson["functions"].filter(this.isWritten)
     }
-    getFunction(id:number):Function{
-        return this.analysisJson.functions[id];
+    getFunction(id:FunctionId):Function{
+        return this.analysisJson.functions[id as unknown  as number];
     }
     getCalls():Call[]{
         return this.analysisJson.calls
@@ -35,9 +41,9 @@ export default class Analysis implements Analyzable {
             throw Error("Cannot get subcommunities of a community")
         }
     }
-    getFunctionsInside(community: Community): number[] {
+    getFunctionsInside(community: Community): FunctionId[] {
         if ("functions" in community) {
-            return community["functions"] as number[]
+            return community["functions"] as FunctionId[]
         } else {
             throw Error("This community has no functions")
         }
@@ -54,7 +60,7 @@ export default class Analysis implements Analyzable {
             this.getSubCommunities(community).length == 0
             &&
             this.getFunctionsInside(community).every(
-                f => !this.isWritten(this.analysisJson["functions"][f])
+                f => !this.isWritten(this.getFunction(f))
             )
         )
     }
@@ -110,7 +116,7 @@ export default class Analysis implements Analyzable {
             )
     
         this.getFunctionsInside(community)
-            .map(id => this.analysisJson.functions[id])
+            .map(id => this.getFunction(id))
             .forEach(func => metrics.forEach(metric =>
                 this.addToMetric(community, metric, this.getMetric(func, metric))
             ))

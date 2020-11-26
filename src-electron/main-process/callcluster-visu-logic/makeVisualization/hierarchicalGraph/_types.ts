@@ -1,1 +1,1 @@
-export { CommunityIdentifier, Community, CommunityName } from "../_types";
+export { CommunityIdentifier, Community, CommunityName, FunctionId } from "../_types";

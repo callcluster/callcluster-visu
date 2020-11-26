@@ -1,1 +1,1 @@
-export { CommunityName, Call, Community, Function, Metric, OriginalAnalysisJson } from "../types";
+export { CommunityName, Call, Community, Function, Metric, OriginalAnalysisJson, FunctionId, CommunityId } from "../types";
