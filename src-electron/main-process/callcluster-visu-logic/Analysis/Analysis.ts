@@ -6,6 +6,10 @@ import Indexer from "./Indexer";
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
     constructor( private analysisJson:OriginalAnalysisJson  ) {}
+    getColor(community: Community): string {
+        const seed = community["_treemap_id"] as number
+        return "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
+    }
     getFunctionId(id: string):FunctionId {
         return parseInt(id.replace("f","")) as unknown as FunctionId
     }
@@ -48,12 +52,15 @@ export default class Analysis implements Analyzable {
             throw Error("This community has no functions")
         }
     }
-    getTreemapId(community: Community):number {
-        if ("_treemap_id" in community) {
-            return community["_treemap_id"] as number
-        } else {
-            throw Error("This community has no treemap id")
+    getStringIdentifier(identifiable: Community|FunctionId):string {
+        if(Number.isInteger(identifiable)){
+            return `f${identifiable}`
         }
+        if ("_treemap_id" in identifiable) {
+            return `c${identifiable["_treemap_id"] as number}`
+        }
+
+        throw Error("This identifiable has no identifier")
     }
     isAbstract(community: Community): boolean {
         return (

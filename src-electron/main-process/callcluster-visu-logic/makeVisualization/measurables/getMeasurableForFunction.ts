@@ -7,7 +7,7 @@ export default function getMeasurableForFunction(id: FunctionId, evaluator: Subj
     const func = analyzable.getFunction(id)
     return {
         ...func,
-        id: `f${id}`,
+        id: analyzable.getStringIdentifier(id),
         type: 'function',
         value: evaluator(func),
         name: func.name,

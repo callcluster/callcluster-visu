@@ -10,7 +10,8 @@ export default interface Analyzable {
     getMetric(subject: Function | Community, metric: Metric): number
     getSubCommunities(c: Community): Community[]
     getFunctionsInside(community: Community): FunctionId[]
-    getTreemapId(community: Community):number
+    getStringIdentifier(identifiable: Community|FunctionId):string
+    getColor(community: Community):string
     isAbstract(community: Community):boolean
     isWritten(func: Function): boolean
     getAvailableMetrics(): Metric[]

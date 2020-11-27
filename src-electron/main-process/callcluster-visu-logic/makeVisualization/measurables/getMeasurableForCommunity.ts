@@ -5,7 +5,7 @@ import { Community } from "./_types"
 export default function getMeasurableForCommunity(community: Community, evaluator: SubjectEvaluator, analyzable:Analyzable): Measurable {
     return {
         ...community,
-        id: `c${analyzable.getTreemapId(community)}`,
+        id: analyzable.getStringIdentifier(community),
         communities: undefined,
         functions: undefined,
         type: "community",

@@ -1,6 +1,5 @@
 import { CommunityIdentifier, Community } from "./_types";
 import { SubjectEvaluator } from "./_makeEvaluator";
-import getColor from "./getColor";
 import { MeasurablesAnalyzer, Measurable, getMeasurablesInside } from "./_measurables";
 import Node from "./Node";
 import Analyzable from "./_Analyzable";
@@ -9,8 +8,8 @@ function subjectToNode(subject: Measurable, parent: Community, measurablesAnalyz
     return {
         ...subject,
         functions: measurablesAnalyzer.getAllFunctionsInside(subject),
-        parent: `c${analyzable.getTreemapId(parent)}`,
-        color: getColor(analyzable.getTreemapId(parent))
+        parent: analyzable.getStringIdentifier(parent),
+        color: analyzable.getColor(parent)
     }
 }
 export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator, analyzable: Analyzable): Node[] {
