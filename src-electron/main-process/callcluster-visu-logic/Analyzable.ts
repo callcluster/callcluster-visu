@@ -7,7 +7,7 @@ export default interface Analyzable {
     getWrittenFunctions():Function[]
     getFunction(id:FunctionId):Function
     getCalls():Call[]
-    getMetric(subject: Function | Community, metric: Metric): number
+    getMetric(subject: Function | Community, metric: Metric): number|undefined
     getSubCommunities(c: Community): Community[]
     getFunctionsInside(community: Community): FunctionId[]
     getStringIdentifier(identifiable: Community|FunctionId):string

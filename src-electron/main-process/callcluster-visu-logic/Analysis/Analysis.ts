@@ -31,11 +31,11 @@ export default class Analysis implements Analyzable {
     getCalls():Call[]{
         return this.analysisJson.calls
     }
-    getMetric(subject: Function | Community, metric: Metric): number {
+    getMetric(subject: Function | Community, metric: Metric): number|undefined {
         if (metric in subject) {
             return subject[metric] as number
         } else {
-            throw Error("This metric doesn't exist within this subject. Metric:" + metric+" subject: "+JSON.stringify(subject))
+            return undefined
         }
     }
     getSubCommunities(c: Community): Community[] {
@@ -88,10 +88,7 @@ export default class Analysis implements Analyzable {
         return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
     }
     addToMetric(community: Community, metric: Metric, value: number): number {
-        let gotMetric = 0
-        try {
-            gotMetric = this.getMetric(community, metric)
-        } catch (_) { }
+        const gotMetric = this.getMetric(community, metric) ?? 0
         const sum = gotMetric + value
         community[metric] = sum
         return sum
@@ -118,14 +115,14 @@ export default class Analysis implements Analyzable {
         this.getSubCommunities(community)
             .forEach(childCommunity => 
                 metrics.forEach(m => 
-                    this.addToMetric(community, m, this.getMetric(childCommunity, m))
+                    this.addToMetric(community, m, this.getMetric(childCommunity, m) ?? 0)
                 )
             )
     
         this.getFunctionsInside(community)
             .map(id => this.getFunction(id))
             .forEach(func => metrics.forEach(metric =>
-                this.addToMetric(community, metric, this.getMetric(func, metric))
+                this.addToMetric(community, metric, this.getMetric(func, metric) ?? 0)
             ))
     }
 }

@@ -9,7 +9,7 @@ export default function makeHistogram(visualization:HistogramVisualization, anal
     let max = -Infinity
     for (const func of analyzable.getWrittenFunctions()) {
         const val = evaluate(func)
-        if (!isNaN(val) && val < 100000) {
+        if (val!==undefined && val < 100000) {
             min = Math.min(val, min)
             max = Math.max(val, max)
         }
@@ -26,6 +26,9 @@ export default function makeHistogram(visualization:HistogramVisualization, anal
     }))
     for (const func of analyzable.getWrittenFunctions()) {
         const x = evaluate(func)
+        if( x === undefined ){
+            continue;
+        }
         const bin = Math.floor((x - min) / binSize)
         const realBin = Math.min(bin, histogram.length - 1)
         if (histogram[realBin]) {

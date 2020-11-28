@@ -1,4 +1,4 @@
-import { getTreemap } from 'treemap-squarify';
+import { getTreemap, HasValue } from 'treemap-squarify';
 import makeEvaluator from "./_makeEvaluator";
 import TreemapVisualization from "./TreemapVisualization";
 import { getMeasurablesInside } from "./_measurables";
@@ -9,11 +9,11 @@ export default function makeTreemap(visualization: TreemapVisualization, analyza
     const evaluator = makeEvaluator(visualization, analyzable)
 
     const subjects = getMeasurablesInside(community, evaluator, analyzable)[1]
-        .filter(f => f.value != 0)
-        .sort((a, b) => a.value - b.value)
+        .filter(f => f.value!==undefined && f.value>0)
+        .sort((a, b) => (a.value as number) - (b.value as number))
 
     return getTreemap({
-        data: subjects,
+        data: subjects as HasValue[],
         width: 100,
         height: 100
     });

@@ -3,7 +3,7 @@ import { CommunityIdentifier } from "../../types";
 interface MeasurableFields {
     id: CommunityIdentifier
     type: string
-    value: number
+    value: number|undefined
     //functions:Set<number>
 }
 
