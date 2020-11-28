@@ -28,6 +28,13 @@ interface OpenedCommunitiesData {
   openedCommunities?:Array<number>
 }
 
+
+function findAddedParent(newOpenedCommunities:number[],previousOpenedCommunities:number[]):number|undefined{
+  return newOpenedCommunities.find((oc)=>!previousOpenedCommunities.includes(oc))
+}
+function explodeVisNode(){
+  
+}
 @Component
 export default class VisGraph extends Vue {
   @Prop({ type: Object, required: true }) readonly visData!:VisGraphData ;
@@ -37,7 +44,6 @@ export default class VisGraph extends Vue {
     networks.set(this.networkKey,null)
   }
   mounted(){
-    console.log("MOUNTED!!")
     let visuRef = this.$refs["visualization"];
     if(visuRef instanceof HTMLElement){
       let nw = new Network(visuRef,this.visData,this.options)
@@ -62,17 +68,15 @@ export default class VisGraph extends Vue {
   get network(){
     return networks.get(this.networkKey) as any
   }
+  resetGraphData(data:VisGraphData){
+    networks.get(this.networkKey)?.setData(Object.assign({},data))
+  }
   @Watch("visData")
   nodesChanged(newVal:VisGraphData & OpenedCommunitiesData, oldVal:VisGraphData & OpenedCommunitiesData){
-    console.log("99999999")
-    console.log(newVal.openedCommunities)
-    if (newVal.openedCommunities) {
-      let addedParent = newVal.openedCommunities.find((oc)=>{
-        return !(oldVal.openedCommunities||[]).includes(oc)
-      })
-      if(!addedParent) return;
-      const newNodes = newVal.nodes.filter(n=>n.parent == addedParent)
+    let addedParent = findAddedParent(newVal.openedCommunities??[],oldVal.openedCommunities??[])
+    if (addedParent!==undefined) {
       const explodedVisNode = this.network?.body.nodes[addedParent]
+      const newNodes = newVal.nodes.filter(n=>n.parent == addedParent)
       this.network?.body.data.nodes.remove([addedParent])
       this.network?.body.data.nodes.add(newNodes.map(n =>({
         ...n,
@@ -86,17 +90,9 @@ export default class VisGraph extends Vue {
           return newNodes.map(n=>n.id).includes(from) || newNodes.map(n=>n.id).includes(to)
         })
       )
-      /*
-      debugger;
-      console.log("####NEW NODES####")
-      console.log(newNodes)
-      console.log("####EXPLODED NODE####")
-      console.log(explodedNode)
-      */
     }else{
-      networks.get(this.networkKey)?.setData(Object.assign({},newVal))
+      this.resetGraphData(newVal)
     }
-    
   }
   beforeDestroy(){
     networks.get(this.networkKey)?.destroy();

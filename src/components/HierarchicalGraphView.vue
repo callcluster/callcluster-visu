@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <q-toolbar>
-      <path-navigator v-model="path"/>
+      <path-navigator :path="path" @change="changePath"/>
     </q-toolbar>
     <transition
           mode="out-in"
@@ -45,6 +45,17 @@ export default class HierarchicalGraphView extends Vue {
 
   get options ():Options {
     return {
+      /*
+      physics:{
+        enabled:false
+      },
+      layout:{
+        hierarchical:{
+          enabled:true,
+          sortMethod:'directed'
+        }
+      },
+      */
       nodes:{
         color:{
           highlight:{
@@ -87,26 +98,25 @@ export default class HierarchicalGraphView extends Vue {
     return this.visualization.openedCommunities || []
   }
 
-  set path(p:Array<string>) {
-    this.visualization.path = p
-    const req = {
-      ...this.visualization,
-      openedCommunities:[],
-      path:p
-    }
-    this.$emit('request', req)
-  }
-
   emitClickEvent (obj:any,evName:string,payloadFunction:(n:Node)=>object){
     if(obj?.nodes.length==0){
       return
     }
     const node = this.visualization.nodes.find(n=> n?.id === obj?.nodes?.[0])
-    console.log("Clicked:")
-    console.log(obj?.nodes?.[0])
+    console.log("Clicked: %s, emitting %s", node,evName)
+    console.log(node)
     if ( node ) {
       this.$emit(evName, payloadFunction(node) )
     }
+  }
+
+  changePath(path:Array<string>){
+    const req = {
+      ...this.visualization,
+      openedCommunities:[],
+      path
+    }
+    this.$emit('request', req)
   }
 
   select(obj:any) {

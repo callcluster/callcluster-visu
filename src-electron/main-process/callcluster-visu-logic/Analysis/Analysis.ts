@@ -79,7 +79,7 @@ export default class Analysis implements Analyzable {
         this.analysisJson.functions.forEach(f => {
             Object.keys(f)
                 .filter(k => {
-                    return !Number.isNaN(f[k])
+                    return Number.isFinite(f[k])
                 })
                 .forEach(k => {
                     metricsDict[k] = true

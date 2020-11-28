@@ -4,6 +4,7 @@ import { isTreemap, makeTreemap } from "./treemap";
 import {isHierarchical, makeHierarchicalGraph} from "./hierarchicalGraph";
 import Analyzable from "./_Analyzable";
 export default function makeVisualization(visualization: Visualization, analyzable:Analyzable) {
+    console.log("STARTING VISUALIZATION")
     console.log(visualization)
     if (isTreemap(visualization)) {
         return {

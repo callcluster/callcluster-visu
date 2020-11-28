@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <q-toolbar class="">
-      <path-navigator v-model="path"/>
+      <path-navigator :path="path" @change="changePath"/>
     </q-toolbar>
     <div class="col-grow relative-position overflow-hidden">
     <transition
@@ -115,6 +115,16 @@ export default class TreemapView extends Vue {
     this.$emit('request', req)
   }
 
+
+  changePath(path:Array<string>){
+    const req = {
+      ...this.visualization,
+      openedCommunities:[],
+      path
+    }
+    this.$emit('request', req)
+  }
+
   get subjects () {
     return this.visualization?.subjects || []
   }
@@ -122,17 +132,6 @@ export default class TreemapView extends Vue {
   get path():Array<string> {
     return this.visualization.path || []
   }
-
-  set path(p:Array<string>) {
-    this.visualization.path = p
-    const req = {
-      ...this.visualization,
-      path:p
-    }
-    delete req.subjects
-    this.$emit('request', req)
-  }
-
 }
 </script>
 
