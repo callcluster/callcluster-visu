@@ -6,6 +6,9 @@ import Indexer from "./Indexer";
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
     constructor( private analysisJson:OriginalAnalysisJson  ) {}
+    getMinedCommunity(): Community {
+        return this.analysisJson.community
+    }
     getColor(community: Community): string {
         const seed = community["_treemap_id"] as number
         return "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);

@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <q-toolbar class="">
-      <path-navigator :path="path" @change="changePath"/>
+      <!--<path-navigator :path="path" @change="changePath"/>-->
     </q-toolbar>
     <div class="col-grow relative-position overflow-hidden">
     <transition
@@ -10,7 +10,7 @@
         leave-active-class="animated fadeOut"
         duration="200"
       >
-    <div :key="JSON.stringify(path)" class="absolute-full">
+    <div :key="root" class="absolute-full">
         <svg
         width="100%"
         height="100%"
@@ -71,7 +71,8 @@ import PathNavigator from 'components/PathNavigator.vue'
 type SubjectData = {
   name:string,
   value:number,
-  type:string
+  type:string,
+  id:string
 }
 type Subject = {
   height:number,
@@ -85,7 +86,7 @@ type TreemapVisualization = {
   subjects?:Array<Subject>,
   id:number,
   visualizationType:'treemap',
-  path?:Array<string>,
+  root?:string,
   parameters:Record<string, string>
 }
 @Component({
@@ -107,9 +108,10 @@ export default class TreemapView extends Vue {
     if (subject.data.type === 'function') {
       return
     }
+    console.log(subject)
     const req = {
       ...this.visualization,
-      path: [...(this.visualization.path || []), subject.data.name]
+      root: subject.data.id
     }
     delete req.subjects
     this.$emit('request', req)
@@ -129,8 +131,8 @@ export default class TreemapView extends Vue {
     return this.visualization?.subjects || []
   }
 
-  get path():Array<string> {
-    return this.visualization.path || []
+  get root():string|null {
+    return this.visualization.root??null
   }
 }
 </script>

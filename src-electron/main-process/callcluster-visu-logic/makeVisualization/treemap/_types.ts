@@ -1,1 +1,1 @@
-export { CommunityName } from "../../types";
+export { CommunityIdentifier } from "../../types";

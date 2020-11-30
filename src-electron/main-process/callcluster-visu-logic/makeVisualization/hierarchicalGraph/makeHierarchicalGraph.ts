@@ -5,8 +5,8 @@ import Node from "./Node";
 import Analyzable from "./_Analyzable";
 import { CommunityIdentifier } from "./_types";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
-    const {path} = visualization
-    const community = analyzable.getCommunityAt(path ?? [])
+    const {root} = visualization
+    const community = root?analyzable.getCommunityFromString(root):analyzable.getMinedCommunity()
     const evaluator = makeEvaluator(visualization, analyzable)
     const openedCommunities=(visualization.openedCommunities??[]).map(id=>new CommunityIdentifier(id))
 

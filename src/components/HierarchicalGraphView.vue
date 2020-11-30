@@ -9,7 +9,7 @@
           leave-active-class="animated fadeOut"
           duration="200"
         >
-      <div :key="JSON.stringify(path)" class="col">
+      <div :key="root" class="col">
         <vis-graph :visData="visData" @select="select" @explode="explode" @request="request" :options="options"/>
       </div>
     </transition>
@@ -32,7 +32,8 @@ type HierarchicalGraphVisualization = {
   visualizationType:'hierarchical',
   path?:Array<string>,
   openedCommunities?:Array<string>,
-  parameters:Record<string, string>
+  parameters:Record<string, string>,
+  root:string
 }
 @Component({
   components:{
@@ -134,9 +135,12 @@ export default class HierarchicalGraphView extends Vue {
   request(obj:any) {
     this.emitClickEvent(obj,'request',(node)=>({
       ...this.visualization,
-      path:[ ...this.path, node.name ],
+      root:node.id,
       openedCommunities:[]
     }))
+  }
+  get root():string|null {
+    return this.visualization.root??null
   }
 }
 </script>

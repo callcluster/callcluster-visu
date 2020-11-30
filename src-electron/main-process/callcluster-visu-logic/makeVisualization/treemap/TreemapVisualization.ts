@@ -1,6 +1,6 @@
 import Visualization from "../Visualization";
-import { CommunityName } from "./_types";
+import { CommunityIdentifier } from "./_types";
 export default interface TreemapVisualization extends Visualization {
     visualizationType: 'treemap',
-    path: CommunityName[],
+    root?:CommunityIdentifier
 }

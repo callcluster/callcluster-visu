@@ -12,7 +12,7 @@ export default function makeVisualization(visualization: Visualization, analyzab
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
-            path: visualization.path
+            root: visualization.root
         };
     } else if (isHistogram(visualization)) {
         return {
@@ -24,7 +24,7 @@ export default function makeVisualization(visualization: Visualization, analyzab
     } else if (isHierarchical(visualization)) {
         return {
             ...(makeHierarchicalGraph(visualization, analyzable)),
-            path: visualization.path,
+            root: visualization.root,
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
