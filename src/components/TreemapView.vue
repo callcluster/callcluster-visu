@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <q-toolbar class="">
-      <!--<path-navigator :path="path" @change="changePath"/>-->
+      <path-navigator :path="path" @change="changeRoot"/>
     </q-toolbar>
     <div class="col-grow relative-position overflow-hidden">
     <transition
@@ -87,7 +87,8 @@ type TreemapVisualization = {
   id:number,
   visualizationType:'treemap',
   root?:string,
-  parameters:Record<string, string>
+  parameters:Record<string, string>,
+  parents?:Array<{ id:string, name:string }>
 }
 @Component({
   components:{PathNavigator}
@@ -108,7 +109,6 @@ export default class TreemapView extends Vue {
     if (subject.data.type === 'function') {
       return
     }
-    console.log(subject)
     const req = {
       ...this.visualization,
       root: subject.data.id
@@ -118,11 +118,11 @@ export default class TreemapView extends Vue {
   }
 
 
-  changePath(path:Array<string>){
+  changeRoot(newRoot:string){
     const req = {
       ...this.visualization,
       openedCommunities:[],
-      path
+      root:newRoot
     }
     this.$emit('request', req)
   }
@@ -133,6 +133,10 @@ export default class TreemapView extends Vue {
 
   get root():string|null {
     return this.visualization.root??null
+  }
+
+  get path():Array<{ id:string, name:string }>{
+    return this.visualization.parents??[]
   }
 }
 </script>

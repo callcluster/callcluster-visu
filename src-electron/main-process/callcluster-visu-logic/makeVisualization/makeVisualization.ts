@@ -12,7 +12,12 @@ export default function makeVisualization(visualization: Visualization, analyzab
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
-            root: visualization.root
+            root: visualization.root,
+            parents:(
+                (visualization.root == undefined)
+                ?undefined
+                :analyzable.getParents(visualization.root)
+            )
         };
     } else if (isHistogram(visualization)) {
         return {
@@ -29,6 +34,11 @@ export default function makeVisualization(visualization: Visualization, analyzab
             id: visualization.id,
             parameters: visualization.parameters,
             openedCommunities: visualization.openedCommunities || [],
+            parents:(
+                (visualization.root == undefined)
+                ?undefined
+                :analyzable.getParents(visualization.root)
+            )
         }
     }
 }

@@ -1,4 +1,5 @@
 <template>
+<div :key="JSON.stringify(path)">
   <q-breadcrumbs active-color="primary">
     <template v-slot:separator>
       <q-icon
@@ -9,46 +10,57 @@
     </template>
     <q-breadcrumbs-el
       v-for="part in shownPaths"
-      :key="JSON.stringify(part)"
+      :key="part.id"
     >
       <a
         style="max-width:120px; direction:rtl; cursor:pointer"
         class="ellipsis"
-        @click="clickShown(part.path)"
+        @click="clickShown(part)"
       ><q-icon :name="part.icon" /> {{part.name}}</a>
       <q-tooltip>
         {{part.name}}
       </q-tooltip>
     </q-breadcrumbs-el>
   </q-breadcrumbs>
+</div>
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Model } from 'vue-property-decorator'
+
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
 type PathItem = {
-  name?:string,
+  name:string,
   icon?:string,
-  path:Array<string>
+  id:string
 }
 
+const PathNavigatorProps = Vue.extend({
+  props: {
+    path: {
+      type:Array,
+      default:[]
+    }
+  }
+})
+
 @Component
-export default class PathNavigator extends Vue {
-  @Model('change', { type: Array }) readonly path!: Array<string>;
+export default class PathNavigator extends PathNavigatorProps {
+
+  path!:Array<{name:string,id:string}>
+
   get shownPaths ():Array<PathItem> {
-    let arr:Array<PathItem> = (this.path || []).map((v, i, a) => ({
-      name: v,
-      path: a.slice(0, i + 1)
-    }))
-    arr = [{
-      icon: 'home',
-      path: []
-    }, ...arr]
+    const path=this.path
+    const arr:PathItem[] = [...path]
+    if(arr.length>0){
+      arr[0].icon="home"
+    }
     return arr.slice(Math.max(0, arr.length - 5))
   }
 
-  clickShown (path:Array<string>) {
-    this.$emit('change', path)
+  clickShown (clicked:{name:string,id:string}) {
+    this.$emit('change', clicked.id)
   }
 }
 

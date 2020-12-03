@@ -2,10 +2,28 @@ import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson,
 import Analyzable from "./_Analyzable";
 import getCommunityFromPath from "./getCommunity";
 import Indexer from "./Indexer";
+import { CommunityIdentifier } from "../types";
 
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
+    private parents:Map<string,Community> = new Map<string,Community>();
     constructor( private analysisJson:OriginalAnalysisJson  ) {}
+    getParents(root: string): { id: string; name: string; }[] {
+        const community = this.getCommunityFromString(root)
+        let parent:Community|null=this.getParent(community);
+        let parents:Community[] =[]
+        while(parent!=null){
+            parents=[parent,...parents]
+            parent = this.getParent(parent);
+        }
+        return [...parents,community].map(community=>({
+            id:this.getStringIdentifier(community),
+            name:community.name as string
+        }))
+    }
+    getParent(community: Community): Community | null {
+        return this.parents.get(this.getStringIdentifier(community)) ?? null
+    }
     getMinedCommunity(): Community {
         return this.analysisJson.community
     }
@@ -97,22 +115,14 @@ export default class Analysis implements Analyzable {
         return sum
     }
 
-    optimize(community: Community|null = null, metrics: Metric[]|null = null) {
-        if(community==null){
-            this.optimize(this.analysisJson.community,metrics)
-            return
-        }
-        if(metrics==null){
-            this.optimize(community,this.getAvailableMetrics())
-            return
-        }
 
+    private optimizeMetrics(community: Community, metrics: Metric[]) {
         community._treemap_id = this.communityIndex.nextId
         this.communityIndex.add(community)
     
         this.getSubCommunities(community)
             .forEach(childCommunity => 
-                this.optimize(childCommunity, metrics)
+                this.optimizeMetrics(childCommunity, metrics)
             )
     
         this.getSubCommunities(community)
@@ -127,5 +137,28 @@ export default class Analysis implements Analyzable {
             .forEach(func => metrics.forEach(metric =>
                 this.addToMetric(community, metric, this.getMetric(func, metric) ?? 0)
             ))
+    }
+    private optimizeGetParents(community: Community){
+        this.getSubCommunities(community)
+        .forEach(childCommunity => {
+            const com = this.getStringIdentifier(childCommunity)
+            this.parents.set(com, community)
+        })
+        this.getSubCommunities(community)
+        .forEach(childCommunity => {
+            this.optimizeGetParents(childCommunity)
+        })
+    }
+
+    optimize(community: Community|null = null, metrics: Metric[]|null = null) {
+        if(community==null){
+            community=this.analysisJson.community
+        }
+        if(metrics==null){
+            metrics = this.getAvailableMetrics()
+        }
+
+        this.optimizeMetrics(community, metrics)
+        this.optimizeGetParents(community)
     }
 }

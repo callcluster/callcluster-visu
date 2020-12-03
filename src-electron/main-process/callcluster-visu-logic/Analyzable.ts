@@ -1,5 +1,6 @@
 import { CommunityName, Call, Community, Function, Metric, FunctionId, CommunityId, CommunityIdentifier } from "./types";
 export default interface Analyzable {
+    getParents(root: CommunityIdentifier): { id: string; name: string; }[];
     getFunctionId(id: CommunityIdentifier): FunctionId;
     getCommunity(id: CommunityId):Community;
     getCommunityFromString(id: CommunityIdentifier):Community;
