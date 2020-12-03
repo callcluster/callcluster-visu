@@ -46,6 +46,13 @@ ipcMain.on("selectObject", (event,data) => {
   mainWindow.webContents.send('setDetails',getInfoFor(data))
 })
 
+ipcMain.on("getDetailsForExtraction", (event,data) => {
+  if(mainWindow==null) return;
+  mainWindow.webContents.send('setDetailsForExtraction',getInfoFor(data))
+})
+
+
+
 
 
 

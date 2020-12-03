@@ -23,6 +23,9 @@ function register(store:Store<any>){
   ipcRenderer.on("setDetails",(e,details)=>{
     store.commit("other/setDetails", details)
   })
+  ipcRenderer.on("setDetailsForExtraction",(e,details)=>{
+    store.commit("other/setDetailsForExtraction", details)
+  })
 }
 
 

@@ -1,16 +1,22 @@
+import { ipcRenderer } from "electron"
+
 export type OtherDataState = {
   viewCreateVisualization:boolean,
   availableMetrics:Array<string>,
   visualization:Record<string, string>,
   shownDetails:Record<string, string>|null,
-  deletableVisualization:number | null
+  deletableVisualization:number | null,
+  extractionDialogVisualization:string | null,
+  extractionDetails:Record<string, string>|null,
 }
 const defaultState:OtherDataState = {
   viewCreateVisualization: false,
   availableMetrics: [],
   visualization: {},
   shownDetails: null,
-  deletableVisualization: null
+  deletableVisualization: null,
+  extractionDialogVisualization: null,
+  extractionDetails:null
 }
 const otherDataModule = {
   namespaced: true,
@@ -32,11 +38,23 @@ const otherDataModule = {
     setDetails (state:OtherDataState, details:Record<string, string>) {
       state.shownDetails = details
     },
+    setDetailsForExtraction(state:OtherDataState, details:Record<string, string>) {
+      state.extractionDetails = details;
+    },
     setDeletableVisualization (state:OtherDataState, id:number|null) {
       state.deletableVisualization = id
+    },
+    setExtractionDialogVisualization (state:OtherDataState, id:string|null) {
+      state.extractionDialogVisualization = id
     }
   },
-  state: defaultState
+  state: defaultState,
+  actions:{
+    getDetailsForExtraction(_:any, id:string) {
+      _.commit("setExtractionDialogVisualization",id)
+      ipcRenderer.send("getDetailsForExtraction", { id })
+    }
+  }
 }
 
 export default otherDataModule

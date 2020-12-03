@@ -49,7 +49,13 @@ class MenuOwner{
     }))
     this.menu.append(new remote.MenuItem({
       label:"Extract",
-      click:()=>this.emit("extract")
+      click:()=>{
+        if(this.currentEmitter==null) return
+        this.currentEmitter.$store.dispatch(
+          'other/getDetailsForExtraction', 
+          this.currentNode
+        )
+      }
     }))
   }
   private emit(type:string){

@@ -6,6 +6,7 @@
       ref="creation-dialog"
     />
     <visualization-deletion-dialog />
+    <extraction-dialog/>
 
     <q-page-container>
       <q-splitter
@@ -39,6 +40,7 @@ import { Community } from '../Types'
 import SideLists from 'components/SideLists.vue'
 import DetailsPopup from 'components/DetailsPopup.vue'
 import VisualizationDeletionDialog from 'components/VisualizationDeletionDialog.vue'
+import ExtractionDialog from 'components/ExtractionDialog.vue'
 @Component({
   components: {
     EssentialLink,
@@ -47,7 +49,8 @@ import VisualizationDeletionDialog from 'components/VisualizationDeletionDialog.
     VisualizationView,
     SideLists,
     DetailsPopup,
-    VisualizationDeletionDialog
+    VisualizationDeletionDialog,
+    ExtractionDialog
   }
 })
 export default class MainLayout extends Vue {
