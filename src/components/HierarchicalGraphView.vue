@@ -1,7 +1,7 @@
 <template>
   <div class="column">
     <q-toolbar>
-      <path-navigator :path="path" @change="changePath"/>
+      <path-navigator :path="path" @change="changeRoot"/>
     </q-toolbar>
     <transition
           mode="out-in"
@@ -30,7 +30,7 @@ type HierarchicalGraphVisualization = {
   edges:Array<object>,
   id:number,
   visualizationType:'hierarchical',
-  path?:Array<string>,
+  parents?:Array<{ id:string, name:string }>
   openedCommunities?:Array<string>,
   parameters:Record<string, string>,
   root:string
@@ -91,8 +91,8 @@ export default class HierarchicalGraphView extends Vue {
     }
   }
 
-  get path():Array<string>{
-    return this.visualization.path || []
+  get path():Array<{ id:string, name:string }>{
+    return this.visualization.parents || []
   }
 
   get openedCommunities():Array<string>{
@@ -111,11 +111,11 @@ export default class HierarchicalGraphView extends Vue {
     }
   }
 
-  changePath(path:Array<string>){
+  changeRoot(newRoot:string){
     const req = {
       ...this.visualization,
       openedCommunities:[],
-      path
+      root:newRoot
     }
     this.$emit('request', req)
   }

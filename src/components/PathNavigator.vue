@@ -1,5 +1,4 @@
 <template>
-<div :key="JSON.stringify(path)">
   <q-breadcrumbs active-color="primary">
     <template v-slot:separator>
       <q-icon
@@ -22,7 +21,6 @@
       </q-tooltip>
     </q-breadcrumbs-el>
   </q-breadcrumbs>
-</div>
 </template>
 
 <script lang="ts">
