@@ -3,7 +3,15 @@ export function currentMetricName (visualization: Record<string, any>): string {
 }
 
 export function descriptionOfVisualization (visualization: Record<string, any>): string {
-  return `<strong>${normalCasing(visualization.visualizationType)}</strong> of ${visualization.parameters.scaling} <strong>${normalCasing(visualization.parameters.metric)}</strong> on ${visualization.parameters.community}`;
+  return `<strong>
+    ${normalCasing(visualization.visualizationType)}
+    </strong>
+    of 
+    ${visualization.parameters.scaling} 
+    <strong>
+    ${normalCasing(visualization.parameters.metric)}
+    </strong> 
+    on ${visualization.parameters.community.label}`;
 }
 
 export function normalCasing (camelCase: string): string {

@@ -80,13 +80,13 @@ import { Todo, Meta } from './models'
 import { ipcRenderer } from "electron";
 import { QInput, QDialog } from 'quasar'
 import VisuTypeChooser from "./VisuTypeChooser.vue";
-import VisuCustomization from "./VisuCustomization.vue"
+import VisuCustomization, { Parameters } from "./VisuCustomization.vue"
 
 @Component({
   components:{ VisuTypeChooser, VisuCustomization }
 })
 export default class VisualizationCreationDialog extends Vue {
-  editVisualization (name:string, visualizationType:string, parameters:Record<string, string|null>, edited:number) {
+  editVisualization (name:string, visualizationType:string, parameters:Parameters, edited:number) {
     this.showDialog = true
     this.$nextTick(() => {
       this.name = name
@@ -101,7 +101,7 @@ export default class VisualizationCreationDialog extends Vue {
   chosen='treemap'
   edited:number|null = null
 
-  parameters:Record<string, string|null> = { metric: null, community: null, scaling: null }
+  parameters:Parameters = { metric: null, community: null, scaling: null }
 
   get showDialog () {
     return this.$store.state.other.viewCreateVisualization;
@@ -118,7 +118,23 @@ export default class VisualizationCreationDialog extends Vue {
 
   get customizationDescription(){
     let params = this.parameters;
-    return Object.keys(params).filter(k => params[k]!=null).map((k)=>k+": "+params[k]).join(", ")
+    let ret = "";
+    if(params.metric!=null){
+      ret += `Metric: ${params.metric}, `
+    }
+    if(params.scaling!=null){
+      ret += `Scaling: ${params.scaling}, `
+    }
+    if(params.community!=null){
+      const community = params.community;
+      if(typeof community ==="number" ){
+        const communityName=this.$store.state.data.communities[community].name
+        ret += `Community: ${communityName}, `
+      }else{
+        ret += `Community: ${community.label}, `
+      }
+    }
+    return ret;
   }
 
   get nameInput(){
@@ -148,7 +164,7 @@ export default class VisualizationCreationDialog extends Vue {
   private resetContent () {
     this.name = null
     this.chosen = 'treemap'
-    this.parameters = { metric: null, community: null }
+    this.parameters = { metric: null, community: null, scaling:null }
     this.step = 1
     this.edited = null
   }
