@@ -1,33 +1,42 @@
+import Indexer from "./Indexer";
 export default class CommunityRepository{
-    minedCommunityId: number|undefined;
+    private repository = new Indexer<ExtractedCommunity>()
+    private minedCommunityId: number|undefined;
 
     renameCommunity(id: number, name: string) {
-        console.log("Renaming this community!",id,name)
+        this.repository.get(id).name=name
     }
+
     deleteCommunity(id: number) {
-        console.log("Deleting this community!",id)
+        this.repository.remove(id)
     }
+
     createCommunity(communityId: number, name: string): ExtractedCommunity {
-        return {
-            id: 20,
-            name: name,
+        const community:ExtractedCommunity = {
+            id:this.repository.nextId,
             description: "Extracted community",
-            communityId: communityId,
+            name,
+            communityId
         }
+        this.repository.add(community)
+        return community
     }
+
     getMinedCommunity():ExtractedCommunity{
         if(this.minedCommunityId===undefined){
             throw new Error("The mined community was not set")
         }
-        return {
-            id: 0,
-            name: "Mined community",
-            description: "Mined community",
-            communityId:this.minedCommunityId,
-        }
+        return this.repository.get(this.minedCommunityId)
     }
+    
     setMinedCommunityId(id:number){
-        this.minedCommunityId=id
+        this.minedCommunityId=this.repository.nextId
+        this.repository.add({
+            communityId:id,
+            description:"Mined community",
+            name:"Mined community",
+            id:this.minedCommunityId
+        })
     }
 }
 

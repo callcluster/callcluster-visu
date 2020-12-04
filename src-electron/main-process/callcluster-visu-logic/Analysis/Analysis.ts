@@ -1,8 +1,7 @@
 import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson, FunctionId, CommunityId } from "./_types";
 import Analyzable from "./_Analyzable";
 import getCommunityFromPath from "./getCommunity";
-import Indexer from "./Indexer";
-import { CommunityIdentifier } from "../types";
+import Indexer from "./_Indexer";
 
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
