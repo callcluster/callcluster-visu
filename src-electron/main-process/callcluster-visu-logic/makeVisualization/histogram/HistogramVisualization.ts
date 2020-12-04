@@ -4,6 +4,10 @@ export default interface HistogramVisualization extends Visualization {
     parameters: {
         scaling: string,
         metric: string,
-        bins:number
+        bins:number,
+        community:{
+            label:string,
+            value:number
+        }
     }
 }

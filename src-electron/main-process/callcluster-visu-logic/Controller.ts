@@ -19,6 +19,11 @@ export default class Controller{
         if(this.repository===undefined){
             throw new Error("analysisjson wasn't set")
         }
+        if(! ("root" in visualization)){
+            const communityValue = visualization.parameters.community.value
+            const extracted = this.communities.getRoot(communityValue)
+            visualization.root="c"+extracted.communityId;
+        }
         return makeVisualization(visualization, this.repository)
     }
 

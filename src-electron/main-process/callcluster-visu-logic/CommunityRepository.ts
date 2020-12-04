@@ -3,6 +3,10 @@ export default class CommunityRepository{
     private repository = new Indexer<ExtractedCommunity>()
     private minedCommunityId: number|undefined;
 
+    getRoot(id: number):ExtractedCommunity {
+        return this.repository.get(id)
+    }
+
     renameCommunity(id: number, name: string) {
         this.repository.get(id).name=name
     }
