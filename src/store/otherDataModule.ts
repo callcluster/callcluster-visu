@@ -8,6 +8,7 @@ export type OtherDataState = {
   deletableVisualization:number | null,
   extractionDialogVisualization:string | null,
   extractionDetails:Record<string, string>|null,
+  deletableCommunity:number|null,
 }
 const defaultState:OtherDataState = {
   viewCreateVisualization: false,
@@ -16,7 +17,8 @@ const defaultState:OtherDataState = {
   shownDetails: null,
   deletableVisualization: null,
   extractionDialogVisualization: null,
-  extractionDetails:null
+  extractionDetails:null,
+  deletableCommunity:null
 }
 const otherDataModule = {
   namespaced: true,
@@ -43,6 +45,9 @@ const otherDataModule = {
     },
     setDeletableVisualization (state:OtherDataState, id:number|null) {
       state.deletableVisualization = id
+    },
+    setDeletableCommunity (state:OtherDataState, id:number|null) {
+      state.deletableCommunity = id;
     },
     setExtractionDialogVisualization (state:OtherDataState, id:string|null) {
       state.extractionDialogVisualization = id

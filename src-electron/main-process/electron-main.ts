@@ -70,6 +70,11 @@ ipcMain.on("renameCommunity", (event,data)=>{
   })
 })
 
+ipcMain.on("deleteCommunity", (event,data)=>{
+  if(mainWindow==null) return;
+  console.log("deleting a community")
+})
+
 
 
 

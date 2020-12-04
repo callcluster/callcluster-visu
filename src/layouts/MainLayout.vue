@@ -6,6 +6,7 @@
       ref="creation-dialog"
     />
     <visualization-deletion-dialog />
+    <community-deletion-dialog/>
     <extraction-dialog ref="extraction-dialog"/>
 
     <q-page-container>
@@ -43,6 +44,7 @@ import SideLists from 'components/SideLists.vue'
 import DetailsPopup from 'components/DetailsPopup.vue'
 import VisualizationDeletionDialog from 'components/VisualizationDeletionDialog.vue'
 import ExtractionDialog from 'components/ExtractionDialog.vue'
+import CommunityDeletionDialog from "components/CommunityDeletionDialog.vue";
 @Component({
   components: {
     EssentialLink,
@@ -52,7 +54,8 @@ import ExtractionDialog from 'components/ExtractionDialog.vue'
     SideLists,
     DetailsPopup,
     VisualizationDeletionDialog,
-    ExtractionDialog
+    ExtractionDialog,
+    CommunityDeletionDialog
   }
 })
 export default class MainLayout extends Vue {
@@ -86,11 +89,7 @@ export default class MainLayout extends Vue {
   }
 
   deleteCommunity(community:{id:number,name:string,description:string,communityId:number}){
-    console.log("-------")
-    console.log("-------")
-    console.log("-------")
-    console.log("-------")
-    console.log(community)
+    this.$store.commit('other/setDeletableCommunity', community.id)
   }
 }
 </script>
