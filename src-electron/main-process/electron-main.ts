@@ -62,6 +62,14 @@ ipcMain.on("extractCommunity", (event,data)=>{
   })
 })
 
+ipcMain.on("renameCommunity", (event,data)=>{
+  if(mainWindow==null) return;
+  mainWindow.webContents.send('renameCommunity',{
+    id:data.id,
+    name:data.name,
+  })
+})
+
 
 
 

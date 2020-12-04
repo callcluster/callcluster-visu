@@ -14,6 +14,9 @@ const actions: ActionTree<StoredStateInterface, StateInterface> = {
   },
   extractCommunity(_,payload){
     ipcRenderer.send("extractCommunity", payload)
+  },
+  renameCommunity(_,payload){
+    ipcRenderer.send("renameCommunity", payload)
   }
 }
 

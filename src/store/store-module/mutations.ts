@@ -24,6 +24,19 @@ const mutation: MutationTree<StoredStateInterface> = {
     );
   },
 
+  renameCommunity(state:StoredStateInterface,community:any){
+    const renamedCommunity=Object.assign(
+      {},
+      state.communities[community.id],
+      {name:community.name}
+    )
+    state.communities = Object.assign(
+      {},
+      state.communities,
+      {[community.id]:renamedCommunity}
+    );
+  },
+
   deleteVisualization (state:StoredStateInterface, id:number) {
     const visus = { ...state.visualizations }
     delete visus[id]

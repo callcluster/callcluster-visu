@@ -2,7 +2,8 @@
   <q-dialog v-model="showDialog" ref="dialog">
     <q-card>
        <q-card-section>
-        <div class="text-h6">Extracting a new community</div>
+        <div class="text-h6" v-if="editing">Extracting a new community</div>
+        <div class="text-h6" v-if="!editing">Renaming a community</div>
       </q-card-section>
       <q-card-section class="row items-center">
         <q-input 
@@ -15,8 +16,8 @@
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn flat label="Cancel" v-close-popup @click="clearName" />
-        <q-btn flat label="OK" @click="extractCommunity"/>
+        <q-btn flat label="Cancel" @click="cancel" />
+        <q-btn flat label="OK" @click="ok"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -30,8 +31,14 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 export default class ExtractionDialog extends Vue {
   rename(community: {id:number,name:string,description:string,communityId:number}) {
     console.log(community)
-    throw new Error('Method not implemented.')
+    this.$store.commit('other/setExtractionDialogVisualization', community.communityId)
+    this.name=community.name
+    this.editing=true
+    this.editedId=community.id
   }
+
+  editing:boolean=false;
+  editedId:number|null=null;
   
   name:string=""
 
@@ -43,17 +50,29 @@ export default class ExtractionDialog extends Vue {
     }
   }
 
-  clearName(){
+  cancel(){
     this.name=""
+    this.showDialog = false
+    this.editing = false
+    this.editedId=null
   }
 
-  extractCommunity(){
-    this.$store.dispatch("data/extractCommunity",{
-      name:this.name,
-      communityId:this.communityId
-    })
-    this.clearName()
-    this.showDialog = false;
+  ok(){
+    if(this.editing){
+      this.$store.dispatch("data/renameCommunity",{
+        name: this.name,
+        id: this.editedId ?? 0
+      })
+    } else {
+      this.$store.dispatch("data/extractCommunity",{
+        name: this.name,
+        communityId: this.communityId
+      })
+    }
+    this.name=""
+    this.showDialog = false
+    this.editedId=null
+    this.editing = false
   }
 
 
