@@ -23,6 +23,10 @@ export function createCommunity(data:{communityId:number,name:string}):Extracted
     return controllerInstance.createCommunity(data.communityId,data.name)
 }
 
+export function createClustering(data:any):ExtractedCommunity {
+    return controllerInstance.createClustering(data)
+}
+
 export function getMinedCommunity():ExtractedCommunity {
     return controllerInstance.getMinedCommunity()
 }

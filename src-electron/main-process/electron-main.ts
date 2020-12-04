@@ -1,6 +1,6 @@
 import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
-import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor, createCommunity, getMinedCommunity, renameCommunity, deleteCommunity } from './callcluster-visu-logic'
+import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor, createCommunity, getMinedCommunity, renameCommunity, deleteCommunity, createClustering } from './callcluster-visu-logic'
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
@@ -62,6 +62,11 @@ ipcMain.on("renameCommunity", (event,data)=>{
 ipcMain.on("deleteCommunity", (event,data)=>{
   if(mainWindow==null) return;
   deleteCommunity(data)
+})
+
+ipcMain.on("createOrEditClustering", (event,data)=>{
+  if(mainWindow==null) return;
+  mainWindow.webContents.send('createCommunity',createClustering(data))
 })
 
 function createWindow () {
@@ -129,10 +134,17 @@ function createWindow () {
             mainWindow.webContents.send('create','visualization')
           },
           accelerator:'CommandOrControl+D'
+        },
+        {
+          label:"Clustering",
+          click:async () => {
+            if(mainWindow==null) return;
+            mainWindow.webContents.send('create','clustering')
+          },
+          accelerator:'CommandOrControl+Q'
         }
       ]
     })
-
   ])
   Menu.setApplicationMenu(menu)
 }

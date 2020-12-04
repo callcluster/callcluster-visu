@@ -7,6 +7,7 @@
     />
     <visualization-deletion-dialog />
     <community-deletion-dialog/>
+    <cluster-creation-dialog v-on:create="finishClusteringCreation"/>
     <extraction-dialog ref="extraction-dialog"/>
 
     <q-page-container>
@@ -45,6 +46,7 @@ import DetailsPopup from 'components/DetailsPopup.vue'
 import VisualizationDeletionDialog from 'components/VisualizationDeletionDialog.vue'
 import ExtractionDialog from 'components/ExtractionDialog.vue'
 import CommunityDeletionDialog from "components/CommunityDeletionDialog.vue";
+import ClusterCreationDialog from "components/ClusterCreationDialog.vue";
 @Component({
   components: {
     EssentialLink,
@@ -55,7 +57,8 @@ import CommunityDeletionDialog from "components/CommunityDeletionDialog.vue";
     DetailsPopup,
     VisualizationDeletionDialog,
     ExtractionDialog,
-    CommunityDeletionDialog
+    CommunityDeletionDialog,
+    ClusterCreationDialog
   }
 })
 export default class MainLayout extends Vue {
@@ -66,7 +69,12 @@ export default class MainLayout extends Vue {
   }
 
   finishCreation (event:any) {
-    this.$store.commit('data/createOrEditVisualization', event)
+    this.$store.dispatch('data/createOrEditVisualization', event)
+  }
+
+
+  finishClusteringCreation(event:any){
+    this.$store.dispatch('data/createOrEditClustering', event)
   }
 
   async selectVisualization (visualization:any) {

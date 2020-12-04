@@ -20,6 +20,9 @@ const actions: ActionTree<StoredStateInterface, StateInterface> = {
   },
   deleteCommunityFromBackend(_,payload){
     ipcRenderer.send("deleteCommunity", payload)
+  },
+  createOrEditClustering(_,payload){
+    ipcRenderer.send("createOrEditClustering", payload)
   }
 }
 

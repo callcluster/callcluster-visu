@@ -4,8 +4,22 @@ import CommunityRepository, { ExtractedCommunity } from "./CommunityRepository";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
 import makeVisualization, { Visualization } from "./makeVisualization";
 import { OriginalAnalysisJson } from "./types";
-
+interface ClusteringParameters{
+    name:string, 
+    community: { 
+        label:string, 
+        value:number
+    } 
+}
 export default class Controller{
+    createClustering(data: ClusteringParameters): ExtractedCommunity {
+        return {
+            communityId:this.getMinedCommunity().communityId,
+            description:"Clustering",
+            id:89,
+            name:data.name
+        }
+    }
     private repository:Analyzable|undefined
     private communities:CommunityRepository = new CommunityRepository()
 

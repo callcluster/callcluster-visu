@@ -1,6 +1,7 @@
 import { ipcRenderer } from "electron"
 
 export type OtherDataState = {
+  viewCreateClustering:boolean,
   viewCreateVisualization:boolean,
   availableMetrics:Array<string>,
   visualization:Record<string, string>,
@@ -11,6 +12,7 @@ export type OtherDataState = {
   deletableCommunity:number|null,
 }
 const defaultState:OtherDataState = {
+  viewCreateClustering:false,
   viewCreateVisualization: false,
   availableMetrics: [],
   visualization: {},
@@ -27,9 +29,15 @@ const otherDataModule = {
       if (createdType === 'visualization') {
         state.viewCreateVisualization = true
       }
+      if (createdType === 'clustering') {
+        state.viewCreateClustering = true
+      }
     },
     setCreateVisualization (state:OtherDataState, value:boolean) {
       state.viewCreateVisualization = value
+    },
+    setCreateClustering (state:OtherDataState, value:boolean) {
+      state.viewCreateClustering = value
     },
     setAvailableMetrics (state:OtherDataState, value:Array<string>) {
       state.availableMetrics = value
