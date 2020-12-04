@@ -1,3 +1,4 @@
+import { ExtractedCommunity } from "./CommunityRepository";
 import Controller from "./Controller";
 import { InfoQuery } from "./getInfoFor";
 import { Visualization } from "./makeVisualization";
@@ -18,37 +19,18 @@ export function getAvailableMetrics() {
     return controllerInstance.getAvailableMetrics()
 }
 
-export function createCommunity(data:{communityId:number,name:string}) {
-    console.log("-----")
-    console.log("-----")
-    console.log(data)
-    console.log("-----")
-    console.log("-----")
-    return {
-        id: 20,
-        communityId: data.communityId,
-        name: data.name,
-        description: "Extracted community",
-    }
+export function createCommunity(data:{communityId:number,name:string}):ExtractedCommunity {
+    return controllerInstance.createCommunity(data.communityId,data.name)
 }
 
-export function getMinedCommunity() {
-    return {
-        id: 0,
-        name: "Mined community",
-        description: "Mined community",
-    }
+export function getMinedCommunity():ExtractedCommunity {
+    return controllerInstance.getMinedCommunity()
 }
 
-export function renameCommunity(data:{id:number,name:string}){
-    console.log("=====")
-    console.log(data)
-    console.log("=====")
-    
-    return data;
+export function renameCommunity(data:{id:number,name:string}):void {
+    controllerInstance.renameCommunity(data.id,data.name)
 }
 
-export function deleteCommunity(id:number){
-    console.log("delete!")
-    console.log(id)
+export function deleteCommunity(id:number):void {
+    controllerInstance.deleteCommunity(id)
 }

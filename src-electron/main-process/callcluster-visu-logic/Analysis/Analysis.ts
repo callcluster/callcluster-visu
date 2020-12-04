@@ -83,6 +83,13 @@ export default class Analysis implements Analyzable {
 
         throw Error("This identifiable has no identifier")
     }
+    getNumberIdentifier(community:Community):number{
+        if ("_treemap_id" in community) {
+            return community["_treemap_id"] as number
+        }else{
+            throw Error("This community has no identifier")
+        }
+    }
     isAbstract(community: Community): boolean {
         return (
             this.getSubCommunities(community).length == 0
