@@ -2,5 +2,9 @@ export {
     getAvailableMetrics,
     getInfoFor,
     makeVisualization,
-    setAnalysisJson
+    setAnalysisJson,
+    createCommunity,
+    getMinedCommunity,
+    renameCommunity,
+    deleteCommunity
 } from "./controllerInstance";

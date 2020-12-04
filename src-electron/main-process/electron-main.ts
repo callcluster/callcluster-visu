@@ -1,6 +1,6 @@
 import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
-import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor } from './callcluster-visu-logic'
+import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor, createCommunity, getMinedCommunity, renameCommunity, deleteCommunity } from './callcluster-visu-logic'
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
@@ -26,11 +26,7 @@ async function loadAnalysisJson(path:string){
   }
   let analysisJson=JSON.parse(buffer);
   setAnalysisJson(analysisJson)
-  mainWindow.webContents.send('createCommunity',{
-    id:0,
-    name:"Mined community",
-    description:"Mined community",
-  });
+  mainWindow.webContents.send('createCommunity',getMinedCommunity());
   mainWindow.webContents.send('availableMetrics',getAvailableMetrics())
 }
 
@@ -54,31 +50,19 @@ ipcMain.on("getDetailsForExtraction", (event,data) => {
 
 ipcMain.on("extractCommunity", (event,data)=>{
   if(mainWindow==null) return;
-  mainWindow.webContents.send('createCommunity',{
-    id:20,
-    communityId:data.communityId,
-    name:data.name,
-    description:"Extracted community",
-  })
+  mainWindow.webContents.send('createCommunity',createCommunity(data))
 })
 
 ipcMain.on("renameCommunity", (event,data)=>{
   if(mainWindow==null) return;
-  mainWindow.webContents.send('renameCommunity',{
-    id:data.id,
-    name:data.name,
-  })
+  renameCommunity(data)
+  mainWindow.webContents.send('renameCommunity',data)
 })
 
 ipcMain.on("deleteCommunity", (event,data)=>{
   if(mainWindow==null) return;
-  console.log("deleting a community")
+  deleteCommunity(data)
 })
-
-
-
-
-
 
 function createWindow () {
   /**
