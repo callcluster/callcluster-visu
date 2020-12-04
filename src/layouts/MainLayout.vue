@@ -6,7 +6,7 @@
       ref="creation-dialog"
     />
     <visualization-deletion-dialog />
-    <extraction-dialog/>
+    <extraction-dialog ref="extraction-dialog"/>
 
     <q-page-container>
       <q-splitter
@@ -20,6 +20,8 @@
             @select-visualization="selectVisualization"
             @edit-visualization="editVisualization"
             @delete-visualization="deleteVisualization"
+            @rename-community="renameCommunity"
+            @delete-community="deleteCommunity"
           />
         </template>
         <template v-slot:after>
@@ -76,6 +78,19 @@ export default class MainLayout extends Vue {
 
   deleteVisualization (id:string) {
     this.$store.commit('other/setDeletableVisualization', id)
+  }
+
+  renameCommunity(community:{id:number,name:string,description:string,communityId:number}){
+    const dialog = this.$refs['extraction-dialog'] as ExtractionDialog
+    dialog.rename(community)
+  }
+
+  deleteCommunity(community:{id:number,name:string,description:string,communityId:number}){
+    console.log("-------")
+    console.log("-------")
+    console.log("-------")
+    console.log("-------")
+    console.log(community)
   }
 }
 </script>

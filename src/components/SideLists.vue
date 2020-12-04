@@ -23,12 +23,33 @@
             v-ripple 
             v-for="c in communities" 
             @click="selectCommunity(c)"
-            active-class="bg-primary text-grey-1"
-            :active="selectedThing == c"
             >
               <q-item-section>
                 <q-item-label>{{ c.name }}</q-item-label>
-                <q-item-label caption>Mined community</q-item-label>
+                <q-item-label caption>{{ c.description }}</q-item-label>
+              </q-item-section>
+              <q-item-section avatar v-if="c.name!='Mined community'">
+                <q-btn flat round icon="more_vert">
+                  <q-menu>
+                    <q-list style="min-width: 100px">
+                      <q-item
+                        clickable
+                        v-close-popup
+                        @click="renameCommunity(c)"
+                      >
+                        <q-item-section>Rename</q-item-section>
+                      </q-item>
+                      <q-item
+                        clickable
+                        v-close-popup
+                        @click="deleteCommunity(c)"
+                      >
+                        <q-item-section class="text-negative">Delete</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+
+                </q-btn>
               </q-item-section>
             </q-item>
           </q-list>
@@ -106,7 +127,7 @@ export default class ClassComponent extends Vue {
     this.selectedThing=community
   }
 
-  get communities ():{name:string}[] {
+  get communities ():{name:string,description:string,id:number}[] {
     let commuDict = this.$store.state.data.communities;
     return Object.values(commuDict);
   }
@@ -121,6 +142,14 @@ export default class ClassComponent extends Vue {
 
   description (visualization:Record<string, any>) {
     return descriptionOfVisualization(visualization)
+  }
+
+  renameCommunity(community:{id:number,name:string,description:string,communityId:number}){
+    this.$emit('rename-community', community)
+  }
+
+  deleteCommunity(community:{id:number,name:string,description:string,communityId:number}){
+    this.$emit('delete-community', community)
   }
 }
 </script>

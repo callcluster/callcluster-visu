@@ -28,6 +28,11 @@ import { Vue, Component, Watch } from 'vue-property-decorator'
 @Component({
 })
 export default class ExtractionDialog extends Vue {
+  rename(community: {id:number,name:string,description:string,communityId:number}) {
+    console.log(community)
+    throw new Error('Method not implemented.')
+  }
+  
   name:string=""
 
   @Watch('defaultName')
@@ -43,16 +48,23 @@ export default class ExtractionDialog extends Vue {
   }
 
   extractCommunity(){
-    console.log("CREADAAAAA",this.name,this.communityId)
+    this.$store.dispatch("data/extractCommunity",{
+      name:this.name,
+      communityId:this.communityId
+    })
     this.clearName()
     this.showDialog = false;
   }
 
 
   get defaultName():string{
-    return this.$store.state.other.extractionDetails.type 
-    + " "
-    + this.$store.state.other.extractionDetails.name
+    if( this.$store.state.other.extractionDetails == null ){
+      return ""
+    }else{
+      return this.$store.state.other.extractionDetails.type 
+      + " "
+      + this.$store.state.other.extractionDetails.name
+    }
   }
 
   get communityId():number{

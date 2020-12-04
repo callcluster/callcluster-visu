@@ -28,7 +28,8 @@ async function loadAnalysisJson(path:string){
   setAnalysisJson(analysisJson)
   mainWindow.webContents.send('createCommunity',{
     id:0,
-    name:"Mined community"
+    name:"Mined community",
+    description:"Mined community",
   });
   mainWindow.webContents.send('availableMetrics',getAvailableMetrics())
 }
@@ -49,6 +50,16 @@ ipcMain.on("selectObject", (event,data) => {
 ipcMain.on("getDetailsForExtraction", (event,data) => {
   if(mainWindow==null) return;
   mainWindow.webContents.send('setDetailsForExtraction',getInfoFor(data))
+})
+
+ipcMain.on("extractCommunity", (event,data)=>{
+  if(mainWindow==null) return;
+  mainWindow.webContents.send('createCommunity',{
+    id:20,
+    communityId:data.communityId,
+    name:data.name,
+    description:"Extracted community",
+  })
 })
 
 
