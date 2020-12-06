@@ -7,7 +7,7 @@ export default interface Analyzable {
     getCommunityAt(path:CommunityName[]):Community
     getWrittenFunctions():Function[]
     getFunction(id:FunctionId):Function
-    getCalls():Call[]
+    getCalls(community:Community):Call[]
     getMetric(subject: Function | Community, metric: Metric): number|undefined
     getSubCommunities(c: Community): Community[]
     getFunctionsInside(community: Community): FunctionId[]
@@ -21,4 +21,5 @@ export default interface Analyzable {
     optimize():void
     getMinedCommunity():Community
     getNumberIdentifier(community:Community):number
+    getAllFunctionsInside(community: Community): FunctionId[]
 }

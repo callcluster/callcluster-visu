@@ -20,6 +20,16 @@ export default class Analysis implements Analyzable {
             name:community.name as string
         }))
     }
+    getAllFunctionsInside(community: Community): FunctionId[] {
+        return [
+            ...this.getFunctionsInside(community),
+            ...(
+                this.getSubCommunities(community)
+                    .map((community)=>this.getAllFunctionsInside(community))
+                    .reduce((a, b) => [...a, ...b], [])
+            )
+        ]
+    }
     getParent(community: Community): Community | null {
         return this.parents.get(this.getStringIdentifier(community)) ?? null
     }
@@ -48,8 +58,10 @@ export default class Analysis implements Analyzable {
     getFunction(id:FunctionId):Function{
         return this.analysisJson.functions[id as unknown  as number];
     }
-    getCalls():Call[]{
+    getCalls(community:Community):Call[]{
+        const allFunctions = new Set(this.getAllFunctionsInside(community))
         return this.analysisJson.calls
+            .filter(({ from, to }) => from!==to && allFunctions.has(from) && allFunctions.has(to))
     }
     getMetric(subject: Function | Community, metric: Metric): number|undefined {
         if (metric in subject) {

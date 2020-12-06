@@ -69,9 +69,8 @@ export default class MainLayout extends Vue {
   }
 
   finishCreation (event:any) {
-    this.$store.dispatch('data/createOrEditVisualization', event)
+    this.$store.commit('data/createOrEditVisualization', event)
   }
-
 
   finishClusteringCreation(event:any){
     this.$store.dispatch('data/createOrEditClustering', event)

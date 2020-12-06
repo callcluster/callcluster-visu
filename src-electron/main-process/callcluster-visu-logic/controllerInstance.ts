@@ -23,7 +23,7 @@ export function createCommunity(data:{communityId:number,name:string}):Extracted
     return controllerInstance.createCommunity(data.communityId,data.name)
 }
 
-export function createClustering(data:any):ExtractedCommunity {
+export async function createClustering(data:any):Promise<ExtractedCommunity> {
     return controllerInstance.createClustering(data)
 }
 

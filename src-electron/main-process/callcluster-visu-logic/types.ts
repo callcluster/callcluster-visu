@@ -1,6 +1,6 @@
 export interface Call {
-    from: number,
-    to: number
+    from: FunctionId,
+    to: FunctionId
 }
 
 export type Function = {

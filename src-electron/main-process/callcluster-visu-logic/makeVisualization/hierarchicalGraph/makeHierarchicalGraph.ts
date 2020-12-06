@@ -34,13 +34,13 @@ export default function makeHierarchicalGraph(visualization:HierarchicalVisualiz
             label: v.name
         })),
         edges: [...new Set([
-            ...analyzable.getCalls()
+            ...analyzable.getCalls(analyzable.getMinedCommunity())
                 .filter(({ from, to }) => from !== to)
                 .filter(({ from }) => allFunctions.has(from))
                 .filter(({ to }) => allFunctions.has(to))
                 .map(({ from, to }) => ({
-                    from: nodeIdDict[from],
-                    to: nodeIdDict[to],
+                    from: nodeIdDict[from as unknown as number],
+                    to: nodeIdDict[to as unknown as number],
                     arrows: "to"
                 }))
                 .filter(({ from, to }) => from !== to)

@@ -4,6 +4,7 @@ import CommunityRepository, { ExtractedCommunity } from "./CommunityRepository";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
 import makeVisualization, { Visualization } from "./makeVisualization";
 import { OriginalAnalysisJson } from "./types";
+import {runClustering} from "./Clusterer";
 interface ClusteringParameters{
     name:string, 
     community: { 
@@ -12,12 +13,23 @@ interface ClusteringParameters{
     } 
 }
 export default class Controller{
-    createClustering(data: ClusteringParameters): ExtractedCommunity {
+    async createClustering(parameters: ClusteringParameters): Promise<ExtractedCommunity> {
+        if(this.repository===undefined){
+            throw new Error("analysisjson wasn't set")
+        }
+        const communityValue = parameters.community.value
+        const extracted = this.communities.getRoot(communityValue)
+        const root="c"+extracted.communityId;
+        const community=this.repository.getCommunityFromString(root);
+        const calls=this.repository.getCalls(community)
+        const newCommunity = await runClustering(calls)
+        console.log("new community created",newCommunity)
+
         return {
             communityId:this.getMinedCommunity().communityId,
             description:"Clustering",
             id:89,
-            name:data.name
+            name:parameters.name
         }
     }
     private repository:Analyzable|undefined

@@ -65,8 +65,10 @@ ipcMain.on("deleteCommunity", (event,data)=>{
 })
 
 ipcMain.on("createOrEditClustering", (event,data)=>{
-  if(mainWindow==null) return;
-  mainWindow.webContents.send('createCommunity',createClustering(data))
+  createClustering(data).then((extractedCommunity)=>{
+    if(mainWindow==null) return;
+    mainWindow.webContents.send('createCommunity',extractedCommunity)
+  })
 })
 
 function createWindow () {
