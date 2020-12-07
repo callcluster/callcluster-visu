@@ -10,16 +10,16 @@ import {
     Callgraph
 } from "./_types";
 import Analyzable from "./_Analyzable";
-import Indexer from "./_Indexer";
 import CommunityInterpreter from "./_CommunityInterpreter";
+import CommunityRepository from "./_CommunityRepository";
+import { CommunityIdentifier } from "../types";
 
 export default class Analysis implements Analyzable {
-    private communityIndex:Indexer<Community>=new Indexer<Community>()
-    private parents:Map<string,Community> = new Map<string,Community>();
+    
     constructor(
-        private minedCommunity:Community, 
         private callgraph:Callgraph, 
-        private communityInterpreter:CommunityInterpreter 
+        private communityInterpreter:CommunityInterpreter,
+        private communityRepository:CommunityRepository
     ) {}
     
     getParents(root: string): { id: string; name: string; }[] {
@@ -46,10 +46,10 @@ export default class Analysis implements Analyzable {
         ]
     }
     getParent(community: Community): Community | null {
-        return this.parents.get(this.getStringIdentifier(community)) ?? null
+        return this.communityRepository.getParent(community)
     }
     getMinedCommunity(): Community {
-        return this.minedCommunity
+        return this.communityRepository.getMinedCommunity()
     }
     getColor(community: Community): string {
         const seed = community["_treemap_id"] as number
@@ -58,11 +58,11 @@ export default class Analysis implements Analyzable {
     getFunctionId(id: string):FunctionId {
         return parseInt(id.replace("f","")) as unknown as FunctionId
     }
-    getCommunityFromString(id: string):Community {
-        return this.communityIndex.get(parseInt(id.replace("c","")))
+    getCommunityFromString(id: CommunityIdentifier):Community {
+        return this.communityRepository.getCommunityFromString(id)
     }
     getCommunity(id: CommunityId): Community {
-        return this.communityIndex.get(id as unknown as number)
+        return this.communityRepository.getCommunity(id)
     }
     getWrittenFunctions():Function[] {
         return this.callgraph.functions.filter(this.isWritten)
@@ -89,14 +89,7 @@ export default class Analysis implements Analyzable {
         return this.communityInterpreter.getFunctionsInside(community)
     }
     getStringIdentifier(identifiable: Community|FunctionId):string {
-        if(Number.isInteger(identifiable)){
-            return `f${identifiable}`
-        }
-        if ("_treemap_id" in identifiable) {
-            return `c${identifiable["_treemap_id"] as number}`
-        }
-
-        throw Error("This identifiable has no identifier")
+        return this.communityInterpreter.getStringIdentifier(identifiable)
     }
     getNumberIdentifier(community:Community):number{
         return this.communityInterpreter.getNumberIdentifier(community)
@@ -154,36 +147,15 @@ export default class Analysis implements Analyzable {
                 this.addToMetric(community, metric, this.getMetric(func, metric) ?? 0)
             ))
     }
-    private optimizeGetParents(community: Community){
-        this.getSubCommunities(community)
-        .forEach(childCommunity => {
-            const com = this.getStringIdentifier(childCommunity)
-            this.parents.set(com, community)
-        })
-        this.getSubCommunities(community)
-        .forEach(childCommunity => {
-            this.optimizeGetParents(childCommunity)
-        })
-    }
-
-    private indexCommunities(community: Community){
-        community._treemap_id = this.communityIndex.nextId
-        this.communityIndex.add(community)
-        this.getSubCommunities(community)
-            .forEach(childCommunity => 
-                this.indexCommunities(childCommunity)
-            )
-    }
+    
 
     optimize(community: Community|null = null, metrics: Metric[]|null = null) {
         if(community==null){
-            community=this.minedCommunity
+            community=this.getMinedCommunity()
         }
         if(metrics==null){
             metrics = this.getAvailableMetrics()
         }
-        this.indexCommunities(community)
         this.optimizeMetrics(community, metrics)
-        this.optimizeGetParents(community)
     }
 }

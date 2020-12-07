@@ -4,6 +4,7 @@ export default interface CommunityInterpreter{
     getSubCommunities(c: Community): Community[]
     getFunctionsInside(community: Community): FunctionId[]
     getNumberIdentifier(community:Community):number
+    getStringIdentifier(identifiable: Community|FunctionId):string
 }
 
 
@@ -28,6 +29,16 @@ class ConcreteCommunityInterpreter implements CommunityInterpreter{
         }else{
             throw Error("This community has no identifier")
         }
+    }
+    getStringIdentifier(identifiable: Community|FunctionId):string {
+        if(Number.isInteger(identifiable)){
+            return `f${identifiable}`
+        }
+        if ("_treemap_id" in identifiable) {
+            return `c${identifiable["_treemap_id"] as number}`
+        }
+
+        throw Error("This identifiable has no identifier")
     }
 }
 

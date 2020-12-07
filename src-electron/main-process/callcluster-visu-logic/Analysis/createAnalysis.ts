@@ -1,12 +1,13 @@
 import Analysis from "./Analysis";
 import Analyzable from "./_Analyzable";
 import CommunityInterpreter from "./_CommunityInterpreter";
+import CommunityRepository from "./_CommunityRepository";
 import { Community, Callgraph } from "./_types";
 
 export default function createAnalysis(
-    minedCommunity:Community,
     callgraph:Callgraph,
-    interpreter:CommunityInterpreter
+    interpreter:CommunityInterpreter,
+    repository:CommunityRepository
 ):Analyzable {
-    return new Analysis(minedCommunity, callgraph, interpreter)
+    return new Analysis(callgraph, interpreter, repository)
 }
