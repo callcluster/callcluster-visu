@@ -4,7 +4,6 @@ export default interface Analyzable {
     getFunctionId(id: CommunityIdentifier): FunctionId;
     getCommunity(id: CommunityId):Community;
     getCommunityFromString(id: CommunityIdentifier):Community;
-    getCommunityAt(path:CommunityName[]):Community
     getWrittenFunctions():Function[]
     getFunction(id:FunctionId):Function
     getCalls(community:Community):Call[]

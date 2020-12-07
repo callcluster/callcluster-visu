@@ -1,6 +1,5 @@
 import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson, FunctionId, CommunityId } from "./_types";
 import Analyzable from "./_Analyzable";
-import getCommunityFromPath from "./getCommunity";
 import Indexer from "./_Indexer";
 
 export default class Analysis implements Analyzable {
@@ -48,9 +47,6 @@ export default class Analysis implements Analyzable {
     }
     getCommunity(id: CommunityId): Community {
         return this.communityIndex.get(id as unknown as number)
-    }
-    getCommunityAt(path: CommunityName[]): Community {
-        return getCommunityFromPath(path,this.analysisJson.community, this)
     }
     getWrittenFunctions():Function[] {
         return this.analysisJson["functions"].filter(this.isWritten)
