@@ -15,10 +15,10 @@ export default class ExtractedCommunityRepository{
         this.repository.remove(id)
     }
 
-    createCommunity(communityId: number, name: string): ExtractedCommunity {
+    createCommunity(communityId: number, name: string, description:string): ExtractedCommunity {
         const community:ExtractedCommunity = {
             id:this.repository.nextId,
-            description: "Extracted community",
+            description: description,
             name,
             communityId
         }

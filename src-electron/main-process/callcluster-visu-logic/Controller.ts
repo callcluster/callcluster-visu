@@ -20,20 +20,14 @@ export default class Controller{
         if(this.analysis===undefined){
             throw new Error("analysisjson wasn't set")
         }
-        const communityValue = parameters.community.value
-        const extracted = this.extractedCommunitiesRepository.getRoot(communityValue)
-        const root="c"+extracted.communityId;
-        const community=this.analysis.getCommunityFromString(root);
-        const calls=this.analysis.getCalls(community)
-        const newCommunity = await runClustering(calls)
+        const extracted:ExtractedCommunity = this.extractedCommunitiesRepository.getRoot(parameters.community.value)
+        const community:Community = this.analysis.getCommunityFromString("c"+extracted.communityId);
+        const newCommunity = await runClustering(this.analysis.getCalls(community))
         console.log("new community created",newCommunity)
-
-        return {
-            communityId:this.getMinedCommunity().communityId,
-            description:"Clustering",
-            id:89,
-            name:parameters.name
-        }
+        this.optimizeAndAdd(newCommunity)
+        const communityId = this.interpreter.getNumberIdentifier(newCommunity)
+        const name = parameters.name
+        return this.extractedCommunitiesRepository.createCommunity(communityId,name,"Extracted community")
     }
     private analysis:Analyzable|undefined
     private extractedCommunitiesRepository:ExtractedCommunityRepository = new ExtractedCommunityRepository()
@@ -94,7 +88,7 @@ export default class Controller{
     }
 
     public createCommunity(communityId:number,name:string):ExtractedCommunity {
-        return this.extractedCommunitiesRepository.createCommunity(communityId,name)
+        return this.extractedCommunitiesRepository.createCommunity(communityId,name,"Extracted community")
     }
 
     public deleteCommunity(id: number) {
