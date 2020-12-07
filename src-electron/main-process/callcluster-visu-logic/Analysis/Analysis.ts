@@ -13,13 +13,15 @@ import Analyzable from "./_Analyzable";
 import CommunityInterpreter from "./_CommunityInterpreter";
 import CommunityRepository from "./_CommunityRepository";
 import { CommunityIdentifier } from "../types";
+import CommunityMeasurer from "./_CommunityMeasurer";
 
 export default class Analysis implements Analyzable {
     
     constructor(
         private callgraph:Callgraph, 
         private communityInterpreter:CommunityInterpreter,
-        private communityRepository:CommunityRepository
+        private communityRepository:CommunityRepository,
+        private communityMeasurer:CommunityMeasurer
     ) {}
     
     getParents(root: string): { id: string; name: string; }[] {
@@ -73,11 +75,7 @@ export default class Analysis implements Analyzable {
             .filter(({ from, to }) => from!==to && allFunctions.has(from) && allFunctions.has(to))
     }
     getMetric(subject: Function | Community, metric: Metric): number|undefined {
-        if (metric in subject) {
-            return subject[metric] as number
-        } else {
-            return undefined
-        }
+        return this.communityMeasurer.getMetric(subject, metric)
     }
     getSubCommunities(c: Community): Community[] {
         return this.communityInterpreter.getSubCommunities(c)
@@ -104,45 +102,12 @@ export default class Analysis implements Analyzable {
         return func.written == undefined || func.written == true;
     }
     getAvailableMetrics(): Metric[] {
-        let metricsDict: Record<string, boolean> = {}
-        this.callgraph.functions.forEach(f => {
-            Object.keys(f)
-                .filter(k => {
-                    return Number.isFinite(f[k])
-                })
-                .forEach(k => {
-                    metricsDict[k] = true
-                });
-        });
-        return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
-    }
-    addToMetric(community: Community, metric: Metric, value: number): number {
-        const gotMetric = this.getMetric(community, metric) ?? 0
-        const sum = gotMetric + value
-        community[metric] = sum
-        return sum
+        return this.communityMeasurer.getAvailableMetrics()
     }
 
 
     private optimizeMetrics(community: Community, metrics: Metric[]) {
-
-        this.getSubCommunities(community)
-            .forEach(childCommunity => 
-                this.optimizeMetrics(childCommunity, metrics)
-            )
-    
-        this.getSubCommunities(community)
-            .forEach(childCommunity => 
-                metrics.forEach(m => 
-                    this.addToMetric(community, m, this.getMetric(childCommunity, m) ?? 0)
-                )
-            )
-    
-        this.getFunctionsInside(community)
-            .map(id => this.getFunction(id))
-            .forEach(func => metrics.forEach(metric =>
-                this.addToMetric(community, metric, this.getMetric(func, metric) ?? 0)
-            ))
+        this.communityMeasurer.optimizeMetrics(community, metrics)
     }
     
 
