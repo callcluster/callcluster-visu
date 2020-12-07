@@ -16,6 +16,5 @@ export default interface Analyzable {
     isWritten(func: Function): boolean
     getAvailableMetrics(): Metric[]
     getAvailableMetrics(): Metric[]
-    getNumberIdentifier(community:Community):number
     getAllFunctionsInside(community: Community): FunctionId[]
 }

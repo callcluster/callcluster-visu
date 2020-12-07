@@ -6,22 +6,17 @@ export default interface CommunityRepository{
     getParent(community: Community): Community | null
     getCommunityFromString(id: CommunityIdentifier):Community
     getCommunity(id: CommunityId): Community
-    getMinedCommunity(): Community
 }
 
 export interface MutableCommunityRepository extends CommunityRepository{
-    optimize():void
+    addIndependentCommunity(communityRoot:Community):void
 }
 
 class ConcreteCommunityRepository implements MutableCommunityRepository{
     private communityIndex:Indexer<Community>=new Indexer<Community>()
     private parents:Map<string,Community> = new Map<string,Community>();
-    constructor(private communityInterpreter:CommunityInterpreter, private minedCommunity:Community) {}
+    constructor(private communityInterpreter:CommunityInterpreter) {}
 
-    getMinedCommunity(): Community {
-        return this.minedCommunity
-    }
-    
     getParent(community: Community): Community | null {
         const stringIdentifier = this.communityInterpreter.getStringIdentifier(community)
         return this.parents.get(stringIdentifier) ?? null
@@ -56,12 +51,12 @@ class ConcreteCommunityRepository implements MutableCommunityRepository{
             )
     }
 
-    optimize() {
-        this.indexCommunities(this.minedCommunity)
-        this.optimizeGetParents(this.minedCommunity)
+    addIndependentCommunity(communityRoot:Community):void{
+        this.indexCommunities(communityRoot)
+        this.optimizeGetParents(communityRoot)
     }
 }
 
-export function createCommunityRepository(interpreter:CommunityInterpreter, minedCommunity:Community):MutableCommunityRepository{
-    return new ConcreteCommunityRepository(interpreter, minedCommunity)
+export function createCommunityRepository(interpreter:CommunityInterpreter):MutableCommunityRepository{
+    return new ConcreteCommunityRepository(interpreter)
 }

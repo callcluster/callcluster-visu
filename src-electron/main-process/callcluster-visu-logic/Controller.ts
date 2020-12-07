@@ -3,11 +3,11 @@ import Analyzable from "./Analysis/_Analyzable";
 import ExtractedCommunityRepository, { ExtractedCommunity } from "./ExtractedCommunityRepository";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
 import makeVisualization, { Visualization, RootlessVisualization } from "./makeVisualization";
-import { CommunityIdentifier, OriginalAnalysisJson } from "./types";
+import { Community, CommunityId, CommunityIdentifier, OriginalAnalysisJson } from "./types";
 import {runClustering} from "./Clusterer";
 import { createCommunityInterpreter } from "./CommunityInterpreter";
 import { createCommunityRepository } from "./CommunityRepository";
-import { createCommunityMeasurer } from "./CommunityMeasurer";
+import { createCommunityMeasurer, OptimizingCommunityMeasurer } from "./CommunityMeasurer";
 interface ClusteringParameters{
     name:string, 
     community: { 
@@ -17,14 +17,14 @@ interface ClusteringParameters{
 }
 export default class Controller{
     async createClustering(parameters: ClusteringParameters): Promise<ExtractedCommunity> {
-        if(this.repository===undefined){
+        if(this.analysis===undefined){
             throw new Error("analysisjson wasn't set")
         }
         const communityValue = parameters.community.value
-        const extracted = this.extractedCommunities.getRoot(communityValue)
+        const extracted = this.extractedCommunitiesRepository.getRoot(communityValue)
         const root="c"+extracted.communityId;
-        const community=this.repository.getCommunityFromString(root);
-        const calls=this.repository.getCalls(community)
+        const community=this.analysis.getCommunityFromString(root);
+        const calls=this.analysis.getCalls(community)
         const newCommunity = await runClustering(calls)
         console.log("new community created",newCommunity)
 
@@ -35,20 +35,29 @@ export default class Controller{
             name:parameters.name
         }
     }
-    private repository:Analyzable|undefined
-    private extractedCommunities:ExtractedCommunityRepository = new ExtractedCommunityRepository()
+    private analysis:Analyzable|undefined
+    private extractedCommunitiesRepository:ExtractedCommunityRepository = new ExtractedCommunityRepository()
+    private interpreter = createCommunityInterpreter()
+    private communityRepository = createCommunityRepository(this.interpreter)
+    private measurer:OptimizingCommunityMeasurer|undefined
 
     public setAnalysisJson(localAnalysisJson: any){
-        const communityRepository = createCommunityRepository(createCommunityInterpreter(),localAnalysisJson.community)
-        const measurer = createCommunityMeasurer(localAnalysisJson.functions,createCommunityInterpreter())
-        communityRepository.optimize()
-        measurer.optimize(localAnalysisJson.community)
-        this.repository = createAnalysis(localAnalysisJson, createCommunityInterpreter(),communityRepository, measurer)
-        this.extractedCommunities.setMinedCommunityId(this.repository.getNumberIdentifier(communityRepository.getMinedCommunity()))
+        this.measurer = createCommunityMeasurer(localAnalysisJson.functions,this.interpreter)
+        this.optimizeAndAdd(localAnalysisJson.community)
+        this.analysis = createAnalysis(localAnalysisJson, this.interpreter, this.communityRepository, this.measurer)
+        this.extractedCommunitiesRepository.setMinedCommunityId(this.interpreter.getNumberIdentifier(localAnalysisJson.community))
+    }
+
+    private optimizeAndAdd(community:Community){
+        if(this.measurer===undefined){
+            throw new Error("No measurer assigned")
+        }
+        this.measurer.optimize(community)
+        this.communityRepository.addIndependentCommunity(community)
     }
 
     public makeVisualization(visualization: RootlessVisualization) {
-        if(this.repository===undefined){
+        if(this.analysis===undefined){
             throw new Error("analysisjson wasn't set")
         }
         let root:CommunityIdentifier|undefined=undefined;
@@ -56,44 +65,44 @@ export default class Controller{
             root=visualization["root"]
         }else{
             const communityValue = visualization.parameters.community.value
-            const extracted = this.extractedCommunities.getRoot(communityValue)
+            const extracted = this.extractedCommunitiesRepository.getRoot(communityValue)
             root="c"+extracted.communityId;
         }
         
         return makeVisualization({
             ...visualization,
             root
-        }, this.repository)
+        }, this.analysis)
     }
 
     public getInfoFor(data:InfoQuery){
-        if(this.repository===undefined){
+        if(this.analysis===undefined){
             throw new Error("analysisjson wasn't set")
         }
-        return getInfoFor(data, this.repository)
+        return getInfoFor(data, this.analysis)
     }
 
     public getAvailableMetrics(){
-        if(this.repository===undefined){
+        if(this.analysis===undefined){
             throw new Error("analysisjson wasn't set")
         }
-        return this.repository.getAvailableMetrics()
+        return this.analysis.getAvailableMetrics()
     }
     
     public getMinedCommunity():ExtractedCommunity {
-        return this.extractedCommunities.getMinedCommunity()
+        return this.extractedCommunitiesRepository.getMinedCommunity()
     }
 
     public createCommunity(communityId:number,name:string):ExtractedCommunity {
-        return this.extractedCommunities.createCommunity(communityId,name)
+        return this.extractedCommunitiesRepository.createCommunity(communityId,name)
     }
 
     public deleteCommunity(id: number) {
-        this.extractedCommunities.deleteCommunity(id)
+        this.extractedCommunitiesRepository.deleteCommunity(id)
     }
 
     public renameCommunity(id: number, name: string) {
-        this.extractedCommunities.renameCommunity(id,name)
+        this.extractedCommunitiesRepository.renameCommunity(id,name)
     }
     
 }

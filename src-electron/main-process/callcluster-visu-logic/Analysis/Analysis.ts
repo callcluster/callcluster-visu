@@ -86,9 +86,6 @@ export default class Analysis implements Analyzable {
     getStringIdentifier(identifiable: Community|FunctionId):string {
         return this.communityInterpreter.getStringIdentifier(identifiable)
     }
-    getNumberIdentifier(community:Community):number{
-        return this.communityInterpreter.getNumberIdentifier(community)
-    }
     isAbstract(community: Community): boolean {
         return (
             this.getSubCommunities(community).length == 0
