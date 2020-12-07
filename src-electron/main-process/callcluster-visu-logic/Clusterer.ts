@@ -8,10 +8,14 @@ export async function runClustering(subgraph:Call[]):Promise<Community>{
         console.log("spawning the process!")
         python.stdin.write(JSON.stringify(subgraph))
         python.stdin.end()
+        let allData=""
         python.stdout.on('data',function(data){
-            const commnityJson=data.toString('utf8')
-            resolve(JSON.parse(commnityJson))
+            allData+=data.toString('utf8')
+            
         });
+        python.stdout.on('end',()=>{
+            resolve(JSON.parse(allData))
+        })
         python.stderr.on('data',function(data){
             reject(data.toString('utf8'))
         });
