@@ -5,9 +5,7 @@ import { getMeasurablesInside } from "./_measurables";
 import Analyzable from "./_Analyzable";
 
 export default function makeTreemap(visualization: TreemapVisualization, analyzable:Analyzable) {
-    const community = visualization.root?
-    analyzable.getCommunityFromString(visualization.root)
-    :analyzable.getMinedCommunity()
+    const community = analyzable.getCommunityFromString(visualization.root)
     const evaluator = makeEvaluator(visualization, analyzable)
 
     const subjects = getMeasurablesInside(community, evaluator, analyzable)[1]

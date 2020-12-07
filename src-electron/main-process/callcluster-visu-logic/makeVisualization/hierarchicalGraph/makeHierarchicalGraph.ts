@@ -5,8 +5,7 @@ import Node from "./Node";
 import Analyzable from "./_Analyzable";
 import { CommunityIdentifier } from "./_types";
 export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
-    const {root} = visualization
-    const community = root?analyzable.getCommunityFromString(root):analyzable.getMinedCommunity()
+    const community = analyzable.getCommunityFromString(visualization.root)
     const evaluator = makeEvaluator(visualization, analyzable)
     const openedCommunities=(visualization.openedCommunities??[]).map(id=>new CommunityIdentifier(id))
 
@@ -34,7 +33,7 @@ export default function makeHierarchicalGraph(visualization:HierarchicalVisualiz
             label: v.name
         })),
         edges: [...new Set([
-            ...analyzable.getCalls(analyzable.getMinedCommunity())
+            ...analyzable.getCalls(community)
                 .filter(({ from, to }) => from !== to)
                 .filter(({ from }) => allFunctions.has(from))
                 .filter(({ to }) => allFunctions.has(to))

@@ -2,8 +2,8 @@ import createAnalysis from "./Analysis";
 import Analyzable from "./Analysis/_Analyzable";
 import CommunityRepository, { ExtractedCommunity } from "./CommunityRepository";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
-import makeVisualization, { Visualization } from "./makeVisualization";
-import { OriginalAnalysisJson } from "./types";
+import makeVisualization, { Visualization, RootlessVisualization } from "./makeVisualization";
+import { CommunityIdentifier, OriginalAnalysisJson } from "./types";
 import {runClustering} from "./Clusterer";
 interface ClusteringParameters{
     name:string, 
@@ -41,16 +41,23 @@ export default class Controller{
         this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(this.repository.getMinedCommunity()))
     }
 
-    public makeVisualization(visualization: Visualization) {
+    public makeVisualization(visualization: RootlessVisualization) {
         if(this.repository===undefined){
             throw new Error("analysisjson wasn't set")
         }
-        if(! ("root" in visualization)){
+        let root:CommunityIdentifier|undefined=undefined;
+        if("root" in visualization && visualization["root"]!==undefined){
+            root=visualization["root"]
+        }else{
             const communityValue = visualization.parameters.community.value
             const extracted = this.communities.getRoot(communityValue)
-            visualization.root="c"+extracted.communityId;
+            root="c"+extracted.communityId;
         }
-        return makeVisualization(visualization, this.repository)
+        
+        return makeVisualization({
+            ...visualization,
+            root
+        }, this.repository)
     }
 
     public getInfoFor(data:InfoQuery){

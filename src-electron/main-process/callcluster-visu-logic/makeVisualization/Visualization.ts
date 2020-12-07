@@ -1,6 +1,6 @@
 import { CommunityIdentifier } from "./_types";
 
-export default interface Visualization {
+interface GeneralVisualization {
     visualizationType: string,
     id: number,
     parameters: {
@@ -11,5 +11,12 @@ export default interface Visualization {
             value:number
         }
     }
+}
+
+export default interface Visualization extends GeneralVisualization{
+    root:CommunityIdentifier
+}
+
+export interface RootlessVisualization extends GeneralVisualization {
     root?:CommunityIdentifier
 }
