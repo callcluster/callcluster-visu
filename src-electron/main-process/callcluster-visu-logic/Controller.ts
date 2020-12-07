@@ -21,7 +21,7 @@ export default class Controller{
             throw new Error("analysisjson wasn't set")
         }
         const communityValue = parameters.community.value
-        const extracted = this.communities.getRoot(communityValue)
+        const extracted = this.extractedCommunities.getRoot(communityValue)
         const root="c"+extracted.communityId;
         const community=this.repository.getCommunityFromString(root);
         const calls=this.repository.getCalls(community)
@@ -36,7 +36,7 @@ export default class Controller{
         }
     }
     private repository:Analyzable|undefined
-    private communities:ExtractedCommunityRepository = new ExtractedCommunityRepository()
+    private extractedCommunities:ExtractedCommunityRepository = new ExtractedCommunityRepository()
 
     public setAnalysisJson(localAnalysisJson: any){
         const communityRepository = createCommunityRepository(createCommunityInterpreter(),localAnalysisJson.community)
@@ -44,7 +44,7 @@ export default class Controller{
         communityRepository.optimize()
         measurer.optimize(localAnalysisJson.community)
         this.repository = createAnalysis(localAnalysisJson, createCommunityInterpreter(),communityRepository, measurer)
-        this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(communityRepository.getMinedCommunity()))
+        this.extractedCommunities.setMinedCommunityId(this.repository.getNumberIdentifier(communityRepository.getMinedCommunity()))
     }
 
     public makeVisualization(visualization: RootlessVisualization) {
@@ -56,7 +56,7 @@ export default class Controller{
             root=visualization["root"]
         }else{
             const communityValue = visualization.parameters.community.value
-            const extracted = this.communities.getRoot(communityValue)
+            const extracted = this.extractedCommunities.getRoot(communityValue)
             root="c"+extracted.communityId;
         }
         
@@ -81,19 +81,19 @@ export default class Controller{
     }
     
     public getMinedCommunity():ExtractedCommunity {
-        return this.communities.getMinedCommunity()
+        return this.extractedCommunities.getMinedCommunity()
     }
 
     public createCommunity(communityId:number,name:string):ExtractedCommunity {
-        return this.communities.createCommunity(communityId,name)
+        return this.extractedCommunities.createCommunity(communityId,name)
     }
 
     public deleteCommunity(id: number) {
-        this.communities.deleteCommunity(id)
+        this.extractedCommunities.deleteCommunity(id)
     }
 
     public renameCommunity(id: number, name: string) {
-        this.communities.renameCommunity(id,name)
+        this.extractedCommunities.renameCommunity(id,name)
     }
     
 }
