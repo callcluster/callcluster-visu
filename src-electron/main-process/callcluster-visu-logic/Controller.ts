@@ -1,6 +1,6 @@
 import createAnalysis from "./Analysis";
 import Analyzable from "./Analysis/_Analyzable";
-import CommunityRepository, { ExtractedCommunity } from "./CommunityRepository";
+import ExtractedCommunityRepository, { ExtractedCommunity } from "./ExtractedCommunityRepository";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
 import makeVisualization, { Visualization, RootlessVisualization } from "./makeVisualization";
 import { CommunityIdentifier, OriginalAnalysisJson } from "./types";
@@ -33,7 +33,7 @@ export default class Controller{
         }
     }
     private repository:Analyzable|undefined
-    private communities:CommunityRepository = new CommunityRepository()
+    private communities:ExtractedCommunityRepository = new ExtractedCommunityRepository()
 
     public setAnalysisJson(localAnalysisJson: any){
         this.repository = createAnalysis(localAnalysisJson.community, localAnalysisJson)

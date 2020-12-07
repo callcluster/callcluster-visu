@@ -1,4 +1,4 @@
-import { ExtractedCommunity } from "./CommunityRepository";
+import { ExtractedCommunity } from "./ExtractedCommunityRepository";
 import Controller from "./Controller";
 import { InfoQuery } from "./getInfoFor";
 import { Visualization } from "./makeVisualization";

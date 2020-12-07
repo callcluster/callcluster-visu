@@ -1,5 +1,5 @@
 import Indexer from "./Indexer";
-export default class CommunityRepository{
+export default class ExtractedCommunityRepository{
     private repository = new Indexer<ExtractedCommunity>()
     private minedCommunityId: number|undefined;
 
