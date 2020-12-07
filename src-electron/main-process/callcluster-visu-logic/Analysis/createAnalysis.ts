@@ -1,7 +1,7 @@
 import Analysis from "./Analysis";
 import Analyzable from "./_Analyzable";
-import { OriginalAnalysisJson } from "./_types";
+import { Community, Callgraph } from "./_types";
 
-export default function createAnalysis(analysisJson:OriginalAnalysisJson):Analyzable{
-    return new Analysis(analysisJson)
+export default function createAnalysis(minedCommunity:Community, callgraph:Callgraph):Analyzable{
+    return new Analysis(minedCommunity, callgraph)
 }

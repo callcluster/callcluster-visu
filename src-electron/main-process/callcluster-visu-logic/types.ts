@@ -11,9 +11,12 @@ export type Community = {
     [key: string]: unknown
 }
 
-export interface OriginalAnalysisJson {
+export interface Callgraph {
     calls: Call[],
     functions: Function[],
+}
+
+export interface OriginalAnalysisJson extends Callgraph {
     community: Community
 }
 

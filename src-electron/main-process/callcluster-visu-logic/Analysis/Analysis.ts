@@ -1,11 +1,21 @@
-import { Metric, CommunityName, Call, Community, Function, OriginalAnalysisJson, FunctionId, CommunityId } from "./_types";
+import {
+    Metric,
+    CommunityName,
+    Call,
+    Community,
+    Function,
+    OriginalAnalysisJson,
+    FunctionId,
+    CommunityId,
+    Callgraph
+} from "./_types";
 import Analyzable from "./_Analyzable";
 import Indexer from "./_Indexer";
 
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
     private parents:Map<string,Community> = new Map<string,Community>();
-    constructor( private analysisJson:OriginalAnalysisJson  ) {}
+    constructor(  private minedCommunity:Community, private callgraph:Callgraph  ) {}
     getParents(root: string): { id: string; name: string; }[] {
         const community = this.getCommunityFromString(root)
         let parent:Community|null=this.getParent(community);
@@ -33,7 +43,7 @@ export default class Analysis implements Analyzable {
         return this.parents.get(this.getStringIdentifier(community)) ?? null
     }
     getMinedCommunity(): Community {
-        return this.analysisJson.community
+        return this.minedCommunity
     }
     getColor(community: Community): string {
         const seed = community["_treemap_id"] as number
@@ -49,14 +59,14 @@ export default class Analysis implements Analyzable {
         return this.communityIndex.get(id as unknown as number)
     }
     getWrittenFunctions():Function[] {
-        return this.analysisJson["functions"].filter(this.isWritten)
+        return this.callgraph.functions.filter(this.isWritten)
     }
     getFunction(id:FunctionId):Function{
-        return this.analysisJson.functions[id as unknown  as number];
+        return this.callgraph.functions[id as unknown  as number];
     }
     getCalls(community:Community):Call[]{
         const allFunctions = new Set(this.getAllFunctionsInside(community))
-        return this.analysisJson.calls
+        return this.callgraph.calls
             .filter(({ from, to }) => from!==to && allFunctions.has(from) && allFunctions.has(to))
     }
     getMetric(subject: Function | Community, metric: Metric): number|undefined {
@@ -111,7 +121,7 @@ export default class Analysis implements Analyzable {
     }
     getAvailableMetrics(): Metric[] {
         let metricsDict: Record<string, boolean> = {}
-        this.analysisJson.functions.forEach(f => {
+        this.callgraph.functions.forEach(f => {
             Object.keys(f)
                 .filter(k => {
                     return Number.isFinite(f[k])
@@ -131,9 +141,7 @@ export default class Analysis implements Analyzable {
 
 
     private optimizeMetrics(community: Community, metrics: Metric[]) {
-        community._treemap_id = this.communityIndex.nextId
-        this.communityIndex.add(community)
-    
+
         this.getSubCommunities(community)
             .forEach(childCommunity => 
                 this.optimizeMetrics(childCommunity, metrics)
@@ -164,14 +172,23 @@ export default class Analysis implements Analyzable {
         })
     }
 
+    private indexCommunities(community: Community){
+        community._treemap_id = this.communityIndex.nextId
+        this.communityIndex.add(community)
+        this.getSubCommunities(community)
+            .forEach(childCommunity => 
+                this.indexCommunities(childCommunity)
+            )
+    }
+
     optimize(community: Community|null = null, metrics: Metric[]|null = null) {
         if(community==null){
-            community=this.analysisJson.community
+            community=this.minedCommunity
         }
         if(metrics==null){
             metrics = this.getAvailableMetrics()
         }
-
+        this.indexCommunities(community)
         this.optimizeMetrics(community, metrics)
         this.optimizeGetParents(community)
     }

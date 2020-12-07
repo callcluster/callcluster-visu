@@ -36,7 +36,7 @@ export default class Controller{
     private communities:CommunityRepository = new CommunityRepository()
 
     public setAnalysisJson(localAnalysisJson: any){
-        this.repository = createAnalysis(localAnalysisJson as OriginalAnalysisJson)
+        this.repository = createAnalysis(localAnalysisJson.community, localAnalysisJson)
         this.repository.optimize()
         this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(this.repository.getMinedCommunity()))
     }
