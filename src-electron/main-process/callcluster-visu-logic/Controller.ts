@@ -5,6 +5,7 @@ import getInfoFor, { InfoQuery } from "./getInfoFor";
 import makeVisualization, { Visualization, RootlessVisualization } from "./makeVisualization";
 import { CommunityIdentifier, OriginalAnalysisJson } from "./types";
 import {runClustering} from "./Clusterer";
+import { createCommunityInterpreter } from "./CommunityInterpreter";
 interface ClusteringParameters{
     name:string, 
     community: { 
@@ -36,7 +37,7 @@ export default class Controller{
     private communities:ExtractedCommunityRepository = new ExtractedCommunityRepository()
 
     public setAnalysisJson(localAnalysisJson: any){
-        this.repository = createAnalysis(localAnalysisJson.community, localAnalysisJson)
+        this.repository = createAnalysis(localAnalysisJson.community, localAnalysisJson, createCommunityInterpreter())
         this.repository.optimize()
         this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(this.repository.getMinedCommunity()))
     }

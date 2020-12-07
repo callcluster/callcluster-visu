@@ -11,11 +11,17 @@ import {
 } from "./_types";
 import Analyzable from "./_Analyzable";
 import Indexer from "./_Indexer";
+import CommunityInterpreter from "./_CommunityInterpreter";
 
 export default class Analysis implements Analyzable {
     private communityIndex:Indexer<Community>=new Indexer<Community>()
     private parents:Map<string,Community> = new Map<string,Community>();
-    constructor(  private minedCommunity:Community, private callgraph:Callgraph  ) {}
+    constructor(
+        private minedCommunity:Community, 
+        private callgraph:Callgraph, 
+        private communityInterpreter:CommunityInterpreter 
+    ) {}
+    
     getParents(root: string): { id: string; name: string; }[] {
         const community = this.getCommunityFromString(root)
         let parent:Community|null=this.getParent(community);
@@ -77,18 +83,10 @@ export default class Analysis implements Analyzable {
         }
     }
     getSubCommunities(c: Community): Community[] {
-        if ("communities" in c) {
-            return c.communities as Community[];
-        } else {
-            throw Error("Cannot get subcommunities of a community")
-        }
+        return this.communityInterpreter.getSubCommunities(c)
     }
     getFunctionsInside(community: Community): FunctionId[] {
-        if ("functions" in community) {
-            return community["functions"] as FunctionId[]
-        } else {
-            throw Error("This community has no functions")
-        }
+        return this.communityInterpreter.getFunctionsInside(community)
     }
     getStringIdentifier(identifiable: Community|FunctionId):string {
         if(Number.isInteger(identifiable)){
@@ -101,11 +99,7 @@ export default class Analysis implements Analyzable {
         throw Error("This identifiable has no identifier")
     }
     getNumberIdentifier(community:Community):number{
-        if ("_treemap_id" in community) {
-            return community["_treemap_id"] as number
-        }else{
-            throw Error("This community has no identifier")
-        }
+        return this.communityInterpreter.getNumberIdentifier(community)
     }
     isAbstract(community: Community): boolean {
         return (
