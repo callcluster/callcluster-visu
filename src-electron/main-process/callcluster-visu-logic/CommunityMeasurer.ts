@@ -3,10 +3,12 @@ import { Community, Function, FunctionId, Metric } from "./types";
 export default interface CommunityMeasurer{
     getAvailableMetrics(): Metric[]
     getMetric(subject: Function | Community, metric: Metric): number|undefined
-    optimizeMetrics(community: Community, metrics: Metric[]):void
+}
+export interface OptimizingCommunityMeasurer extends CommunityMeasurer{
+    optimize(community: Community):void
 }
 
-class ConcreteCommunityMeasurer implements CommunityMeasurer{
+class ConcreteCommunityMeasurer implements OptimizingCommunityMeasurer{
     constructor(private functions:Function[], private communityInterpreter:CommunityInterpreter){}
     getAvailableMetrics(): Metric[] {
         let metricsDict: Record<string, boolean> = {}
@@ -39,28 +41,29 @@ class ConcreteCommunityMeasurer implements CommunityMeasurer{
         return this.functions[id as unknown  as number];
     }
 
-    optimizeMetrics(community: Community, metrics: Metric[]) {
+    optimize(community: Community, metrics?: Metric[]) {
+        const definedMetrics=metrics??this.getAvailableMetrics()
 
         this.communityInterpreter.getSubCommunities(community)
             .forEach(childCommunity => 
-                this.optimizeMetrics(childCommunity, metrics)
+                this.optimize(childCommunity, metrics)
             )
     
         this.communityInterpreter.getSubCommunities(community)
             .forEach(childCommunity => 
-                metrics.forEach(m => 
+                definedMetrics.forEach(m => 
                     this.addToMetric(community, m, this.getMetric(childCommunity, m) ?? 0)
                 )
             )
     
         this.communityInterpreter.getFunctionsInside(community)
             .map(id => this.getFunction(id))
-            .forEach(func => metrics.forEach(metric =>
+            .forEach(func => definedMetrics.forEach(metric =>
                 this.addToMetric(community, metric, this.getMetric(func, metric) ?? 0)
             ))
     }
 }
 
-export function createCommunityMeasurer(functions:Function[], interpreter:CommunityInterpreter):CommunityMeasurer{
+export function createCommunityMeasurer(functions:Function[], interpreter:CommunityInterpreter):OptimizingCommunityMeasurer{
     return new ConcreteCommunityMeasurer(functions, interpreter)
 }

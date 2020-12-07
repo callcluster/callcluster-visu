@@ -104,20 +104,4 @@ export default class Analysis implements Analyzable {
     getAvailableMetrics(): Metric[] {
         return this.communityMeasurer.getAvailableMetrics()
     }
-
-
-    private optimizeMetrics(community: Community, metrics: Metric[]) {
-        this.communityMeasurer.optimizeMetrics(community, metrics)
-    }
-    
-
-    optimize(community: Community|null = null, metrics: Metric[]|null = null) {
-        if(community==null){
-            community=this.communityRepository.getMinedCommunity()
-        }
-        if(metrics==null){
-            metrics = this.getAvailableMetrics()
-        }
-        this.optimizeMetrics(community, metrics)
-    }
 }

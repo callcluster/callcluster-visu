@@ -42,8 +42,8 @@ export default class Controller{
         const communityRepository = createCommunityRepository(createCommunityInterpreter(),localAnalysisJson.community)
         const measurer = createCommunityMeasurer(localAnalysisJson.functions,createCommunityInterpreter())
         communityRepository.optimize()
+        measurer.optimize(localAnalysisJson.community)
         this.repository = createAnalysis(localAnalysisJson, createCommunityInterpreter(),communityRepository, measurer)
-        this.repository.optimize()
         this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(communityRepository.getMinedCommunity()))
     }
 

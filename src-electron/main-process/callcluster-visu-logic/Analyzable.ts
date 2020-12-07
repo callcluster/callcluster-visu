@@ -18,6 +18,4 @@ export default interface Analyzable {
     getAvailableMetrics(): Metric[]
     getNumberIdentifier(community:Community):number
     getAllFunctionsInside(community: Community): FunctionId[]
-    
-    optimize():void
 }
