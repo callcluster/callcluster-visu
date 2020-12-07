@@ -21,5 +21,4 @@ export default interface Analyzable {
     getAllFunctionsInside(community: Community): FunctionId[]
     
     optimize():void
-    getMinedCommunity():Community
 }

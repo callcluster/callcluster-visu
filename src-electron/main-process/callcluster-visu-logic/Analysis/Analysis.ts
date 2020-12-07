@@ -48,9 +48,6 @@ export default class Analysis implements Analyzable {
     getParent(community: Community): Community | null {
         return this.communityRepository.getParent(community)
     }
-    getMinedCommunity(): Community {
-        return this.communityRepository.getMinedCommunity()
-    }
     getColor(community: Community): string {
         const seed = community["_treemap_id"] as number
         return "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
@@ -151,7 +148,7 @@ export default class Analysis implements Analyzable {
 
     optimize(community: Community|null = null, metrics: Metric[]|null = null) {
         if(community==null){
-            community=this.getMinedCommunity()
+            community=this.communityRepository.getMinedCommunity()
         }
         if(metrics==null){
             metrics = this.getAvailableMetrics()

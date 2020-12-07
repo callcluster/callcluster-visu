@@ -42,7 +42,7 @@ export default class Controller{
         communityRepository.optimize()
         this.repository = createAnalysis(localAnalysisJson, createCommunityInterpreter(),communityRepository)
         this.repository.optimize()
-        this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(this.repository.getMinedCommunity()))
+        this.communities.setMinedCommunityId(this.repository.getNumberIdentifier(communityRepository.getMinedCommunity()))
     }
 
     public makeVisualization(visualization: RootlessVisualization) {
