@@ -8,7 +8,7 @@ export default function makeVisualization(visualization: Visualization, analyzab
     console.log(visualization)
     if (isTreemap(visualization)) {
         return {
-            subjects: makeTreemap(visualization, analyzable),
+            subjects: makeTreemap(visualization, analyzable, visualization?.coloringParameters?.leftColorer ?? null),
             visualizationType: visualization.visualizationType,
             id: visualization.id,
             parameters: visualization.parameters,
@@ -28,7 +28,7 @@ export default function makeVisualization(visualization: Visualization, analyzab
         }
     } else if (isHierarchical(visualization)) {
         return {
-            ...(makeHierarchicalGraph(visualization, analyzable)),
+            ...(makeHierarchicalGraph(visualization, analyzable, visualization?.coloringParameters?.leftColorer ?? null)),
             root: visualization.root,
             visualizationType: visualization.visualizationType,
             id: visualization.id,

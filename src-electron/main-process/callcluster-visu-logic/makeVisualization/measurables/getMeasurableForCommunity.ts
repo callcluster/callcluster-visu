@@ -2,7 +2,9 @@ import { Measurable } from "./Measurable";
 import Analyzable from "./_Analyzable";
 import { SubjectEvaluator } from "./_makeEvaluator";
 import { Community } from "./_types"
-export default function getMeasurableForCommunity(community: Community, evaluator: SubjectEvaluator, analyzable:Analyzable): Measurable {
+import Colorer from "./_Colorer";
+
+export default function getMeasurableForCommunity(community: Community, evaluator: SubjectEvaluator, analyzable:Analyzable, colorer:Colorer|null): Measurable {
     return {
         ...community,
         id: analyzable.getStringIdentifier(community),
@@ -10,6 +12,7 @@ export default function getMeasurableForCommunity(community: Community, evaluato
         functions: undefined,
         type: "community",
         value: evaluator(community),
-        name: community.name
+        name: community.name,
+        colorsInside:[]
     }
 }

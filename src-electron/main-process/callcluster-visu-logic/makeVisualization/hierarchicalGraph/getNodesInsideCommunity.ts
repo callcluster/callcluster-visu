@@ -3,7 +3,7 @@ import { SubjectEvaluator } from "./_makeEvaluator";
 import { MeasurablesAnalyzer, Measurable, getMeasurablesInside } from "./_measurables";
 import Node from "./Node";
 import Analyzable from "./_Analyzable";
-
+import Colorer from "./_Colorer";
 function subjectToNode(subject: Measurable, parent: Community, measurablesAnalyzer: MeasurablesAnalyzer, analyzable:Analyzable): Node {
     return {
         ...subject,
@@ -12,9 +12,9 @@ function subjectToNode(subject: Measurable, parent: Community, measurablesAnalyz
         color: analyzable.getColor(parent)
     }
 }
-export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator, analyzable: Analyzable): Node[] {
+export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator, analyzable: Analyzable, colorer:Colorer|null): Node[] {
 
-    const [nodesAnalyzer, subjects] = getMeasurablesInside(community, evaluator, analyzable)
+    const [nodesAnalyzer, subjects] = getMeasurablesInside(community, evaluator, analyzable, colorer)
 
     return subjects
         .filter(subject => !nodesAnalyzer.identifierIncluded(subject, excludedIds))

@@ -4,16 +4,18 @@ import getNodesInsideCommunity from "./getNodesInsideCommunity";
 import Node from "./Node";
 import Analyzable from "./_Analyzable";
 import { CommunityIdentifier } from "./_types";
-export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable){
+import Colorer from "./_Colorer";
+
+export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable, colorer:Colorer|null){
     const community = analyzable.getCommunityFromString(visualization.root)
     const evaluator = makeEvaluator(visualization, analyzable)
     const openedCommunities=(visualization.openedCommunities??[]).map(id=>new CommunityIdentifier(id))
 
     const nodes:Node[] = [
-        ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable),
+        ...getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable, colorer),
         ...(openedCommunities || [])
             .map((id) => analyzable.getCommunityFromString(id))
-            .map((community) => getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable))
+            .map((community) => getNodesInsideCommunity(community, openedCommunities ?? [], evaluator, analyzable, colorer))
             .reduce((a, b) => [...a, ...b], [])
     ]
 

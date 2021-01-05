@@ -10,10 +10,22 @@ interface GeneralVisualization {
             label:string,
             value:number
         }
+    },
+}
+
+export interface Colorer {
+    label:string,
+    value:number
+}
+
+export interface ClusteredVisualization {
+    coloringParameters?:{
+        leftColorer:Colorer|null
+        rightColorer:Colorer|null
     }
 }
 
-export default interface Visualization extends GeneralVisualization{
+export default interface Visualization extends GeneralVisualization, ClusteredVisualization {
     root:CommunityIdentifier
 }
 
