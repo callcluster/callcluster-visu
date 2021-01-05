@@ -9,7 +9,7 @@ import {
     CommunityId,
     Callgraph
 } from "./_types";
-import Analyzable from "./_Analyzable";
+import Analyzable, {Colorer, SubjectEvaluator, ColorInside} from "./_Analyzable";
 import CommunityInterpreter from "./_CommunityInterpreter";
 import CommunityRepository from "./_CommunityRepository";
 import { CommunityIdentifier } from "../types";
@@ -23,6 +23,13 @@ export default class Analysis implements Analyzable {
         private communityRepository:CommunityRepository,
         private communityMeasurer:CommunityMeasurer
     ) {}
+
+    getColorForFunction(id: FunctionId, evaluator: SubjectEvaluator, colorer: Colorer | null): ColorInside {
+        throw new Error("Method not implemented.");
+    }
+    getColorsForCommunity(community: Community, evaluator: SubjectEvaluator, colorer: Colorer | null): ColorInside[] {
+        throw new Error("Method not implemented.");
+    }
     
     getParents(root: string): { id: string; name: string; }[] {
         const community = this.getCommunityFromString(root)

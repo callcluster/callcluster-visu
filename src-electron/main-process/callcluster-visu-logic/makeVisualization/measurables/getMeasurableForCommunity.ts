@@ -13,6 +13,6 @@ export default function getMeasurableForCommunity(community: Community, evaluato
         type: "community",
         value: evaluator(community),
         name: community.name,
-        colorsInside:[]
+        colorsInside: analyzable.getColorsForCommunity(community, evaluator,colorer)
     }
 }
