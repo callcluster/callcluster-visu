@@ -8,6 +8,7 @@ import {runClustering} from "./Clusterer";
 import { createCommunityInterpreter } from "./CommunityInterpreter";
 import { createCommunityRepository } from "./CommunityRepository";
 import { createCommunityMeasurer, OptimizingCommunityMeasurer } from "./CommunityMeasurer";
+import { createFunctionLocator } from "./FunctionLocator";
 interface ClusteringParameters{
     name:string, 
     community: { 
@@ -36,9 +37,10 @@ export default class Controller{
     private measurer:OptimizingCommunityMeasurer|undefined
 
     public setAnalysisJson(localAnalysisJson: any){
-        this.measurer = createCommunityMeasurer(localAnalysisJson.functions,this.interpreter)
+        const locator = createFunctionLocator(this.extractedCommunitiesRepository, this.communityRepository)
+        this.measurer = createCommunityMeasurer(localAnalysisJson.functions, this.interpreter)
         this.optimizeAndAdd(localAnalysisJson.community)
-        this.analysis = createAnalysis(localAnalysisJson, this.interpreter, this.communityRepository, this.measurer)
+        this.analysis = createAnalysis(localAnalysisJson, this.interpreter, this.communityRepository, this.measurer, locator)
         this.extractedCommunitiesRepository.setMinedCommunityId(this.interpreter.getNumberIdentifier(localAnalysisJson.community))
     }
 

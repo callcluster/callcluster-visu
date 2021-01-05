@@ -14,21 +14,35 @@ import CommunityInterpreter from "./_CommunityInterpreter";
 import CommunityRepository from "./_CommunityRepository";
 import { CommunityIdentifier } from "../types";
 import CommunityMeasurer from "./_CommunityMeasurer";
-
+import FunctionLocator from "./_FunctionLocator";
 export default class Analysis implements Analyzable {
     
     constructor(
         private callgraph:Callgraph, 
         private communityInterpreter:CommunityInterpreter,
         private communityRepository:CommunityRepository,
-        private communityMeasurer:CommunityMeasurer
+        private communityMeasurer:CommunityMeasurer,
+        private functionLocator:FunctionLocator
     ) {}
 
-    getColorForFunction(id: FunctionId, evaluator: SubjectEvaluator, colorer: Colorer | null): ColorInside {
-        throw new Error("Method not implemented.");
+    getColorForFunction(id: FunctionId, evaluator: SubjectEvaluator, colorer: Colorer): ColorInside {
+        const community:Community|undefined=this.functionLocator.findCommunityFor(id,colorer)
+        return {
+            id: community === undefined ? "" : this.getStringIdentifier(community),
+            value:evaluator(this.getFunction(id)) ?? 0
+        }
     }
     getColorsForCommunity(community: Community, evaluator: SubjectEvaluator, colorer: Colorer | null): ColorInside[] {
-        throw new Error("Method not implemented.");
+        if(colorer===null){
+            return []
+        }
+        return Array.from(
+            this.getAllFunctionsInside(community)
+            .map(fid => this.getColorForFunction(fid,evaluator,colorer))
+            .reduce((dict,color)=>{
+                return dict.set( color.id, ( dict.get(color.id) ?? 0 ) + color.value )
+            },new Map<string,number>())
+        ).map(([id,value])=>({id,value}))
     }
     
     getParents(root: string): { id: string; name: string; }[] {

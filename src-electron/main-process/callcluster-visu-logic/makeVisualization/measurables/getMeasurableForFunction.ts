@@ -12,6 +12,6 @@ export default function getMeasurableForFunction(id: FunctionId, evaluator: Subj
         type: 'function',
         value: evaluator(func),
         name: func.name,
-        colorsInside: [analyzable.getColorForFunction(id, evaluator,colorer)]
+        colorsInside: colorer===null?[]:[analyzable.getColorForFunction(id, evaluator,colorer)]
     }
 }

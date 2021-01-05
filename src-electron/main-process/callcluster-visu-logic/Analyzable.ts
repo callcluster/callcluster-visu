@@ -2,7 +2,7 @@ import { CommunityName, Call, Community, Function, Metric, FunctionId, Community
 import {Colorer, SubjectEvaluator, ColorInside} from "./makeVisualization"
 export {Colorer, SubjectEvaluator, ColorInside}
 export default interface Analyzable {
-    getColorForFunction(id: FunctionId, evaluator: SubjectEvaluator, colorer: Colorer | null): ColorInside;
+    getColorForFunction(id: FunctionId, evaluator: SubjectEvaluator, colorer: Colorer): ColorInside;
     getColorsForCommunity(community: Community, evaluator: SubjectEvaluator, colorer: Colorer | null): ColorInside[];
     getParents(root: CommunityIdentifier): { id: string; name: string; }[];
     getFunctionId(id: CommunityIdentifier): FunctionId;
