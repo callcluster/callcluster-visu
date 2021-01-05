@@ -5,6 +5,7 @@
         v-model="chosenInside"
         :options="[
           { label: 'Treemap', value: 'treemap' },
+          { label: 'Colored Treemap', value: 'treemap-colored' },
           { label: 'Histogram', value: 'histogram' },
           { label: 'Hierarchical graph', value: 'hierarchical' },
           { label: 'Hierarchical colored graph', value: 'hierarchical-colored' },
@@ -20,6 +21,16 @@
             <q-card-section>
               <div class="text-h6">Treemap</div>
               Reports some property representing size  as a treemap, on a single community.
+            </q-card-section>
+          </q-card>
+        </q-tab-panel>
+
+        <q-tab-panel name="treemap-colored">
+          <q-card class="fit">
+            <q-img src="graph.png" />
+            <q-card-section>
+              <div class="text-h6">Colored Treemap</div>
+              A treemap that shows what part of every "graphed" community corresponds to a different "colored" community.
             </q-card-section>
           </q-card>
         </q-tab-panel>

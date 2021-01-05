@@ -37,7 +37,7 @@
         <visu-customization :chosen-type="chosen" v-model="parameters" />
 
         <q-stepper-navigation>
-          <q-btn @click="step = 4" color="primary" label="Continue" />
+          <q-btn @click="step = stepAfterCustomization" color="primary" label="Continue" />
           <q-btn flat @click="step = 1" color="primary" label="Back" class="q-ml-sm" />
         </q-stepper-navigation>
       </q-step>
@@ -45,11 +45,16 @@
       <q-step
         :name="3"
         title="Set colored community"
-        caption="Not necessary for this graph"
+        :caption="settingColoredCommunityCaption"
         icon="format_list_bulleted"
-        disable
+        :disable="settingColoredCommunityDisabled"
+        :done="step > 3 && !settingColoredCommunityDisabled"
       >
         This step won't show up because it is disabled.
+        <q-stepper-navigation>
+          <q-btn @click="step = 4" color="primary" label="Continue" />
+          <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
+        </q-stepper-navigation>
       </q-step>
 
       <q-step
@@ -66,7 +71,7 @@
 
         <q-stepper-navigation>
           <q-btn @click="createVisualization" color="primary" label="Finish" />
-          <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
+          <q-btn flat @click="step = stepBeforeName" color="primary" label="Back" class="q-ml-sm" />
         </q-stepper-navigation>
       </q-step>
     </q-stepper>
@@ -109,6 +114,39 @@ export default class VisualizationCreationDialog extends Vue {
 
   set showDialog (v) {
     this.$store.commit('other/setCreateVisualization', v)
+  }
+
+  get settingColoredCommunityDisabled():boolean {
+    return [
+      'treemap',
+      'histogram',
+      'hierarchical',
+    ].includes(this.chosen)
+  }
+
+  get settingColoredCommunityCaption():string {
+    if(this.settingColoredCommunityDisabled){
+      return "Not necessary for this graph"
+    }else{
+      return ""
+    }
+    
+  }
+
+  get stepAfterCustomization():number {
+    if(this.settingColoredCommunityDisabled){
+      return 4
+    }else{
+      return 3
+    }
+  }
+
+  get stepBeforeName():number {
+    if(this.settingColoredCommunityDisabled){
+      return 2
+    }else{
+      return 3
+    }
   }
 
   @Watch('showDialog')
