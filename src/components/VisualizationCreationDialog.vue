@@ -50,7 +50,7 @@
         :disable="settingColoredCommunityDisabled"
         :done="step > 3 && !settingColoredCommunityDisabled"
       >
-        This step won't show up because it is disabled.
+        <colorer-selection :chosen-type="chosen" v-model="coloringParameters" />
         <q-stepper-navigation>
           <q-btn @click="step = 4" color="primary" label="Continue" />
           <q-btn flat @click="step = 2" color="primary" label="Back" class="q-ml-sm" />
@@ -85,10 +85,11 @@ import { Todo, Meta } from './models'
 import { ipcRenderer } from "electron";
 import { QInput, QDialog } from 'quasar'
 import VisuTypeChooser from "./VisuTypeChooser.vue";
+import ColorerSelection, { Parameters as ColorerParameters }  from "./ColorerSelection.vue";
 import VisuCustomization, { Parameters } from "./VisuCustomization.vue"
 
 @Component({
-  components:{ VisuTypeChooser, VisuCustomization }
+  components:{ VisuTypeChooser, VisuCustomization, ColorerSelection }
 })
 export default class VisualizationCreationDialog extends Vue {
   editVisualization (name:string, visualizationType:string, parameters:Parameters, edited:number) {
@@ -107,6 +108,7 @@ export default class VisualizationCreationDialog extends Vue {
   edited:number|null = null
 
   parameters:Parameters = { metric: null, community: null, scaling: null }
+  coloringParameters:ColorerParameters = {leftColorer:null, rightColorer:null}
 
   get showDialog () {
     return this.$store.state.other.viewCreateVisualization;
@@ -130,7 +132,6 @@ export default class VisualizationCreationDialog extends Vue {
     }else{
       return ""
     }
-    
   }
 
   get stepAfterCustomization():number {
@@ -192,6 +193,7 @@ export default class VisualizationCreationDialog extends Vue {
         name:this.name,
         visualizationType:this.chosen,
         parameters:this.parameters,
+        coloringParameters:this.coloringParameters
       })
       this.resetContent()
     }else{
@@ -203,6 +205,7 @@ export default class VisualizationCreationDialog extends Vue {
     this.name = null
     this.chosen = 'treemap'
     this.parameters = { metric: null, community: null, scaling:null }
+    this.coloringParameters = {leftColorer:null, rightColorer:null}
     this.step = 1
     this.edited = null
   }
