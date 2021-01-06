@@ -215,7 +215,8 @@ export default class TreemapView extends Vue {
     }
     const begin=calculatePoint(angleBegin)
     const end=calculatePoint(angleEnd)
-    return `M ${begin.x} ${begin.y} A ${radius} ${radius} 0 0 0 ${end.x} ${end.y} L ${centerX} ${centerY}`
+    const largeArcFlag=(angleEnd-angleBegin>=180)?1:0
+    return `M ${begin.x} ${begin.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y} L ${centerX} ${centerY}`
   }
 
   get subjects () {
