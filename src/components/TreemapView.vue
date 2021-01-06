@@ -36,6 +36,7 @@
               rx="2"
               v-if="numberOfColorsInside(subject)===0"
             />
+          
           <path 
               :fill="piePart.color"
               :d="dForPie(circleX(subject),circleY(subject),piePart.startAngle,piePart.endAngle,100)"
@@ -51,6 +52,17 @@
               :style="`clip-path: url(#path-${index}); -webkit-clip-path: url(#path-${index});`"
               :fill="calculatePieParts(subject)[0].color"
               v-if="numberOfColorsInside(subject)===1"
+            />
+
+            <rect
+              :x="subject.x"
+              :y="subject.y"
+              :width="subject.width"
+              :height="subject.height"
+              style="stroke-width:0.3;stroke:#26A69A"
+              fill="none"
+              rx="2"
+              v-if="selectedSubject == subject"
             />
             
             <text
