@@ -32,7 +32,7 @@ export default function makeHierarchicalGraph(visualization:HierarchicalVisualiz
         nodes: nodes.map(v => ({
             ...v,
             functions: undefined,
-            label: v.name
+            label: v.name,
         })),
         edges: [...new Set([
             ...analyzable.getCalls(community)

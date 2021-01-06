@@ -1,1 +1,1 @@
-export { Measurable, getMeasurablesInside, MeasurablesAnalyzer } from "../measurables"
+export { Measurable, getMeasurablesInside, MeasurablesAnalyzer, ColorInside } from "../measurables"

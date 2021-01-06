@@ -24,7 +24,7 @@
             @dblclick="navigate(subject)"
             @click="select(subject)"
           >
-          <rect
+            <rect
               :x="subject.x"
               :y="subject.y"
               :width="subject.width"
