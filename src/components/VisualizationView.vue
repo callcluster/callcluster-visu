@@ -7,7 +7,7 @@
     <q-separator />
     <div v-if="visualization.id" class="col" >
         <treemap-view
-          v-if="visualization.visualizationType=='treemap'"
+          v-if="visualization.visualizationType=='treemap' || visualization.visualizationType=='treemap-colored'"
           class="full-height"
           :visualization="visualization"
           v-on:request="request"
@@ -19,7 +19,7 @@
           :visualization="visualization"
         />
         <hierarchical-graph-view
-          v-if="visualization.visualizationType=='hierarchical'"
+          v-if="visualization.visualizationType=='hierarchical' || visualization.visualizationType=='hierarchical-colored'"
           class="full-height"
           :visualization="visualization"
           v-on:request="request"

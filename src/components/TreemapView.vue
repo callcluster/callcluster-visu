@@ -1,3 +1,4 @@
+
 <template>
   <div class="column">
     <q-toolbar class="">
@@ -16,11 +17,14 @@
         height="100%"
         viewBox="0 0 100 100"
         >
+        
           <g
             v-for="(subject,index) in subjects"
             :key="index"
+            @dblclick="navigate(subject)"
+            @click="select(subject)"
           >
-            <rect
+          <rect
               :x="subject.x"
               :y="subject.y"
               :width="subject.width"
@@ -29,13 +33,20 @@
               :class="(
                   (selectedSubject == subject)?'selected':'unselected'
                   )"
-              @dblclick="navigate(subject)"
-              @click="select(subject)"
               rx="2"
+              v-if="!hasColors(subject)"
               />
+          <path 
+              :fill="piePart.color"
+              :d="dForPie(circleX(subject),circleY(subject),piePart.startAngle,piePart.endAngle,100)"
+              :style="`clip-path: url(#path-${index}); -webkit-clip-path: url(#path-${index});`"
+              v-if="hasColors(subject)"
+              v-for="piePart in calculatePieParts(subject)"
+            />
+            
             <text
-              :x="(subject.x + subject.width / 2)"
-              :y="(subject.y + subject.height / 2)"
+              :x="circleX(subject)"
+              :y="circleY(subject)"
               fill="white"
               class="svgText"
               :style="`clip-path: url(#path-${index}); -webkit-clip-path: url(#path-${index});`"
@@ -50,12 +61,14 @@
             :id="`path-${index}`"
             >
             <rect
-              :x="subject.x"
-              :y="subject.y"
-              :width="subject.width"
-              :height="subject.height"
+              :x="subject.x+0.5"
+              :y="subject.y+0.5"
+              :width="subject.width-1"
+              :height="subject.height-1"
+              rx="2"
               />
             </clipPath>
+            
           </defs>
           Sorry, your browser does not support inline SVG.
         </svg>
@@ -66,13 +79,26 @@
 </template>
 
 <script lang="ts">
+
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import PathNavigator from 'components/PathNavigator.vue'
+import Color from 'color'
+
+type PiePart = {
+  color:string,
+  startAngle:number,
+  endAngle:number
+}
+type ColorInside = {
+  id:string,
+  value:number
+}
 type SubjectData = {
   name:string,
   value:number,
   type:string,
-  id:string
+  id:string,
+  colorsInside:ColorInside[]
 }
 type Subject = {
   height:number,
@@ -117,6 +143,10 @@ export default class TreemapView extends Vue {
     this.$emit('request', req)
   }
 
+  hasColors(subject:Subject):boolean {
+    return subject.data.colorsInside.length>0
+  }
+
 
   changeRoot(newRoot:string){
     const req = {
@@ -125,6 +155,64 @@ export default class TreemapView extends Vue {
       root:newRoot
     }
     this.$emit('request', req)
+  }
+
+  calculatePieParts(subject:Subject):PiePart[]{
+    const colors = subject.data.colorsInside
+    const total = colors.map(c => c.value).reduce((a, b) => a + b, 0)
+    const colorsWithDelta = colors.map((colorInside)=>({
+      color:this.calculateColor(colorInside),
+      angleDelta:colorInside.value/total*360
+    }))
+
+    let angleSum=0
+    const parts:PiePart[]=[]
+    for(let colorWithDelta of colorsWithDelta){
+      parts.push({
+        color:colorWithDelta.color,
+        startAngle:angleSum,
+        endAngle:angleSum + colorWithDelta.angleDelta
+      })
+      angleSum+= colorWithDelta.angleDelta
+    }
+    
+    console.log(parts)
+    return parts;
+  }
+
+  calculateColor(colorInside: ColorInside): string {
+    const seed = parseInt(colorInside.id.replace('c',''))
+    const hexColor = "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
+    try{
+      return Color(hexColor).darken(0.5).mix(Color("#1976D2"), 0.5).hex()
+    } catch(e){
+      return Color(hexColor+"0").darken(0.5).mix(Color("#1976D2"), 0.5).hex()
+    }
+  }
+
+  circleX(subject:Subject):number{
+    return subject.x+subject.width/2
+  }
+
+  circleY(subject:Subject):number{
+    return subject.y+subject.height/2
+  }
+
+  circleRadius(subject:Subject):number{
+    return Math.max(subject.height, subject.width)
+  }
+
+  dForPie(centerX:number,centerY:number,angleBegin:number,angleEnd:number,radius:number):string{
+    function calculatePoint(angle:number){
+      const radians=angle/180*Math.PI
+      return {
+        x:Math.cos(radians)*radius+centerX,
+        y:-Math.sin(radians)*radius+centerY,
+      }
+    }
+    const begin=calculatePoint(angleBegin)
+    const end=calculatePoint(angleEnd)
+    return `M ${begin.x} ${begin.y} A ${radius} ${radius} 0 0 0 ${end.x} ${end.y} L ${centerX} ${centerY}`
   }
 
   get subjects () {
