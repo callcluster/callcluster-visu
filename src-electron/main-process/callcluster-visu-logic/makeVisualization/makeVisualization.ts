@@ -17,7 +17,8 @@ export default function makeVisualization(visualization: Visualization, analyzab
                 (visualization.root == undefined)
                 ?undefined
                 :analyzable.getParents(visualization.root)
-            )
+            ),
+            coloringParameters:visualization?.coloringParameters
         };
     } else if (isHistogram(visualization)) {
         return {
@@ -38,7 +39,8 @@ export default function makeVisualization(visualization: Visualization, analyzab
                 (visualization.root == undefined)
                 ?undefined
                 :analyzable.getParents(visualization.root)
-            )
+            ),
+            coloringParameters:visualization?.coloringParameters
         }
     }
 }
