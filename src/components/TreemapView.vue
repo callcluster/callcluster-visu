@@ -181,12 +181,15 @@ export default class TreemapView extends Vue {
   }
 
   calculateColor(colorInside: ColorInside): string {
-    const seed = parseInt(colorInside.id.replace('c',''))
+    let seed = parseInt(colorInside.id.replace('c',''))
+    if(isNaN(seed)){
+      seed=0
+    }
     const hexColor = "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
     try{
-      return Color(hexColor).darken(0.5).mix(Color("#1976D2"), 0.5).hex()
+      return Color(hexColor).darken(0.3).hex()
     } catch(e){
-      return Color(hexColor+"0").darken(0.5).mix(Color("#1976D2"), 0.5).hex()
+      return Color(hexColor+"0").darken(0.3).hex()
     }
   }
 
