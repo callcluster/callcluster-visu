@@ -34,14 +34,23 @@
                   (selectedSubject == subject)?'selected':'unselected'
                   )"
               rx="2"
-              v-if="!hasColors(subject)"
-              />
+              v-if="numberOfColorsInside(subject)===0"
+            />
           <path 
               :fill="piePart.color"
               :d="dForPie(circleX(subject),circleY(subject),piePart.startAngle,piePart.endAngle,100)"
               :style="`clip-path: url(#path-${index}); -webkit-clip-path: url(#path-${index});`"
-              v-if="hasColors(subject)"
+              v-if="numberOfColorsInside(subject)>1"
               v-for="piePart in calculatePieParts(subject)"
+            />
+          <rect
+              :x="subject.x"
+              :y="subject.y"
+              :width="subject.width"
+              :height="subject.height"
+              :style="`clip-path: url(#path-${index}); -webkit-clip-path: url(#path-${index});`"
+              :fill="calculatePieParts(subject)[0].color"
+              v-if="numberOfColorsInside(subject)===1"
             />
             
             <text
@@ -143,10 +152,9 @@ export default class TreemapView extends Vue {
     this.$emit('request', req)
   }
 
-  hasColors(subject:Subject):boolean {
-    return subject.data.colorsInside.length>0
+  numberOfColorsInside(subject:Subject):number {
+    return subject.data.colorsInside.length
   }
-
 
   changeRoot(newRoot:string){
     const req = {
