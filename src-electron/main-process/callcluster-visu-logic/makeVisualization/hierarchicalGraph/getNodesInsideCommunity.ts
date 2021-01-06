@@ -69,9 +69,10 @@ function makePathForPiePart(piePart: PiePart): string {
     />`
 }
 
-function svgSurroundingAndDataUrl(code:string):string{
+function svgSurroundingAndDataUrl(code:string,large:boolean=true):string{
+    const viewBox=large?"-5 -5 110 110":"0 0 100 100";
     const svg: string = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="${viewBox}">
         <g>
             ${code}
         </g>
@@ -83,27 +84,42 @@ function svgSurroundingAndDataUrl(code:string):string{
 function circleForColorinside(colorInside:ColorInside):string{
     return `<circle cx="50" cy="50" r="50" fill="${calculateColor(colorInside)}" />`
 }
-
-function makeImageURL(subject: Measurable): string|undefined {
+type ImageURLs = {
+    selected:string
+    unselected:string
+}
+const surroundingCircle:string=`<circle cx="50" cy="50" r="52" stroke="#26A69A" stroke-width="3" fill="none" />`
+function makeImageURLs(subject: Measurable): ImageURLs|undefined {
+    function makeReturn(content:string):ImageURLs{
+        return {
+            selected:svgSurroundingAndDataUrl(content+surroundingCircle,true),
+            unselected:svgSurroundingAndDataUrl(content)
+        }
+    }
     if (subject.colorsInside.length==1){
-        return svgSurroundingAndDataUrl(circleForColorinside(subject.colorsInside[0]))
+        return makeReturn(circleForColorinside(subject.colorsInside[0]))
+        
     }else if (subject.colorsInside.length>1){
-        return svgSurroundingAndDataUrl(calculatePieParts(subject).map(makePathForPiePart).join())
+        return makeReturn(calculatePieParts(subject).map(makePathForPiePart).join())
     } else {
         return undefined
     }
 }
 
 function subjectToNode(subject: Measurable, parent: Community, measurablesAnalyzer: MeasurablesAnalyzer, analyzable: Analyzable): Node {
-    const imageUrl=makeImageURL(subject)
-    return {
+    const imageUrls=makeImageURLs(subject)
+    const retVal = {
         ...subject,
         functions: measurablesAnalyzer.getAllFunctionsInside(subject),
         parent: analyzable.getStringIdentifier(parent),
-        color: undefined,//analyzable.getColor(parent),
-        shape:imageUrl===undefined?undefined:'image',
-        image:imageUrl
+        color: analyzable.getColor(parent),
     }
+    if(imageUrls!==undefined){
+        (retVal as any).shape='image';
+        (retVal as any).image=imageUrls
+    }
+
+    return retVal
 }
 export default function getNodesInsideCommunity(community: Community, excludedIds: CommunityIdentifier[], evaluator: SubjectEvaluator, analyzable: Analyzable, colorer: Colorer | null): Node[] {
 
