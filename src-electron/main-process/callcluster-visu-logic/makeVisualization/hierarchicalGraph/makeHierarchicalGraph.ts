@@ -5,8 +5,9 @@ import Node from "./Node";
 import Analyzable from "./_Analyzable";
 import { CommunityIdentifier } from "./_types";
 import Colorer from "./_Colorer";
+import DiffVisualization from "./DiffVisualization";
 
-export default function makeHierarchicalGraph(visualization:HierarchicalVisualization, analyzable:Analyzable, colorer:Colorer|null){
+export default function makeHierarchicalGraph(visualization:HierarchicalVisualization|DiffVisualization, analyzable:Analyzable, colorer:Colorer|null){
     const community = analyzable.getCommunityFromString(visualization.root)
     const evaluator = makeEvaluator(visualization, analyzable)
     const openedCommunities=(visualization.openedCommunities??[]).map(id=>new CommunityIdentifier(id))
