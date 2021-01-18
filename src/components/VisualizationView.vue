@@ -25,6 +25,13 @@
           v-on:request="request"
           v-on:select="select"
         />
+        <diff-graph-view
+          v-if="visualization.visualizationType=='diff'"
+          class="full-height"
+          :visualization="visualization"
+          v-on:request="request"
+          v-on:select="select"
+        />
     </div>
   </div>
 </template>
@@ -33,13 +40,15 @@
 import { Vue, Component } from 'vue-property-decorator'
 import TreemapView from 'components/TreemapView.vue'
 import HistogramView from 'components/HistogramView.vue'
+import DiffGraphView from 'components/DiffGraphView.vue'
 import HierarchicalGraphView from 'components/HierarchicalGraphView.vue'
 import { descriptionOfVisualization } from "./Utils";
 @Component({
   components: {
     TreemapView,
     HistogramView,
-    HierarchicalGraphView
+    HierarchicalGraphView,
+    DiffGraphView
   }
 })
 export default class VisualizationView extends Vue {
