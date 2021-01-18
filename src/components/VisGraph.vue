@@ -45,7 +45,7 @@ class MenuOwner{
     }))
     this.menu.append(new remote.MenuItem({
       label:"Open (double click)",
-      click:()=>this.emit("request")
+      click:()=>this.emit("open")
     }))
     this.menu.append(new remote.MenuItem({
       label:"Extract",
@@ -118,7 +118,7 @@ export default class VisGraph extends Vue {
         }
       })
       nw.on('doubleClick',(e)=>{
-        this.emitClickEvent('request',e)
+        this.emitClickEvent('open',e)
       })
       nw.on('oncontext',(e)=>{
         const node = (nw.getNodeAt(e.pointer.DOM) as string|undefined) ?? null

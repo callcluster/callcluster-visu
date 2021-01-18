@@ -10,7 +10,7 @@
           duration="200"
         >
       <div :key="root" class="col">
-        <vis-graph :visData="visData" @select="select" @explode="explode" @request="request" :options="options"/>
+        <vis-graph :visData="visData" @select="select" @explode="explode" @open="open" :options="options"/>
       </div>
     </transition>
   </div>
@@ -129,7 +129,7 @@ export default class HierarchicalGraphView extends Vue {
     }))
   }
 
-  request(obj:any) {
+  open(obj:any) {
     this.emitClickEvent(obj,'request',(node)=>({
       ...this.visualization,
       root:node.id,
