@@ -57,6 +57,11 @@ export default class HierarchicalGraphVisualization extends Vue {
             max:15
           }
         }
+      },
+      edges:{
+        smooth:{
+          type:'continuous'
+        }
       }
     }
   }
