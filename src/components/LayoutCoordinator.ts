@@ -1,14 +1,28 @@
 import { Network, NetworkEvents } from "vis-network";
+import { Z_NO_COMPRESSION } from "zlib";
 export class LayoutCoordinator{
   private networks:Network[]
   private master:Network
+  private humanEvents:NetworkEvents[]=[
+    "dragStart",
+    "dragging",
+    "dragEnd",
+    "click",
+    "zoom"
+  ]
+  private physicsEvents:NetworkEvents[]=[
+    "startStabilizing",
+    "stabilizationProgress",
+    "stabilizationIterationsDone",
+    "stabilized",
+  ]
 
   startSimulation(target:Network){
-    target.setOptions({physics: {enabled:true}});
+    target.startSimulation()
   }
 
   stopSimulation(target:Network){
-    target.setOptions({physics: {enabled:false}});
+    target.stopSimulation()
   }
 
   makeMaster(source:Network,params:any){
@@ -21,43 +35,13 @@ export class LayoutCoordinator{
   constructor(networks:Network[]){
     this.networks = networks
     this.master = networks[0];
-    const humanEvents:NetworkEvents[]=[
-      "dragStart",
-      "dragging",
-      "dragEnd",
-      "click",
-      "zoom"
-    ]
     
-    this.hookEvents(humanEvents, this.makeMaster.bind(this))
+    this.hookEvents(this.humanEvents, this.makeMaster.bind(this))
 
     this.hookEvents([
-      ...humanEvents,
-      "startStabilizing",
-      "stabilizationProgress",
-      "stabilizationIterationsDone",
-      "stabilized",
+      ...this.humanEvents,
+      ...this.physicsEvents
     ], this.injectPositions.bind(this))
-
-    /*
-    console.log("COORDINATED NETWORKS:")
-    console.log(networks)
-    function injectPositionsForOne(from:Network,to:Network){
-      Object.entries(from.getPositions()).forEach(([id,coords]) => {
-        to.moveNode(id,coords.x,coords.y)
-      });
-    }
-    function injectPositions(source:Network){
-      networks
-      .filter((nw)=>nw!==source)
-      .forEach((network)=>{
-        injectPositionsForOne(source,network)
-      })
-    }
-    networks.forEach((network)=>{
-      network.on('stabilized',()=>injectPositions(network))
-    })
-    */
   }
 
   get slaveNetworks(){
@@ -89,6 +73,10 @@ export class LayoutCoordinator{
   }
 
   destroy(){
-
+    [...this.humanEvents,...this.physicsEvents].forEach(eventName => {
+      this.networks.forEach((network)=>{
+        network.off(eventName)
+      })
+    })
   }
 }
