@@ -102,6 +102,10 @@ export default class VisGraph extends Vue {
     }
   }
 
+  getNetwork():Network|null{
+    return networks.get(this.networkKey)
+  }
+
   mounted(){
     let visuRef = this.$refs["visualization"];
     if(visuRef instanceof HTMLElement){
@@ -134,7 +138,7 @@ export default class VisGraph extends Vue {
     return networks.get(this.networkKey) as any
   }
   resetGraphData(data:VisGraphData){
-    networks.get(this.networkKey)?.setData(Object.assign({},data))
+    this.getNetwork()?.setData(Object.assign({},data))
   }
   @Watch("visData")
   nodesChanged(newVal:VisGraphData & OpenedCommunitiesData, oldVal:VisGraphData & OpenedCommunitiesData){
@@ -160,7 +164,7 @@ export default class VisGraph extends Vue {
     }
   }
   beforeDestroy(){
-    networks.get(this.networkKey)?.destroy();
+    this.getNetwork()?.destroy();
   }
 }
 </script>

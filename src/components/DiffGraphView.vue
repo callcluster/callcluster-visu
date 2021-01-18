@@ -23,6 +23,7 @@
             :openedCommunities="openedCommunities"
             @select="select"
             @request="request"
+            ref="leftNetwork"
           />
         </template>
         <template v-slot:after>
@@ -33,6 +34,7 @@
             :openedCommunities="openedCommunities"
             @select="select"
             @request="request"
+            ref="rightNetwork"
           />
         </template>
         </q-splitter>
@@ -46,6 +48,7 @@ import { Options } from "vis-network";
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import HierarchicalGraphVisualization from 'components/HerarchicalGraphVisualization.vue'
 import PathNavigator from 'components/PathNavigator.vue'
+import { LayoutCoordinator } from "./LayoutCoordinator";
 type Node={
   id:string,
   name:string
@@ -75,6 +78,7 @@ type DiffGraphVisualization = {
 export default class DiffGraphView extends Vue {
   splitterModel = 50;
   @Prop() visualization!:DiffGraphVisualization
+  layoutCoordinator:LayoutCoordinator
 
   get path():Array<{ id:string, name:string }>{
     return this.visualization.parents || []
@@ -82,6 +86,22 @@ export default class DiffGraphView extends Vue {
 
   get openedCommunities():Array<string>{
     return this.visualization.openedCommunities || []
+  }
+
+  get leftNetwork(){
+    return this.$refs["leftNetwork"].getNetwork()
+  }
+
+  get rightNetwork(){
+    return this.$refs["rightNetwork"].getNetwork()
+  }
+
+  mounted(){
+    this.layoutCoordinator=new LayoutCoordinator([this.leftNetwork,this.rightNetwork])
+  }
+
+  beforeDestroy(){
+    this.layoutCoordinator?.destroy();
   }
 
   changeRoot(newRoot:string){

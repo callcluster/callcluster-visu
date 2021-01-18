@@ -1,5 +1,5 @@
 <template>
-  <vis-graph :visData="visData" @select="select" @explode="explode" @open="open" :options="options"/>
+  <vis-graph :visData="visData" @select="select" @explode="explode" @open="open" :options="options" ref="visGraph"/>
 </template>
 
 <script lang="ts">
@@ -59,6 +59,10 @@ export default class HierarchicalGraphVisualization extends Vue {
         }
       }
     }
+  }
+
+  getNetwork(){
+    return this.$refs["visGraph"].getNetwork()
   }
 
   get visData () {
