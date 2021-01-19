@@ -28,6 +28,7 @@
         <diff-graph-view
           v-if="visualization.visualizationType=='diff'"
           class="full-height"
+          :key="JSON.stringify(visualization.parents)"
           :visualization="visualization"
           v-on:request="request"
           v-on:select="select"

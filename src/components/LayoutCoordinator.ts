@@ -1,8 +1,8 @@
-import { Network, NetworkEvents } from "vis-network";
-import { Z_NO_COMPRESSION } from "zlib";
+import { NetworkEvents, Network } from "vis-network";
+export type NetworkLike=Network
 export class LayoutCoordinator{
-  private networks:Network[]
-  private master:Network
+  private networks:NetworkLike[]
+  private master:NetworkLike
   private humanEvents:NetworkEvents[]=[
     "dragStart",
     "dragging",
@@ -17,24 +17,24 @@ export class LayoutCoordinator{
     "stabilized",
   ]
 
-  startSimulation(target:Network){
+  startSimulation(target:NetworkLike){
     target.startSimulation()
   }
 
-  stopSimulation(target:Network){
+  stopSimulation(target:NetworkLike|undefined){
+    if(target===undefined) return
     target.stopSimulation()
   }
 
-  makeMaster(source:Network,params:any){
-    console.log("the master is",source)
+  makeMaster(source:NetworkLike,params:any){
     this.master = source
     this.startSimulation(this.master)
     this.slaveNetworks.forEach(slave => this.stopSimulation.bind(this))
   }
 
-  constructor(networks:Network[]){
-    this.networks = networks
-    this.master = networks[0];
+  constructor(networks:(NetworkLike|undefined)[]){
+    this.networks = (networks.filter(n=>n!==undefined) as NetworkLike[])
+    this.master = this.networks[0];
     
     this.hookEvents(this.humanEvents, this.makeMaster.bind(this))
 
@@ -48,13 +48,21 @@ export class LayoutCoordinator{
     return this.networks.filter((nw)=>nw!==this.master)
   }
 
-  injectPositionsToSlave(source:Network,target:Network){
-    Object.entries(source.getPositions()).forEach(([id,coords]) => {
+
+  injectPositionsToSlave(source:NetworkLike,target:NetworkLike){
+    let positions:ReturnType<typeof source.getPositions>={}
+    try{
+      positions=source.getPositions()
+    }catch(e){
+      console.error(e)
+    }
+    Object.entries(positions).forEach(([id,coords]) => {
       target.moveNode(id,coords.x,coords.y)
     });
+    this.stopSimulation(target)
   }
 
-  injectPositions(source:Network,params:any){
+  injectPositions(source:NetworkLike,params:any){
     if(source!==this.master){
       return
     }else{
@@ -62,11 +70,11 @@ export class LayoutCoordinator{
     }
   }
 
-  hookEvents(events:NetworkEvents[],callback:(source:Network,params?:any)=>void){
+  hookEvents(events:NetworkEvents[],callback:(source:NetworkLike,params?:any)=>void){
     events.forEach(event=>this.hookEvent(event,callback))
   }
 
-  hookEvent(event:NetworkEvents,callback:(source:Network,params?:any)=>void){
+  hookEvent(event:NetworkEvents,callback:(source:NetworkLike,params?:any)=>void){
     this.networks.forEach((network)=>{
       network.on(event,(ev)=>callback(network,ev))
     })
