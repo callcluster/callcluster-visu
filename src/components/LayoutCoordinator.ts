@@ -3,17 +3,17 @@ export type NetworkLike=Network
 export class LayoutCoordinator{
   private networks:NetworkLike[]
   private master:NetworkLike
-  private humanEvents:NetworkEvents[]=[
+  private cameraEvents:NetworkEvents[]=[
     "dragStart",
     "dragging",
     "dragEnd",
-    "click",
     "zoom"
   ]
+  private humanEvents:NetworkEvents[]=[
+    ...this.cameraEvents,
+    "click",
+  ]
   private physicsEvents:NetworkEvents[]=[
-    "startStabilizing",
-    "stabilizationProgress",
-    "stabilizationIterationsDone",
     "stabilized",
   ]
 
@@ -32,6 +32,17 @@ export class LayoutCoordinator{
     this.slaveNetworks.forEach(slave => this.stopSimulation.bind(this))
   }
 
+  injectCameraPosition(source:NetworkLike,params:any){
+    this.slaveNetworks.forEach(slave => this.injectCameraPositionToSlave(source,slave))
+  }
+
+  injectCameraPositionToSlave(source:NetworkLike,target:NetworkLike){
+    target.moveTo({
+      position:source.getViewPosition(),
+      scale:source.getScale()
+    })
+  }
+
   constructor(networks:(NetworkLike|undefined)[]){
     this.networks = (networks.filter(n=>n!==undefined) as NetworkLike[])
     this.master = this.networks[0];
@@ -42,6 +53,8 @@ export class LayoutCoordinator{
       ...this.humanEvents,
       ...this.physicsEvents
     ], this.injectPositions.bind(this))
+
+    this.hookEvents(this.cameraEvents,this.injectCameraPosition.bind(this))
   }
 
   get slaveNetworks(){
