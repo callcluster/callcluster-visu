@@ -1,5 +1,14 @@
 <template>
-  <vis-graph :visData="visData" @select="select" @explode="explode" @open="open" :options="options" ref="visGraph"/>
+  <vis-graph 
+    :visData="visData" 
+    @select="select" 
+    @explode="explode" 
+    @open="open" 
+    :options="options" 
+    ref="visGraph"
+    :currentNode="visualization.parents[visualization.parents.length-1].id"
+    @list="list"
+  />
 </template>
 
 <script lang="ts">
@@ -105,6 +114,10 @@ export default class HierarchicalGraphVisualization extends Vue {
       root:node.id,
       openedCommunities:[]
     }))
+  }
+
+  list(node:string){
+    this.$emit('list', node)
   }
 }
 </script>

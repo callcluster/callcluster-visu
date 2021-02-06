@@ -24,6 +24,7 @@
           :visualization="visualization"
           v-on:request="request"
           v-on:select="select"
+          @list="list"
         />
         <diff-graph-view
           v-if="visualization.visualizationType=='diff'"
@@ -32,6 +33,7 @@
           :visualization="visualization"
           v-on:request="request"
           v-on:select="select"
+          @list="list"
         />
     </div>
   </div>
@@ -71,6 +73,16 @@ export default class VisualizationView extends Vue {
     } else{
       return "";
     }
+  }
+
+  list(node:string){
+    console.log("=======")
+    console.log("=======")
+    console.log("=======")
+    console.log(node)
+    console.log("=======")
+    console.log("=======")
+    console.log("=======")
   }
 }
 </script>

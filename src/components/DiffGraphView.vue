@@ -24,6 +24,7 @@
             @select="select"
             @request="request"
             ref="leftNetwork"
+            @list="list"
           />
         </template>
         <template v-slot:after>
@@ -35,6 +36,7 @@
             @select="select"
             @request="request"
             ref="rightNetwork"
+            @list="list"
           />
         </template>
         </q-splitter>
@@ -123,6 +125,10 @@ export default class DiffGraphView extends Vue {
 
   get root():string|null {
     return this.visualization.root??null
+  }
+
+  list(node:string){
+    this.$emit('list', node)
   }
 }
 </script>

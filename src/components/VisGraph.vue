@@ -57,6 +57,10 @@ class MenuOwner{
         )
       }
     }))
+    this.menu.append(new remote.MenuItem({
+      label:"List contents",
+      click:()=>this.emit("list")
+    }))
   }
   private emit(type:string){
     if(this.currentEmitter==null){
@@ -78,9 +82,52 @@ class MenuOwner{
 
 const menuOwner = new MenuOwner()
 
+
+class SmallMenuOwner{
+  private currentNode:string|null = null
+  private currentEmitter:Vue|null = null
+  menu: Electron.Menu;
+  constructor(){
+    this.menu = new remote.Menu()
+    this.menu.append(new remote.MenuItem({
+      label:"Extract",
+      click:()=>{
+        if(this.currentEmitter==null) return
+        this.currentEmitter.$store.dispatch(
+          'other/getDetailsForExtraction', 
+          this.currentNode
+        )
+      }
+    }))
+    this.menu.append(new remote.MenuItem({
+      label:"List contents",
+      click:()=>this.emit("list")
+    }))
+  }
+  private emit(type:string){
+    if(this.currentEmitter==null){
+      return;
+    }
+    if(this.currentNode==null){
+      return;
+    }
+    this.currentEmitter.$emit(type,this.currentNode)
+    this.currentEmitter = null
+    this.currentNode = null
+  }
+  popup(currentNode:string,currentEmitter:Vue){
+    this.currentNode = currentNode
+    this.currentEmitter = currentEmitter
+    this.menu.popup({window:remote.getCurrentWindow()})
+  }
+}
+
+const smallMenuOwner = new SmallMenuOwner()
+
 @Component
 export default class VisGraph extends Vue {
   @Prop({ type: Object, required: true }) readonly visData!:VisGraphData ;
+  @Prop({ type: String, required: true }) readonly currentNode!:string ;
   @Prop({ type: Object, required: false, default:()=>({}) }) readonly options!:Options ;
   readonly networkKey:symbol = Symbol();
   created(){
@@ -128,6 +175,8 @@ export default class VisGraph extends Vue {
         const node = (nw.getNodeAt(e.pointer.DOM) as string|undefined) ?? null
         if(node != null){
           menuOwner.popup(node,this)
+        }else{
+          smallMenuOwner.popup(this.currentNode,this)
         }
       })
     }else{
