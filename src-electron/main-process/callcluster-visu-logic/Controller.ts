@@ -2,9 +2,10 @@ import createAnalysis from "./Analysis";
 import Analyzable from "./Analysis/_Analyzable";
 import ExtractedCommunityRepository, { ExtractedCommunity } from "./ExtractedCommunityRepository";
 import getInfoFor, { InfoQuery } from "./getInfoFor";
+import listContentsFor,{ContentsQuery} from "./listContentsFor";
 import makeVisualization, { Visualization, RootlessVisualization } from "./makeVisualization";
 import { Community, CommunityId, CommunityIdentifier, OriginalAnalysisJson } from "./types";
-import {runClustering} from "./Clusterer";
+import { runClustering } from "./Clusterer";
 import { createCommunityInterpreter } from "./CommunityInterpreter";
 import { createCommunityRepository } from "./CommunityRepository";
 import { createCommunityMeasurer, OptimizingCommunityMeasurer } from "./CommunityMeasurer";
@@ -17,6 +18,12 @@ interface ClusteringParameters{
     } 
 }
 export default class Controller{
+    listContentsFor(query:ContentsQuery) {
+        if(this.analysis===undefined){
+            throw new Error("analysisjson wasn't set")
+        }
+        return listContentsFor(query, this.analysis)
+    }
     async createClustering(parameters: ClusteringParameters): Promise<ExtractedCommunity> {
         if(this.analysis===undefined){
             throw new Error("analysisjson wasn't set")

@@ -78,7 +78,8 @@ export default class VisualizationView extends Vue {
   list(node:string){
     this.$store.dispatch('other/getListContents', {
       node,
-      coloringParameters:this.visualization.coloringParameters
+      coloringParameters:this.visualization.coloringParameters,
+      parameters:this.visualization.parameters
     })
   }
 }

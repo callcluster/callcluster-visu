@@ -7,5 +7,6 @@ export {
     getMinedCommunity,
     renameCommunity,
     deleteCommunity,
-    createClustering
+    createClustering,
+    listContentsFor
 } from "./controllerInstance";

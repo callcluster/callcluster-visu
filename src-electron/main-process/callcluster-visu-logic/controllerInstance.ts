@@ -2,7 +2,7 @@ import { ExtractedCommunity } from "./ExtractedCommunityRepository";
 import Controller from "./Controller";
 import { InfoQuery } from "./getInfoFor";
 import { Visualization } from "./makeVisualization";
-
+import {ContentsQuery} from "./listContentsFor";
 const controllerInstance = new Controller()
 
 export function setAnalysisJson(localAnalysisJson: any) {
@@ -38,3 +38,8 @@ export function renameCommunity(data:{id:number,name:string}):void {
 export function deleteCommunity(id:number):void {
     controllerInstance.deleteCommunity(id)
 }
+
+export function listContentsFor(query:ContentsQuery) {
+    return controllerInstance.listContentsFor(query)
+}
+

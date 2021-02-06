@@ -1,6 +1,17 @@
 import { app, BrowserWindow, nativeTheme, Menu, MenuItem, dialog, ipcMain } from 'electron'
 import fs from 'fs'
-import { setAnalysisJson, getAvailableMetrics, makeVisualization, getInfoFor, createCommunity, getMinedCommunity, renameCommunity, deleteCommunity, createClustering } from './callcluster-visu-logic'
+import { 
+  setAnalysisJson, 
+  getAvailableMetrics, 
+  makeVisualization, 
+  getInfoFor, 
+  createCommunity, 
+  getMinedCommunity, 
+  renameCommunity, 
+  deleteCommunity, 
+  createClustering,
+  listContentsFor
+} from './callcluster-visu-logic'
 try {
   if (process.platform === 'win32' && nativeTheme.shouldUseDarkColors === true) {
     require('fs').unlinkSync(require('path').join(app.getPath('userData'), 'DevTools Extensions'))
@@ -47,20 +58,6 @@ ipcMain.on("getDetailsForExtraction", (event,data) => {
   if(mainWindow==null) return;
   mainWindow.webContents.send('setDetailsForExtraction',getInfoFor(data))
 })
-
-function listContentsFor(data:any){
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  console.log(data)
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  console.log("listContentsFor")
-  return "prueba"
-}
 
 ipcMain.on("getListContents", (event,query) => {
   if(mainWindow==null) return;
