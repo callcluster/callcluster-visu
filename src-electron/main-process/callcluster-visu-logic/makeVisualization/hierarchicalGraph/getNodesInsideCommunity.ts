@@ -5,6 +5,7 @@ import Node from "./Node";
 import Analyzable from "./_Analyzable";
 import Colorer from "./_Colorer";
 import Color from 'color'
+import { removeCssText } from "vis-util/esnext";
 
 type PiePart = {
     color: string,
@@ -88,12 +89,46 @@ type ImageURLs = {
     selected:string
     unselected:string
 }
+function clip(content:string,clipper:string|undefined):string{
+    if(clipper===undefined){
+        return content
+    }else{
+        return `
+        <g style="clip-path:url(#shape);">
+            ${content}
+        </g>
+        <defs>
+            <clipPath id="shape">
+                ${clipper}
+            </clipPath>
+        </defs>
+        `
+    }
+    
+}
+function getClipperFor(subject:Measurable):string|undefined{
+    const rect =`<rect
+        x="15"
+        y="15"
+        width="70"
+        height="70"
+        rx="10"
+        ry="10"
+    />`
+    switch(subject.type){
+        case "function": return undefined
+        case "community": return rect
+    }
+    
+    return undefined
+}
 const surroundingCircle:string=`<circle cx="50" cy="50" r="52" stroke="#26A69A" stroke-width="3" fill="none" />`
 function makeImageURLs(subject: Measurable): ImageURLs|undefined {
     function makeReturn(content:string):ImageURLs{
+        const clipper = getClipperFor(subject)
         return {
-            selected:svgSurroundingAndDataUrl(content+surroundingCircle,true),
-            unselected:svgSurroundingAndDataUrl(content)
+            selected:svgSurroundingAndDataUrl(clip(content,clipper)+surroundingCircle,true),
+            unselected:svgSurroundingAndDataUrl(clip(content,clipper))
         }
     }
     if (subject.colorsInside.length==1){
