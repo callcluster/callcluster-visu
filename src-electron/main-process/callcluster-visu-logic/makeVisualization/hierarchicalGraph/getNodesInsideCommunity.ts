@@ -85,6 +85,9 @@ function svgSurroundingAndDataUrl(code:string,large:boolean=true):string{
 function circleForColorinside(colorInside:ColorInside):string{
     return `<circle cx="50" cy="50" r="50" fill="${calculateColor(colorInside)}" />`
 }
+function circleForColor(color:string):string{
+    return `<circle cx="50" cy="50" r="50" fill="${color}" />`
+}
 type ImageURLs = {
     selected:string
     unselected:string
@@ -147,18 +150,22 @@ function makeImageURLs(subject: Measurable): ImageURLs|undefined {
         
     }else if (subject.colorsInside.length>1){
         return makeReturn(calculatePieParts(subject).map(makePathForPiePart).join())
-    } else {
-        return undefined
+    } else if(typeof subject["color"] === "string" ){
+        return makeReturn(circleForColor(subject["color"]))
     }
 }
 
 function subjectToNode(subject: Measurable, parent: Community, measurablesAnalyzer: MeasurablesAnalyzer, analyzable: Analyzable): Node {
-    const imageUrls=makeImageURLs(subject)
+    const color = analyzable.getColor(parent)
+    const imageUrls=makeImageURLs({
+        ...subject,
+        color
+    })
     const retVal = {
         ...subject,
         functions: measurablesAnalyzer.getAllFunctionsInside(subject),
         parent: analyzable.getStringIdentifier(parent),
-        color: analyzable.getColor(parent),
+        color
     }
     if(imageUrls!==undefined){
         (retVal as any).shape='image';
