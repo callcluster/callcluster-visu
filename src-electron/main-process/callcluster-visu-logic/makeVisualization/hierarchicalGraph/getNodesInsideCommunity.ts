@@ -106,21 +106,32 @@ function clip(content:string,clipper:string|undefined):string{
     }
     
 }
+function regularShape(vertices:number):string{
+    interface Point{x:number,y:number}
+    const points:Point[]=new Array(vertices).fill(null).map((_,i)=>({
+        x: 50 + Math.cos( i / vertices * 2 * Math.PI ) * 50,
+        y: 50 + Math.sin( i / vertices * 2 * Math.PI ) * 50,
+    }))
+    return `<polygon points="${points.map(p=>`${p.x},${p.y}`).join(' ')}" />`
+}
 function getClipperFor(subject:Measurable):string|undefined{
-    const rect =`<rect
-        x="15"
-        y="15"
-        width="70"
-        height="70"
-        rx="10"
-        ry="10"
-    />`
-    switch(subject.type){
-        case "function": return undefined
-        case "community": return rect
+    if(subject["minlevel"]===undefined){ //subject is a function or has no minlevel
+        return undefined
+    }
+    const shapes:Record<number,string> = {
+        1:regularShape(3),
+        2:regularShape(4),
+        3:regularShape(5),
+        4:regularShape(6),
+        5:regularShape(7),
+        6:regularShape(8),
+    }
+    if(typeof subject["minlevel"] === "number"){
+        return shapes[subject["minlevel"] ?? 0]
+    }else{
+        return undefined
     }
     
-    return undefined
 }
 const surroundingCircle:string=`<circle cx="50" cy="50" r="52" stroke="#26A69A" stroke-width="3" fill="none" />`
 function makeImageURLs(subject: Measurable): ImageURLs|undefined {

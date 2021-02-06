@@ -21,7 +21,7 @@ class ConcreteCommunityMeasurer implements OptimizingCommunityMeasurer{
                     metricsDict[k] = true
                 });
         });
-        return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v))
+        return Object.keys(metricsDict).filter(v => !['location', 'name', 'written'].includes(v)).concat(['descendants'])
     }
     getMetric(subject: Function | Community, metric: Metric): number|undefined {
         if (metric in subject) {
