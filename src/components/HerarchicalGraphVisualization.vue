@@ -117,7 +117,12 @@ export default class HierarchicalGraphVisualization extends Vue {
   }
 
   list(node:string){
+    console.log("EVENTO LIST EN HIERARCHICAL!!!")
+    console.log("EVENTO LIST EN HIERARCHICAL!!!")
+    console.log("EVENTO LIST EN HIERARCHICAL!!!")
+    console.log("EVENTO LIST EN HIERARCHICAL!!!")
     this.$emit('list', node)
+    console.log("post-EVENTO LIST EN HIERARCHICAL!!!")
   }
 }
 </script>

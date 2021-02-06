@@ -48,6 +48,25 @@ ipcMain.on("getDetailsForExtraction", (event,data) => {
   mainWindow.webContents.send('setDetailsForExtraction',getInfoFor(data))
 })
 
+function listContentsFor(data:any){
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  console.log(data)
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  console.log("listContentsFor")
+  return "prueba"
+}
+
+ipcMain.on("getListContents", (event,query) => {
+  if(mainWindow==null) return;
+  mainWindow.webContents.send('setListContents',listContentsFor(query))
+})
+
 ipcMain.on("extractCommunity", (event,data)=>{
   if(mainWindow==null) return;
   mainWindow.webContents.send('createCommunity',createCommunity(data))

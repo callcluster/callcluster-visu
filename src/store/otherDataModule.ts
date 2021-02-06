@@ -10,6 +10,7 @@ export type OtherDataState = {
   extractionDialogVisualization:string | null,
   extractionDetails:Record<string, string>|null,
   deletableCommunity:number|null,
+  listContents:any
 }
 const defaultState:OtherDataState = {
   viewCreateClustering:false,
@@ -20,7 +21,8 @@ const defaultState:OtherDataState = {
   deletableVisualization: null,
   extractionDialogVisualization: null,
   extractionDetails:null,
-  deletableCommunity:null
+  deletableCommunity:null,
+  listContents:null
 }
 const otherDataModule = {
   namespaced: true,
@@ -51,6 +53,11 @@ const otherDataModule = {
     setDetailsForExtraction(state:OtherDataState, details:Record<string, string>) {
       state.extractionDetails = details;
     },
+    setListContents(state:OtherDataState, listContents:any) {
+      console.log("///////// RECEIVED ON CLIENTE ///////")
+      console.log(listContents)
+      state.listContents=listContents
+    },
     setDeletableVisualization (state:OtherDataState, id:number|null) {
       state.deletableVisualization = id
     },
@@ -66,7 +73,10 @@ const otherDataModule = {
     getDetailsForExtraction(_:any, id:string) {
       _.commit("setExtractionDialogVisualization",id)
       ipcRenderer.send("getDetailsForExtraction", { id })
-    }
+    },
+    getListContents(_:any, query:any) {
+      ipcRenderer.send("getListContents", query)
+    },
   }
 }
 

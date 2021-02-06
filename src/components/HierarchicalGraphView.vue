@@ -17,6 +17,7 @@
           :openedCommunities="openedCommunities"
           @select="select"
           @request="request"
+          @list="list"
         />
       </div>
     </transition>
@@ -78,6 +79,9 @@ export default class HierarchicalGraphView extends Vue {
 
   get root():string|null {
     return this.visualization.root??null
+  }
+  list(node:string){
+    this.$emit('list',node)
   }
 }
 </script>
