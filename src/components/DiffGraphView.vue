@@ -25,6 +25,7 @@
             @request="request"
             ref="leftNetwork"
             @list="list"
+            :popupInformation="passPopupInformationLeft"
           />
         </template>
         <template v-slot:after>
@@ -37,6 +38,7 @@
             @request="request"
             ref="rightNetwork"
             @list="list"
+            :popupInformation="passPopupInformationRight"
           />
         </template>
         </q-splitter>
@@ -80,7 +82,16 @@ type DiffGraphVisualization = {
 export default class DiffGraphView extends Vue {
   splitterModel = 50;
   @Prop() visualization!:DiffGraphVisualization
-  layoutCoordinator:LayoutCoordinator
+  layoutCoordinator:LayoutCoordinator|null=null
+  @Prop({ required: false}) popupInformation!:any
+
+  get passPopupInformationRight(){
+    return this.popupInformation?.right
+  }
+
+  get passPopupInformationLeft(){
+    return this.popupInformation?.left
+  }
 
   get path():Array<{ id:string, name:string }>{
     return this.visualization.parents || []
@@ -91,11 +102,11 @@ export default class DiffGraphView extends Vue {
   }
 
   get leftNetwork(){
-    return this.$refs["leftNetwork"].getNetwork()
+    return (this.$refs["leftNetwork"] as unknown as any).getNetwork()
   }
 
   get rightNetwork(){
-    return this.$refs["rightNetwork"].getNetwork()
+    return (this.$refs["rightNetwork"] as unknown as any).getNetwork()
   }
 
   mounted(){

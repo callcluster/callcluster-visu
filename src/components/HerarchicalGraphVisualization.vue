@@ -1,20 +1,24 @@
 <template>
-  <vis-graph 
-    :visData="visData" 
-    @select="select" 
-    @explode="explode" 
-    @open="open" 
-    :options="options" 
-    ref="visGraph"
-    :currentNode="visualization.parents[visualization.parents.length-1].id"
-    @list="list"
-  />
+  <div class="fit">
+    <vis-graph 
+      :visData="visData" 
+      @select="select" 
+      @explode="explode" 
+      @open="open" 
+      :options="options" 
+      ref="visGraph"
+      :currentNode="visualization.parents[visualization.parents.length-1].id"
+      @list="list"
+    />
+    <list-content-dialog :information="popupInformation"/>
+  </div>
 </template>
 
 <script lang="ts">
 import { Options } from "vis-network";
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import VisGraph from 'components/VisGraph.vue'
+import ListContentDialog from 'components/ListContentDialog.vue'
 import PathNavigator from 'components/PathNavigator.vue'
 type Node={
   id:string,
@@ -23,6 +27,7 @@ type Node={
 @Component({
   components:{
     VisGraph,
+    ListContentDialog
   }
 })
 export default class HierarchicalGraphVisualization extends Vue {
@@ -30,6 +35,7 @@ export default class HierarchicalGraphVisualization extends Vue {
   @Prop({ required: true}) nodes!:any[]
   @Prop({ required: true}) edges!:any[]
   @Prop({ required: true}) openedCommunities!:any[]
+  @Prop({ required: false}) popupInformation!:any
 
   get options ():Options {
     return {

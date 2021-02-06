@@ -25,6 +25,7 @@
           v-on:request="request"
           v-on:select="select"
           v-on:list="list"
+          :popupInformation="listContents"
         />
         <diff-graph-view
           v-if="visualization.visualizationType=='diff'"
@@ -34,6 +35,7 @@
           v-on:request="request"
           v-on:select="select"
           v-on:list="list"
+          :popupInformation="listContents"
         />
     </div>
   </div>
@@ -73,6 +75,10 @@ export default class VisualizationView extends Vue {
     } else{
       return "";
     }
+  }
+
+  get listContents(){
+    return this.$store.state.other.listContents
   }
 
   list(node:string){

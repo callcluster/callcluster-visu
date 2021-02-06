@@ -42,6 +42,7 @@
         row-key="name"
         hide-bottom
         hide-header
+        :rows-per-page-options="[0]"
         class="bg-secondary"
         dark
         dense

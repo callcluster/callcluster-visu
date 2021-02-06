@@ -18,6 +18,7 @@
           @select="select"
           @request="request"
           @list="list"
+          :popupInformation="passedPopupInformation"
         />
       </div>
     </transition>
@@ -50,7 +51,12 @@ type HierarchicalGraphVisualization = {
   }
 })
 export default class HierarchicalGraphView extends Vue {
+  @Prop({ required: false}) popupInformation!:any
   @Prop() visualization!:HierarchicalGraphVisualization
+
+  get passedPopupInformation(){
+    return this.popupInformation?.left
+  }
 
   get path():Array<{ id:string, name:string }>{
     return this.visualization.parents || []

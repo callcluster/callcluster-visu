@@ -10,6 +10,7 @@ export default function getMeasurableForCommunity(community: Community, evaluato
         id: analyzable.getStringIdentifier(community),
         communities: undefined,
         functions: undefined,
+        originalType:community["type"],
         type: "community",
         value: evaluator(community),
         name: community.name,
