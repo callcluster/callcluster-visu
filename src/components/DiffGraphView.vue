@@ -26,6 +26,7 @@
             ref="leftNetwork"
             @list="list"
             :popupInformation="passPopupInformationLeft"
+            :title="visualization.coloringParameters.leftColorer.label"
           />
         </template>
         <template v-slot:after>
@@ -39,6 +40,7 @@
             ref="rightNetwork"
             @list="list"
             :popupInformation="passPopupInformationRight"
+            :title="visualization.coloringParameters.rightColorer.label"
           />
         </template>
         </q-splitter>
@@ -57,7 +59,15 @@ type Node={
   id:string,
   name:string
 }
+interface Colorer{
+  label:string,
+  value:number
+}
 type DiffGraphVisualization = {
+  coloringParameters:{
+    leftColorer:Colorer,
+    rightColorer:Colorer
+  }
   left:{
     nodes:Array<Node>,
     edges:Array<object>,
