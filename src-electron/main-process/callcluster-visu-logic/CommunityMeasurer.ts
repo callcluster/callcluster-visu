@@ -42,25 +42,42 @@ class ConcreteCommunityMeasurer implements OptimizingCommunityMeasurer{
     }
 
     optimize(community: Community, metrics?: Metric[]) {
-        const definedMetrics=metrics??this.getAvailableMetrics()
+        const definedMetrics = (metrics??this.getAvailableMetrics()).filter(m=>m!=='descendants' && m!=='minlevel')
+        const subcommunities = this.communityInterpreter.getSubCommunities(community)
+        const functions = this.communityInterpreter.getFunctionsInside(community)
 
-        this.communityInterpreter.getSubCommunities(community)
-            .forEach(childCommunity => 
-                this.optimize(childCommunity, metrics)
+        
+        subcommunities.forEach(childCommunity => 
+            this.optimize(childCommunity, metrics)
+        )
+        
+        subcommunities.forEach(childCommunity => 
+            definedMetrics.forEach(m => 
+                this.addToMetric(community, m, this.getMetric(childCommunity, m) ?? 0)
             )
+        )
     
-        this.communityInterpreter.getSubCommunities(community)
-            .forEach(childCommunity => 
-                definedMetrics.forEach(m => 
-                    this.addToMetric(community, m, this.getMetric(childCommunity, m) ?? 0)
-                )
-            )
-    
-        this.communityInterpreter.getFunctionsInside(community)
-            .map(id => this.getFunction(id))
-            .forEach(func => definedMetrics.forEach(metric =>
+        functions.map(id => this.getFunction(id)).forEach(func => 
+            definedMetrics.forEach(metric =>
                 this.addToMetric(community, metric, this.getMetric(func, metric) ?? 0)
-            ))
+            )
+        )
+
+        // descendants count
+        const indirectDescendants=subcommunities.map(childCommunity=>this.getMetric(childCommunity,'descendants') ?? 0).reduce((a,b)=>a+b,0)
+        this.setMetric(community,'descendants',indirectDescendants+functions.length)
+
+        //minimum level
+        if(functions.length>0){
+            this.setMetric(community,'minlevel',1)
+        }else{
+            const lowestMinLevel=subcommunities.map(childCommunity=>this.getMetric(childCommunity,'minlevel') ?? Infinity).reduce((a,b)=>Math.min(a,b),Infinity)
+            this.setMetric(community,'minlevel',lowestMinLevel+1)
+        }
+    }
+    setMetric(community: Community, metric: Metric, value: number): number {
+        community[metric] = value
+        return value
     }
 }
 
