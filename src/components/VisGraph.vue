@@ -51,6 +51,7 @@ class MenuOwner{
       label:"Extract",
       click:()=>{
         if(this.currentEmitter==null) return
+        if(this.currentNode?.includes("f")) return
         this.currentEmitter.$store.dispatch(
           'other/getDetailsForExtraction', 
           this.currentNode
@@ -68,6 +69,9 @@ class MenuOwner{
     }
     if(this.currentNode==null){
       return;
+    }
+    if(this.currentNode?.includes("f")){
+      return
     }
     this.currentEmitter.$emit(type,this.currentNode)
     this.currentEmitter = null
@@ -174,7 +178,9 @@ export default class VisGraph extends Vue {
       nw.on('oncontext',(e)=>{
         const node = (nw.getNodeAt(e.pointer.DOM) as string|undefined) ?? null
         if(node != null){
-          menuOwner.popup(node,this)
+          if(!node.includes("f")){//not a function
+            menuOwner.popup(node,this)
+          }
         }else{
           smallMenuOwner.popup(this.currentNode,this)
         }

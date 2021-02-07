@@ -98,29 +98,33 @@ export default class HierarchicalGraphVisualization extends Vue {
     }
   }
 
-  emitClickEvent (id:string,evName:string,payloadFunction:(n:Node)=>object){
+  emitClickEvent (id:string,evName:string,functionsAreValid:boolean, payloadFunction:(n:Node)=>object){
     const node = this.nodes.find(n=> n?.id === id)
     console.log("Clicked: %s, emitting %s", node,evName)
     console.log(node)
+    if(node.type==="function" && !functionsAreValid){
+      console.log("cant emit because it is a function")
+      return
+    }
     if ( node ) {
       this.$emit(evName, payloadFunction(node) )
     }
   }
 
   select(obj:any) {
-    this.emitClickEvent(obj,'select',(n)=>n)
+    this.emitClickEvent(obj,'select',true,(n)=>n)
   }
 
   explode(obj:any) {
     console.log("BOOOOM")
-    this.emitClickEvent(obj,'request',(node)=>({
+    this.emitClickEvent(obj,'request',false,(node)=>({
       ...this.visualization,
       openedCommunities:[...this.openedCommunities, node.id]
     }))
   }
 
   open(obj:any) {
-    this.emitClickEvent(obj,'request',(node)=>({
+    this.emitClickEvent(obj,'request',false,(node)=>({
       ...this.visualization,
       root:node.id,
       openedCommunities:[]
