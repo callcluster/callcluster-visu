@@ -17,7 +17,7 @@
       <q-tab-panels v-model="chosenInside" animated class="col" style="height:25em">
         <q-tab-panel name="treemap">
           <q-card class="fit">
-            <q-img src="graph.png" />
+            <q-img src="treemap.png" />
             <q-card-section>
               <div class="text-h6">Treemap</div>
               Reports some property representing size  as a treemap, on a single community.
@@ -27,7 +27,7 @@
 
         <q-tab-panel name="treemap-colored">
           <q-card class="fit">
-            <q-img src="graph.png" />
+            <q-img src="treemap.colored.png" />
             <q-card-section>
               <div class="text-h6">Colored Treemap</div>
               A treemap that shows what part of every "graphed" community corresponds to a different "colored" community.
@@ -37,7 +37,7 @@
 
         <q-tab-panel name="histogram">
           <q-card class="fit">
-            <q-img src="graph.png" />
+            <q-img src="histogram.png" />
             <q-card-section>
               <div class="text-h6">Histogram</div>
               Reports a property that represents size as a histogram.
@@ -47,7 +47,7 @@
 
         <q-tab-panel name="hierarchical">
           <q-card class="fit">
-            <q-img src="graph.png" />
+            <q-img src="hierarchical.png" />
             <q-card-section>
               <div class="text-h6">Hierarchical Graph</div>
               Allows the user to browse a community and the calls in it, and click on a node to view it's inner callgraph.
@@ -58,7 +58,7 @@
 
         <q-tab-panel name="hierarchical-colored">
           <q-card class="fit">
-            <q-img src="graph.png" />
+            <q-img src="hierarchical.colored.png" />
             <q-card-section>
               <div class="text-h6">Colored Hierarchical Graph</div>
               A hierarchical graph that shows what part of every "graphed" community corresponds to a different "colored" community.
@@ -68,7 +68,7 @@
 
         <q-tab-panel name="diff">
           <q-card class="fit">
-            <q-img src="graph.png" />
+            <q-img src="diff.png" />
             <q-card-section>
               <div class="text-h6">Diff Graph</div>
               Exhibits the same graph side by side but with different colors, both communities chosen are "colorers".
