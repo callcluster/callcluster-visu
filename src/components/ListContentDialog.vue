@@ -48,6 +48,22 @@
               <img :src="props.row.image.unselected" width="20" height="20"/>
             </q-td>
           </template>
+          <template v-slot:body-cell-ownership="props">
+            <q-td :props="props">
+              <span 
+                v-for="colorInside in props.row.colorsInside.sort((a,b)=>b.value-a.value).slice(0,2)" 
+                :key="colorInside.id" 
+                :style="`color:${colorsInsideDict[colorInside.id].colorCode}`"
+              >
+                {{percentage(colorInside,props.row.colorsInside)}} cluster {{colorsInsideDict[colorInside.id].position+1}}
+              </span>
+              <span 
+                v-if="props.row.colorsInside.length>2"
+              >
+                {{restPercentage(props.row.colorsInside)}} other
+              </span>
+            </q-td>
+          </template>
         </q-table>
       </div>
     </q-card>
@@ -63,6 +79,12 @@ interface Measurable{
   name:string
   color:string
   colorsInside:ColorInside[]
+}
+interface ColorInsideFullDescription{
+  colorId:string
+  colorCode:string
+  position:number
+  value:number
 }
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import Color from 'color'
@@ -108,8 +130,37 @@ export default class ListContentDialog extends Vue {
         headerStyle:"width:40%;text-align:left",
         sortable: true,
         name:"name"
-      }
+      },
+      ...this.ownershipColumn
     ]
+  }
+
+  get ownershipColumn():object[]{
+    if(this.colorInsideResume.length>0){
+      return [{
+        label:"Ownership",
+        name:"ownership",
+        sortable:true,
+        field: "colorsInside",
+        style:"text-align:left",
+        headerStyle:"text-align:left",
+      }]
+    }else{
+      return []
+    }
+  }
+
+  get colorsInsideDict():Record<string,ColorInsideFullDescription>{
+    const fullDescription:Record<string,ColorInsideFullDescription>={}
+    this.colorInsideResume.forEach((value,index) => {
+      fullDescription[value.id]={
+        colorId: value.id,
+        colorCode: this.calculateColor(value),
+        position: index,
+        value: value.value,
+      }
+    })
+    return fullDescription
   }
 
   get colorInsideResume():ColorInside[]{
@@ -135,6 +186,21 @@ export default class ListContentDialog extends Vue {
     } catch (e) {
         return Color(hexColor + "0").darken(0.3).hex()
     }
+  }
+
+  percentage(colorInside:ColorInside,allColors:ColorInside[]):string{
+    const sum=allColors.map(v=>v.value).reduce((a,b)=>a+b,0)
+    if(sum===0){
+      return "100%"
+    }else{
+      return `${Math.floor((colorInside.value/sum)*100)}%`
+    }
+  }
+
+  restPercentage(allColors:ColorInside[]):string{
+    const sum=allColors.map(v=>v.value).reduce((a,b)=>a+b,0)
+    const restSum=allColors.slice(2).map(v=>v.value).reduce((a,b)=>a+b,0)
+    return `${Math.floor((restSum/sum)*100)+1}%`
   }
 
 }
