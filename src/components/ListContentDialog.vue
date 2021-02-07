@@ -43,6 +43,17 @@
           hide-bottom
           :rows-per-page-options="[0]"
         >
+          <template v-slot:body-cell-name="props">
+            <q-td :props="props">
+              <span 
+                :style="`color:${colorsInsideDict[props.row.colorsInside[0].id].colorCode};`"
+                v-if="props.row.colorsInside && props.row.colorsInside.length===1"
+              >{{props.row.name}}</span>
+              <span v-else>
+                {{props.row.name}}
+              </span>
+            </q-td>
+          </template>
           <template v-slot:body-cell-image="props">
             <q-td :props="props">
               <img :src="props.row.image.unselected" width="20" height="20"/>
