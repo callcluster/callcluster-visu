@@ -38,6 +38,11 @@
           :popupInformation="listContents"
         />
     </div>
+    <div v-else class="col">
+      <div class="absolute-center text-primary">
+        <h3>Start by reading the docs at <a href="https://callcluster.github.io" target="_blank">callcluster.github.io</a></h3>
+      </div>
+    </div>
   </div>
 </template>
 
