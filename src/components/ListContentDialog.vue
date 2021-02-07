@@ -23,7 +23,7 @@
                 width:30px;
                 height:30px;
                 border-radius:50% 50%;
-                background-color:${calculateColor(colorInside)};
+                background-color:${colorsInsideDict[colorInside.id].colorCode};
               `"
               class="text-center q-pa-xs q-ma-xs"
             >
@@ -36,7 +36,7 @@
         <q-table
           style="max-height:400px;max-width:400px"
           virtual-scroll
-          :data="information"
+          :data="informationWithOwnership"
           :columns="columns"
           row-key="id"
           dense
@@ -51,16 +51,11 @@
           <template v-slot:body-cell-ownership="props">
             <q-td :props="props">
               <span 
-                v-for="colorInside in props.row.colorsInside.sort((a,b)=>b.value-a.value).slice(0,2)" 
-                :key="colorInside.id" 
-                :style="`color:${colorsInsideDict[colorInside.id].colorCode}`"
+                v-for="ownership in props.row.ownership"
+                :key="JSON.stringify(ownership)"
+                :style="`color:${ownership.color};`"
               >
-                {{percentage(colorInside,props.row.colorsInside)}} cluster {{colorsInsideDict[colorInside.id].position+1}}
-              </span>
-              <span 
-                v-if="props.row.colorsInside.length>2"
-              >
-                {{restPercentage(props.row.colorsInside)}} other
+                {{ownership.text}}
               </span>
             </q-td>
           </template>
@@ -79,6 +74,14 @@ interface Measurable{
   name:string
   color:string
   colorsInside:ColorInside[]
+}
+interface Ownership{
+  color:string
+  text:string
+  cluster:number
+}
+interface MeasurableWithOwnership extends Measurable{
+  ownership?:Ownership[]
 }
 interface ColorInsideFullDescription{
   colorId:string
@@ -141,12 +144,43 @@ export default class ListContentDialog extends Vue {
         label:"Ownership",
         name:"ownership",
         sortable:true,
+        sort: (a:any, b:any, rowA:any, rowB:any) => (rowB.ownership[0].cluster-rowA.ownership[0].cluster),
         field: "colorsInside",
         style:"text-align:left",
         headerStyle:"text-align:left",
       }]
     }else{
       return []
+    }
+  }
+
+  get informationWithOwnership():MeasurableWithOwnership[]{
+    if(this.colorInsideResume.length==0){
+      return this.information
+    }else{
+      return this.information.map(measurable=>{
+        const sortedColors = measurable.colorsInside.sort((a,b)=>b.value-a.value)
+        const valuesSum=sortedColors.map(v=>v.value).reduce((a,b)=>a+b,0)
+        function percentage(colors:ColorInside[]):number{
+          if(valuesSum===0) return 100
+          return Math.floor((colors.map(c=>c.value).reduce((a,b)=>a+b,0)/valuesSum)*100)
+        }
+        return ({
+        ...measurable,
+        ownership:[
+          ...sortedColors.slice(0,2).map((colorInside)=>({
+            color:this.colorsInsideDict[colorInside.id].colorCode,
+            text:`${percentage([colorInside])}% cluster ${this.colorsInsideDict[colorInside.id].position+1}`,
+            cluster:this.colorsInsideDict[colorInside.id].position+1
+          })),
+          ...(sortedColors.length>2?[{
+            color:"#000000",
+            text:`${percentage(sortedColors.slice(2))+1}% other`,
+            cluster:0
+          }]:[])
+        ]
+      })
+      })
     }
   }
 
@@ -164,6 +198,7 @@ export default class ListContentDialog extends Vue {
   }
 
   get colorInsideResume():ColorInside[]{
+    console.log("calculating resume!!!!")
     let resume:Record<string,number>={}
     function addColorInside(color:ColorInside){
       resume[color.id]=color.value+(resume[color.id] ?? 0)
@@ -187,22 +222,6 @@ export default class ListContentDialog extends Vue {
         return Color(hexColor + "0").darken(0.3).hex()
     }
   }
-
-  percentage(colorInside:ColorInside,allColors:ColorInside[]):string{
-    const sum=allColors.map(v=>v.value).reduce((a,b)=>a+b,0)
-    if(sum===0){
-      return "100%"
-    }else{
-      return `${Math.floor((colorInside.value/sum)*100)}%`
-    }
-  }
-
-  restPercentage(allColors:ColorInside[]):string{
-    const sum=allColors.map(v=>v.value).reduce((a,b)=>a+b,0)
-    const restSum=allColors.slice(2).map(v=>v.value).reduce((a,b)=>a+b,0)
-    return `${Math.floor((restSum/sum)*100)+1}%`
-  }
-
 }
 </script>
 
