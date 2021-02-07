@@ -10,7 +10,10 @@
       :currentNode="visualization.parents[visualization.parents.length-1].id"
       @list="list"
     />
-    <div class="absolute-top text-center q-ma-md"><span class="text-body-1">Colored clustering: </span><span class="text-h6">{{title}}</span></div>
+    <div class="absolute-top text-center q-ma-md" v-if="title">
+      <span class="text-body-1">Colored clustering: </span>
+      <span class="text-h6">{{title}}</span>
+    </div>
     <list-content-dialog :information="popupInformation"/>
   </div>
 </template>
@@ -37,7 +40,7 @@ export default class HierarchicalGraphVisualization extends Vue {
   @Prop({ required: true}) edges!:any[]
   @Prop({ required: true}) openedCommunities!:any[]
   @Prop({ required: false}) popupInformation!:any
-  @Prop({ required: false}) title!:string
+  @Prop({ required: false}) title!:string|undefined
 
   get options ():Options {
     return {
