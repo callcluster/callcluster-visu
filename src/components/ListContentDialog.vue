@@ -8,7 +8,11 @@
 
         <q-btn flat round dense icon="close" v-on:click="opened = false"/>
       </q-toolbar>
-      <div>
+      <q-card-section class="col-auto q-pa-md">
+        <span class="text-h6">{{colorInsideResume.length}}</span>
+        <span class="text-body-1"> clusters contained</span>
+      </q-card-section>
+      <div class="col">
         <q-table
           style="max-height:400px;max-width:400px"
           virtual-scroll
@@ -30,11 +34,30 @@
   </div>
 </template>
 <script lang="ts">
+interface ColorInside{
+  id:string
+  value:number
+}
 interface Measurable{
   id:string
   name:string
+  color:string
+  colorsInside:ColorInside[]
 }
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
+import Color from 'color'
+function calculateColor(colorInside: ColorInside): string {
+  let seed = parseInt(colorInside.id.replace('c', ''))
+  if (isNaN(seed)) {
+      seed = 0
+  }
+  const hexColor = "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
+  try {
+      return Color(hexColor).darken(0.3).hex()
+  } catch (e) {
+      return Color(hexColor + "0").darken(0.3).hex()
+  }
+}
 @Component({})
 export default class ListContentDialog extends Vue {
   @Prop({ required: false}) information!:Measurable[]
@@ -63,7 +86,7 @@ export default class ListContentDialog extends Vue {
       },
       {
         label:"Type",
-        field: row=>(row.originalType || row.type),
+        field: (row:any)=>(row.originalType || row.type),
         style:"width:20%",
         headerStyle:"width:20%",
         sortable: true,
@@ -78,6 +101,18 @@ export default class ListContentDialog extends Vue {
         name:"name"
       }
     ]
+  }
+
+  get colorInsideResume():ColorInside[]{
+    let resume:Record<string,number>={}
+    function addColorInside(color:ColorInside){
+      resume[color.id]=color.value+(resume[color.id] ?? 0)
+    }
+    this.information.forEach((m:Measurable)=>m.colorsInside.forEach(addColorInside))
+    return Object.entries(resume).map((entry)=>({
+      id:entry[0],
+      value:entry[1]
+    }))
   }
 
 }

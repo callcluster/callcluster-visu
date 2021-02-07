@@ -1,4 +1,5 @@
 import Analyzable from "./Analyzable"
+import getInfoFor from "./getInfoFor";
 import { Colorer, Visualization } from "./makeVisualization";
 import getNodesInsideCommunity from "./makeVisualization/hierarchicalGraph/getNodesInsideCommunity";
 import makeEvaluator from "./makeVisualization/makeEvaluator";
@@ -22,6 +23,7 @@ export default function listContentsFor(query:ContentsQuery,analyzable:Analyzabl
     const evaluator = makeEvaluator({parameters:query.parameters} as Visualization, analyzable)
     return {
         left:getNodesInsideCommunity(community,[],evaluator,analyzable,query.coloringParameters.leftColorer),
-        right:getNodesInsideCommunity(community,[],evaluator,analyzable,query.coloringParameters.rightColorer)
+        right:getNodesInsideCommunity(community,[],evaluator,analyzable,query.coloringParameters.rightColorer),
+        rootInfo:getInfoFor({id:query.node},analyzable)
     }
 }
