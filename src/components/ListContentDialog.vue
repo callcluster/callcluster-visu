@@ -8,9 +8,29 @@
 
         <q-btn flat round dense icon="close" v-on:click="opened = false"/>
       </q-toolbar>
-      <q-card-section class="col-auto q-pa-md">
-        <span class="text-h6">{{colorInsideResume.length}}</span>
-        <span class="text-body-1"> clusters contained</span>
+      <q-card-section class="col-auto" v-if="colorInsideResume.length>0">
+        <div>
+          <span class="text-h6">{{colorInsideResume.length}}</span>
+          <span class="text-body-1"> clusters contained</span>
+        </div>
+        <div>        
+          <span class="text-body-1" v-if="colorInsideResume.length>8">Top 8 clusters:</span>
+          <div class="row">
+            <div 
+              v-for="colorInside, index in colorInsideResume.slice(0,8)" 
+              :key="colorInside.id"
+              :style="`
+                width:30px;
+                height:30px;
+                border-radius:50% 50%;
+                background-color:${calculateColor(colorInside)};
+              `"
+              class="text-center q-pa-xs q-ma-xs"
+            >
+              {{index+1}}
+            </div>
+          </div>
+        </div>
       </q-card-section>
       <div class="col">
         <q-table
@@ -46,18 +66,7 @@ interface Measurable{
 }
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 import Color from 'color'
-function calculateColor(colorInside: ColorInside): string {
-  let seed = parseInt(colorInside.id.replace('c', ''))
-  if (isNaN(seed)) {
-      seed = 0
-  }
-  const hexColor = "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
-  try {
-      return Color(hexColor).darken(0.3).hex()
-  } catch (e) {
-      return Color(hexColor + "0").darken(0.3).hex()
-  }
-}
+
 @Component({})
 export default class ListContentDialog extends Vue {
   @Prop({ required: false}) information!:Measurable[]
@@ -112,7 +121,20 @@ export default class ListContentDialog extends Vue {
     return Object.entries(resume).map((entry)=>({
       id:entry[0],
       value:entry[1]
-    }))
+    })).sort((a,b)=>b.value-a.value)
+  }
+
+  calculateColor(colorInside: ColorInside): string {
+    let seed = parseInt(colorInside.id.replace('c', ''))
+    if (isNaN(seed)) {
+        seed = 0
+    }
+    const hexColor = "#" + Math.floor((Math.abs(Math.sin(seed + 1000) * 16777215)) % 16777215).toString(16);
+    try {
+        return Color(hexColor).darken(0.3).hex()
+    } catch (e) {
+        return Color(hexColor + "0").darken(0.3).hex()
+    }
   }
 
 }
